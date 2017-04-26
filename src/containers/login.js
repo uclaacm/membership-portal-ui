@@ -1,13 +1,14 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import LoginComponent from 'components/Login'
 
 
-
-class About extends React.Component {
+class Login extends React.Component {
   render(){
     return <div>
-      About<br/>
-      Path: {this.props.urlPath}
+      {/*Login<br/>
+      Path: {this.props.urlPath}*/}
+      <LoginComponent/>
 
     </div>;
   }
@@ -25,5 +26,5 @@ const mapDispatchToProps = (dispatch)=>{
 };
 
 
-About = connect(mapStateToProps, mapDispatchToProps)(About);
-export default About
+Login = connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login
