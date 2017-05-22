@@ -17,12 +17,12 @@ class Sidebar extends React.Component {
             <div className="sidebar">
                 <div className="sidebar-container">
                     <i className="settings-img fa fa-cog fa-2x"></i>
-                    <ProfilePicture pic="https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeeAAAAJDU1OGQ3NGZhLTY1MjgtNGYzNS1iMDc5LTliODhlMzg1NjJmMw.jpg"/>
-                    <Organization org="UCLA ACM" />
-                    <Username username="Vic Yeh" />
-                    <Position pos="Member"/>
+                    <ProfilePicture pic={this.props.propic}/>
+                    <Organization org={this.props.org} />
+                    <Username username={this.props.username} />
+                    <Position pos={this.props.pos}/>
                     <Navigation/>
-                    <Points levelClass="Hacker" levelNumber="2" points="10" />
+                    {!this.props.isAdmin && <Points levelClass="Hacker" levelNumber="2" points="10" />}
 
                     {/*<Leaderboard/>*/}
                 </div>

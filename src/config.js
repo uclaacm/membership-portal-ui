@@ -10,5 +10,6 @@ export default {
     ['About', '/about'],
     ['Login', '/login'],
     ['Register', '/register'],
+    ['Admin', '/admin'],
   ]
 }

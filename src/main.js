@@ -16,6 +16,7 @@ import Login from 'containers/login';
 import SideBar from 'components/Sidebar/';
 import DashBoard from 'components/DashBoard/';
 import Register from 'components/Register';
+import AdminDashboard from 'components/AdminDashboard';
 
 
 class App extends React.Component {
@@ -28,6 +29,7 @@ class App extends React.Component {
              <Route path="/about" component={About}/>
              <Route path="/login" component={Login}/>
              <Route path="/register" component={Register}/>
+             <Route path="/admin" component={AdminDashboard}/>
              <Redirect to="/"/>
            </Switch>
 

@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 
 import Config from 'config';
 import {Action} from 'reducers';
-import Sidebar from 'components/Sidebar'
 import DashBoard from 'components/DashBoard'
 
 class Home extends React.Component {

@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react'
 import Sidebar from 'components/Sidebar'
-import EventsDashboard from './eventsDashboard'
+// import EventsDashboard from 'components/Dashboard/eventsDashboard'
 
 
-class Dashboard extends React.Component {
+class Admin extends React.Component {
     render () {
         const eventList = 
         [
@@ -48,12 +48,15 @@ class Dashboard extends React.Component {
         ];
 
         return(
-            <div className="dashboard">
+            <div>
+                <Sidebar propic="https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAy-AAAAJDYzYjdmMzIwLTdhZWYtNDRkOS1iNjNlLWY2NTRiODgwNTAzYg.jpg" org="UCLA ACM" username="Akhil Nadendla" pos="Admin" isAdmin={true}/>
+            </div>
+            /*<div className="dashboard">
                 <Sidebar propic="https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeeAAAAJDU1OGQ3NGZhLTY1MjgtNGYzNS1iMDc5LTliODhlMzg1NjJmMw.jpg" org="UCLA ACM" username="Vic Yeh" pos="Member" isAdmin={false}/>
                 <EventsDashboard events={eventList}/> 
-            </div>
+            </div>*/
         );
     }
 }
 
-export default Dashboard;
+export default Admin;

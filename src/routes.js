@@ -10,6 +10,7 @@ export default (
         <Route path="register" component={Register} />
         <Route path="login" component={Login} />
         <Route path="dashboard" component={DashBoard} />
+        <Route path="admin" component={Admin} />
 
         <Route path="*" component={NotFoundPage} />
     </Route>
