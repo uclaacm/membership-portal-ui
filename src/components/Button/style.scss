@@ -12,7 +12,6 @@
         text-align: center;
         border-radius: 100px;
         font-size: $checkin-fontsize;
-
         // background: $secondary-color;
         color: $white;
         padding: $sidebar-vertical-spacing;
@@ -23,12 +22,12 @@
     }
 
     .blue {
-        background: $secondaryblue;
+        background: $--secondaryblue;
         box-shadow: 0 4px 0 $primaryblue;
     }
 
     .blue-signup {
-        background: $secondaryblue;
+        background: $--secondaryblue;
         box-shadow: 0 4px 0 #3167ae;
     }
 
@@ -49,7 +48,7 @@
     }
 
     .event-button {
-        background: $secondaryblue;
+        background: $--secondaryblue;
         width: $event-img-width;
         height: 34px;
         font-size: 14px;

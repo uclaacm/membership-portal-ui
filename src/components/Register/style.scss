@@ -64,7 +64,7 @@ input {
         outline: none;
 
         &:focus {
-            border: solid 1px $secondaryblue;
+            border: solid 1px $--secondaryblue;
         }
     }
     &.confirm-details {
@@ -81,7 +81,7 @@ input {
         display: inline-block;
     }
     input:focus ~ p {
-        color: $secondaryblue;
+        color: $--secondaryblue;
     }
 
     .header {
@@ -167,6 +167,6 @@ input {
         text-decoration: inherit;
         font-weight: inherit;
         font-size: 14px;
-        color: $secondaryblue;
+        color: $--secondaryblue;
     }
 }

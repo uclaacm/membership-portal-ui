@@ -49,7 +49,7 @@ class Admin extends React.Component {
 
         return(
             <div>
-                <Sidebar propic="https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAy-AAAAJDYzYjdmMzIwLTdhZWYtNDRkOS1iNjNlLWY2NTRiODgwNTAzYg.jpg" org="UCLA ACM" username="Akhil Nadendla" pos="Admin" isAdmin={true}/>
+                <Sidebar propic="https://pbs.twimg.com/profile_images/821079138060496896/7yR9rQOY.jpg" username="UCLA ACM" pos="Admin" isAdmin={true}/>
             </div>
             /*<div className="dashboard">
                 <Sidebar propic="https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeeAAAAJDU1OGQ3NGZhLTY1MjgtNGYzNS1iMDc5LTliODhlMzg1NjJmMw.jpg" org="UCLA ACM" username="Vic Yeh" pos="Member" isAdmin={false}/>

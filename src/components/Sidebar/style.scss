@@ -60,11 +60,11 @@
     .navigation {
         text-align: center;
         .navigation-tile {
-            background: $secondaryblue;
+            background: $--secondaryblue;
             width: 120.5px;
             height: 115px;
             border-radius: 5px;
-            background-color: $secondaryblue;
+            background-color: $--secondaryblue;
             box-shadow: 0 4px 0 0 #3167ae;
             color: $white;
             margin: 7px;
@@ -79,7 +79,7 @@
             &:hover {
                 background: $white;
                 .icon, p {
-                    color: $secondaryblue;
+                    color: $--secondaryblue;
                 }
                 box-shadow: 0 2px 0 0 #c0c0c0;
             }
@@ -114,12 +114,12 @@
         width: $sidebar-width;
         margin: 0 auto;
         // padding-left: 25px;              //this is 10% of sidebar width I believe. There's some inline styling that must be accounted for too.. :(
-        background: $secondaryblue;
+        background: $--secondaryblue;
         padding-top: 10px;
         padding-bottom: 10px;
 
         .points-wrapper {
-            background: $secondaryblue;
+            background: $--secondaryblue;
             padding-left: 25px;
         }
 
@@ -145,6 +145,21 @@
             display: block;
             float: right;
             margin-right: 25px;             //this is 2*10% of sidebar width I believe
+        }
+
+
+    }
+    .bar {
+        background: $--secondaryblue;
+        width: 250px;
+        margin: 0 auto;
+        margin-top: 40px;
+        border-radius: 4px;
+        height: $input-button-size;
+        
+
+        .text {
+            line-height: $input-button-size;
         }
     }
 

@@ -13,7 +13,6 @@ class EventDropdown extends React.Component {
                         <span className="event-points-val Display-2Secondary">{event.attendancePoints}</span>
                         <Button className="event-button" style="event-button" icon="fa-facebook-square" text="Event Page"/>
                         <Button className="event-button" style="event-button" icon="fa-file" text="Resources"/>
-
                     </div>
                     <div className="dropdown-right">
                         <p className="Subheader-2Secondary">{event.description}</p> 
