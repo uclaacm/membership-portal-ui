@@ -5,10 +5,8 @@ import Button from 'components/Button/index';
 
 class AdminAddEventsForm extends React.Component {
     render () {
-      console.log("EventDay", this.props.fields);
-    //   const numEvents = this.props.singleDayEventsList.events.length;
-    //   const eventsForTheDay = this.props.singleDayEventsList.events;
-     
+        console.log("EventDay", this.props.fields);
+        const event = this.props.fields;
         return(
             <div className="admin-add-event-form">
                 <form>
@@ -50,10 +48,13 @@ class AdminAddEventsForm extends React.Component {
                                 <textarea className="Subheader-2Secondary description">Description of the event will go here. Description of the event will go here. Description of the event will go here. Description of the event will go here. Description of the event will go here. Description of the event will go here. Description of the event will go here. Description of the event will go here. Description of the event will go here.</textarea> 
                             </div>
                         </div>
-                        <div className="minimize">
+                        {/*<div className="minimize">
                             <i className="fa fa-chevron-up fa-3x minimize-icon" aria-hidden="true"></i>
-                        </div>
+                        </div>*/}
+                        <Button className="done-button" style="green" icon="" text="Done"/>
                     </div>
+                    
+
 
                 </form>
             </div>

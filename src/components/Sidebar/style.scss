@@ -2,7 +2,6 @@
 
 .sidebar {
     float: left;
-    height: 100vh;
     width: $sidebar-width;
     background: $primaryblue;
     color: $white;
@@ -10,7 +9,7 @@
 
     .sidebar-container {
         background: $primaryblue;
-        height: 954px;
+        height: 100vh;
     }
 
     .side-tag {

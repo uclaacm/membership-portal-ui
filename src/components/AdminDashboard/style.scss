@@ -1,15 +1,5 @@
 .admin-dashboard {
-
-    form {
-        // background: lightblue;
-    }
-
-    // .admin-add-event-form {
-    //     width: 500px;
-    //     margin: 0 auto;
-    // }
-
-
+    height: 100vh;
     .table-header {
         margin-top: 30px;
         margin-bottom: 15px;
@@ -66,9 +56,10 @@
 
     .events-dashboard {
         margin-left: $sidebar-width;
-        padding: 30px;
+        padding-left: 30px;
+        padding-right: 30px;
         overflow-y: auto;
-        max-height: 954px;
+        height: 100%;
 
         .earlier-events-icon {
             position: relative;
@@ -94,9 +85,9 @@
         white-space:nowrap;
         overflow:hidden;
 
-        &:hover + .event-dropdown {
-            display: inherit;
-        }
+        // &:hover + .event-dropdown {
+        //     display: inherit;
+        // }
 
         .img-wrapper {
             display: table-cell;
@@ -109,7 +100,7 @@
         .event-info-wrapper {
             display: table-cell;
             vertical-align: middle;
-            white-space:nowrap;
+            // white-space:nowrap;
             overflow:hidden;
             margin-top: 17px; 
 
@@ -129,7 +120,7 @@
             .event-info {
                 height: 29px;
                 // word-wrap: normal;
-                white-space: normal;
+                white-space: nowrap;
 
                 .event-icon {
                     text-align: center;
@@ -147,6 +138,7 @@
     .event-dropdown {
         width: 100%;
         // display: none;
+        margin-bottom: $input-button-size + 10px;
 
         &:hover {
             display: inherit;
@@ -198,6 +190,10 @@
                 width: 40px;
                 color: $--disabled
             }
+        }
+
+        .done-button {
+            float: right;
         }
 
     }

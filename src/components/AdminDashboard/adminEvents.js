@@ -8,7 +8,6 @@ import AdminAddEventsForm from './adminAddEventsForm';
 
 class AdminEvents extends React.Component {
     render () {
-        // console.log(this.props.events);
         const fullEventsList = this.props.events;
         var allEvents = [];
         for(let i = 0; i < fullEventsList.length; i++) {
@@ -19,16 +18,19 @@ class AdminEvents extends React.Component {
                 allEvents.push(daysEvents[j]);
             }
         }
+        const numEvents = allEvents.length;
         // console.log(allEvents);
         return(
             <div className="events-dashboard">
                 <EarlierEventsIcon/>
                 <Button className="checkin-button" style="blue event" icon="fa-plus" text="Add Event"/>
-                <AdminAddEventsForm/>
                 <AdminEventsHeader/>                
                 {
                     allEvents.map(function(evt, i) {
-                        return <AdminSingleEvent fields={evt} key={i}/>
+                        return  <div>
+                                    <AdminSingleEvent fields={evt} key={i}/>
+                                    <AdminAddEventsForm fields={evt} key={i+numEvents}/>
+                                </div>
                     })
                 }
             </div>

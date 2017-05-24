@@ -13,8 +13,6 @@ class AdminSingleEvent extends React.Component {
         else {
             fontClass = "Secondary";
         }
-        console.log("Fields", this.props.fields)
-
         {"generic-button " + this.props.style}
         return(
             <div className="admin-event-day">     
