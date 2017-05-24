@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import Button from 'components/Button/index'
+import Button from 'components/Button/index';
 
 class EventDropdown extends React.Component {
     render () {
@@ -9,8 +9,8 @@ class EventDropdown extends React.Component {
             <div className="event-dropdown">
                 <div className="event-top">
                     <div className="dropdown-left">
-                        <span className="Title-2Secondary">Points</span>
-                        <span className="event-points-val Display-2Secondary">{event.attendancePoints}</span>
+                        <span className="Title-2Secondary points">Points</span>
+                        <span className="event-points-val Display-2Secondary points">{event.attendancePoints}</span>
                         <Button className="event-button" style="event-button" icon="fa-facebook-square" text="Event Page"/>
                         <Button className="event-button" style="event-button" icon="fa-file" text="Resources"/>
                     </div>

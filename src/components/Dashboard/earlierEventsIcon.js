@@ -4,7 +4,7 @@ class EarlierEventsIcon extends React.Component {
     render () {
         return(
             <div className="earlier-events-icon">
-                <i className="fa fa-chevron-up"></i>
+                <i className="fa fa-chevron-up icon"></i>
                 <p className="BodySecondary">see earlier events</p>
             </div>
         );

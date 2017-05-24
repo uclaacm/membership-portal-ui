@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
-import Sidebar from 'components/Sidebar'
-// import EventsDashboard from 'components/Dashboard/eventsDashboard'
-
+import Sidebar from 'components/Sidebar';
+import AdminEvents from './adminEvents';
 
 class Admin extends React.Component {
     render () {
@@ -44,17 +43,30 @@ class Admin extends React.Component {
                             "attendancePoints": 5
                         }
                     ]
+            },
+            {
+                "date": "Friday, April 21st", 
+                    "events": [
+                        {
+                            "img": "https://scontent-lax3-1.xx.fbcdn.net/v/t31.0-8/18402016_1608383172535087_1018900285816195814_o.jpg?oh=7a2a342ed781da2dd4af501b5893ae65&oe=5976DF0D", 
+                            "org": "ACM", 
+                            "time": "4:00pm-5:00pm", 
+                            "title": "Implicit Bias Workshop. There is also a really long title here because we need to make sure that it can handle this properly.",                   
+                            "location": "Boelter 4760",
+                            "description": "Come learn about Tensorflow and other stuff more text here. It's a beginner friendly workshop, but please come with everything installed beforehand! Prior knowledge in Python is highly recommended but anything will do.",
+                            "attendancePoints": 5
+                        }
+                    ]
             }
         ];
 
         return(
-            <div>
+            <div className="admin-dashboard">
                 <Sidebar propic="https://pbs.twimg.com/profile_images/821079138060496896/7yR9rQOY.jpg" username="UCLA ACM" pos="Admin" isAdmin={true}/>
+                <AdminEvents events={eventList}/> 
+
             </div>
-            /*<div className="dashboard">
-                <Sidebar propic="https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeeAAAAJDU1OGQ3NGZhLTY1MjgtNGYzNS1iMDc5LTliODhlMzg1NjJmMw.jpg" org="UCLA ACM" username="Vic Yeh" pos="Member" isAdmin={false}/>
-                <EventsDashboard events={eventList}/> 
-            </div>*/
+            
         );
     }
 }

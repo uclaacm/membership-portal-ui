@@ -10,7 +10,7 @@ import Leaderboard from './leaderboard';
 import Settings from './settings';
 import Position from './position';
 import Navigation from './navigation';
-import Bar from './bar';
+import OrgSettings from './orgSettings';
 
 class Sidebar extends React.Component {
     render () {
@@ -31,7 +31,7 @@ class Sidebar extends React.Component {
                     <Position pos={this.props.pos}/>
                     <Navigation/>
                     {!this.props.isAdmin && <Points levelClass="Hacker" levelNumber="2" points="10" />}
-                    {this.props.isAdmin && <Bar/>}
+                    {this.props.isAdmin && <OrgSettings/>}
                     {/*<Leaderboard/>*/}
                 </div>
             </div>

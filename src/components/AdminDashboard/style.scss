@@ -1,0 +1,205 @@
+.admin-dashboard {
+
+    form {
+        // background: lightblue;
+    }
+
+    // .admin-add-event-form {
+    //     width: 500px;
+    //     margin: 0 auto;
+    // }
+
+
+    .table-header {
+        margin-top: 30px;
+        margin-bottom: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .header-offset {
+        padding-left: $admin-table-img-width + 10px + 13.7px + 10px;        //padding + icon width + padding whoops it's ugly
+    }
+
+    .admin-event-day {
+        border-top: 1px solid $--disabled;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .icon {
+        color: $--disabled;
+    }
+
+    .col {
+        display: inline-block;
+        white-space: normal;
+        vertical-align: middle;
+        & + .col {
+            padding-left: 10px;
+        }
+    }
+
+    .img {
+        width: $admin-table-img-width;
+        vertical-align: middle;
+    }
+
+    .title {
+        width: 300px;
+    }
+    .org {
+        width: 150px;
+    }
+    .time {
+        width: 150px;
+    }
+    .location {
+        width: 200px;
+    }
+    .points {
+        width: 50px;
+    }
+
+
+
+    .events-dashboard {
+        margin-left: $sidebar-width;
+        padding: 30px;
+        overflow-y: auto;
+        max-height: 954px;
+
+        .earlier-events-icon {
+            position: relative;
+            text-align: center;
+
+            .icon {
+                color: $--secondaryblack;
+            }
+        }
+
+        .checkin-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }  
+    }
+
+    .event-tile {
+        border-top: 1px solid $black;
+        padding-top: 15px;
+        padding-bottom: 10px;
+
+        white-space:nowrap;
+        overflow:hidden;
+
+        &:hover + .event-dropdown {
+            display: inherit;
+        }
+
+        .img-wrapper {
+            display: inline-block;
+        }
+        .event-img {
+            height: $event-img-height;
+            width: $event-img-width;
+            margin-right: 20px;
+        }
+        .event-info-wrapper {
+            display: inline-block;
+            white-space:nowrap;
+            overflow:hidden;
+            vertical-align: top;
+            margin-top: 17px; 
+
+            .event-info-right, .event-info-left {
+                display: inline-block;
+            }
+            .event-info-left {
+                width: 400px;
+                
+                .title {
+                    width: 350px;
+                    margin-bottom: 40px;
+                }
+            }
+
+            .event-info {
+                height: 29px;
+                // word-wrap: normal;
+                white-space: normal;
+
+                .event-icon {
+                    text-align: center;
+                    width: 20px;
+                    margin-right: 7px;
+                }  
+            }
+
+            .event-info-right {
+                padding-left: 20px;
+            }
+        }
+    }
+
+    .event-dropdown {
+        width: 100%;
+        // display: none;
+
+        &:hover {
+            display: inherit;
+        }
+
+        .event-button {
+            margin-bottom: 7px;
+        }
+
+        .dropdown-left, .dropdown-right {
+            display: inline-block;
+        }
+
+        .dropdown-left {
+            text-align: center;
+            width: $event-img-width;
+            margin-right: 20px;
+            
+        }
+
+        .dropdown-right {
+            min-width: 200px;
+            max-width: 455px;
+            vertical-align: top;
+
+            .description {
+                width: 600px;
+            }
+        }
+
+        .event-points-val {
+            margin-bottom: 20px;
+        }
+        .points-span {
+            display: block;
+            width: $event-img-width;
+
+        }
+
+        .points-input {
+            width: 75px;
+            text-align: center;
+        }
+
+        .minimize {
+            text-align: center;
+            .minimize-icon {
+                margin: auto;
+                width: 40px;
+                color: $--disabled
+            }
+        }
+
+    }
+
+
+}
