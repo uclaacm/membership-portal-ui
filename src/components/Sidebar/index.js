@@ -31,7 +31,6 @@ class Sidebar extends React.Component {
                     <Position pos={this.props.pos}/>
                     <Navigation/>
                     {!this.props.isAdmin && <Points levelClass="Hacker" levelNumber="2" points="10" />}
-                    {this.props.isAdmin && <OrgSettings/>}
                     {/*<Leaderboard/>*/}
                 </div>
             </div>
