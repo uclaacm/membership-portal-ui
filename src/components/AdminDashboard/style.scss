@@ -99,7 +99,7 @@
         }
 
         .img-wrapper {
-            display: inline-block;
+            display: table-cell;
         }
         .event-img {
             height: $event-img-height;
@@ -107,21 +107,23 @@
             margin-right: 20px;
         }
         .event-info-wrapper {
-            display: inline-block;
+            display: table-cell;
+            vertical-align: middle;
             white-space:nowrap;
             overflow:hidden;
             vertical-align: top;
             margin-top: 17px; 
 
+
             .event-info-right, .event-info-left {
-                display: inline-block;
+                display: table-cell;
+                vertical-align: middle;
             }
             .event-info-left {
                 width: 400px;
                 
                 .title {
                     width: 350px;
-                    margin-bottom: 40px;
                 }
             }
 

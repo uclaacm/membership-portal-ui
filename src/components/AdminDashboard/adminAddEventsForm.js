@@ -13,10 +13,10 @@ class AdminAddEventsForm extends React.Component {
             <div className="admin-add-event-form">
                 <form>
                     <div className="event-tile">
-                        <div className="img-wrapper">
-                            <img className="event-img" />
-                        </div>
                         <div className="event-info-wrapper">
+                            <div className="img-wrapper">
+                                <img className="event-img" />
+                            </div>
                             <div className="event-info-left">
                                 <span className="event-info Title-2Secondary">ACM</span><br></br>
                                 <input className="event-info Headline-2Primary title" defaultValue="Implicit Bias Workshop"></input>
