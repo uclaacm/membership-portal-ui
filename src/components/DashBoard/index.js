@@ -44,6 +44,29 @@ class Dashboard extends React.Component {
                             "attendancePoints": 5
                         }
                     ]
+            },
+            {
+                "date": "Friday, April 21st", 
+                    "events": [
+                        {
+                            "img": "https://scontent-lax3-1.xx.fbcdn.net/v/t31.0-8/18402016_1608383172535087_1018900285816195814_o.jpg?oh=7a2a342ed781da2dd4af501b5893ae65&oe=5976DF0D", 
+                            "org": "ACM AI", 
+                            "time": "4:00pm-6:00pm", 
+                            "title": "Machine Learning with Tensorflow and other stuff more text",                   
+                            "location": "Boelter 4760",
+                            "description": "Come learn about Tensorflow and other stuff more text here. It's a beginner friendly workshop, but please come with everything installed beforehand! Prior knowledge in Python is highly recommended but anything will do.",
+                            "attendancePoints": 5
+                        },
+                        {
+                            "img": "https://scontent-lax3-1.xx.fbcdn.net/v/t31.0-8/18402016_1608383172535087_1018900285816195814_o.jpg?oh=7a2a342ed781da2dd4af501b5893ae65&oe=5976DF0D", 
+                            "org": "ACM", 
+                            "time": "4:00pm-5:00pm", 
+                            "title": "Implicit Bias Workshop",                   
+                            "location": "Boelter 4760",
+                            "description": "Mandatory implicit bias workshop to make you a better you.",
+                            "attendancePoints": 50
+                        }
+                    ]
             }
         ];
 

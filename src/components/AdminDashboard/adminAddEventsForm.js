@@ -17,7 +17,7 @@ class AdminAddEventsForm extends React.Component {
                             </div>
                             <div className="event-info-left">
                                 <span className="event-info Title-2Secondary">ACM</span><br></br>
-                                <input className="event-info Headline-2Primary title" defaultValue="Implicit Bias Workshop"></input>
+                                <input className="event-info Headline-2Primary title" defaultValue="Machine Learning with Tensorflow and other stuff more text"></input>
                             </div>
                             <div className="event-info-right">
                                 <div className="event-info">

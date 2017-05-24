@@ -1,11 +1,12 @@
 @import "styles/vars";
 .dashboard {
+    height: 100vh;
     .events-dashboard {
-
         margin-left: $sidebar-width;
-        padding: 30px;
+        padding-left: 30px;
+        padding-right: 30px;
         overflow-y: auto;
-        max-height: 954px;
+        height: 100%;
 
         .earlier-events-icon {
             position: relative;
@@ -45,9 +46,8 @@
         }
         .event-info-wrapper {
             display: table-cell;
-            white-space:nowrap;
-            overflow:hidden;
             vertical-align: middle;
+            overflow:hidden;
             margin-top: 17px; 
 
             .event-info-right, .event-info-left {
@@ -56,12 +56,16 @@
             }
             .event-info-left {
                 width: 400px;
+
+                .title {
+                    width: 350px;
+                }
             }
 
             .event-info {
                 height: 29px;
                 // word-wrap: normal;
-                white-space: normal;
+                white-space: nowrap;
 
                 .event-icon {
                     text-align: center;
@@ -97,6 +101,9 @@
             width: $event-img-width;
             margin-right: 27px;
             
+            .points {
+                display: block;
+            }
         }
 
         .dropdown-right {
@@ -108,9 +115,7 @@
         .event-points-val {
             margin-bottom: 20px;
         }
-        span {
-            display: block;
-        }
+
 
         .minimize {
             text-align: center;

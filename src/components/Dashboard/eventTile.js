@@ -12,7 +12,7 @@ class EventTile extends React.Component {
                     </div>
                     <div className="event-info-left">
                         <span className="event-info Title-2Secondary">{this.props.event.org}</span><br></br>
-                        <span className="event-info Headline-2Primary">{this.props.event.title}</span>
+                        <span className="event-info Headline-2Primary title">{this.props.event.title}</span>
                     </div>
                     <div className="event-info-right">
                         <div className="event-info">
