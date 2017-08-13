@@ -9,11 +9,11 @@ export default class SuccessCard extends React.Component {
 		return (
 			<div className="card success-card">
 				<img src={Config.organization.logo} />
-				<p className="question">Registration Complete</p>
-				<NavLink to="/events">
-					<Button className="continue-button" style="green" icon="fa fa-check" text="Continue to Dashboard" />
+				<p className="question">Reset Password Complete</p>
+				<NavLink to="/login">
+					<Button className="continue-button" style="green" icon="fa fa-check" text="Continue to Login" />
 				</NavLink>
-				<p className="info">You're a member of {Config.organization.shortName} now!</p>
+				<p className="info">You've successfully reset your password</p>
 			</div>
 		);
 	}
