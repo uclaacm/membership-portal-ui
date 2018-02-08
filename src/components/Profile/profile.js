@@ -69,7 +69,7 @@ export default class Profile extends React.Component {
 			newPassword: this.state.passwordNew,
 			confPassword: this.state.passwordConf,
 		};
-		
+
 		this.props.saveChanges(newProfile);
 	}
 
@@ -211,6 +211,11 @@ export default class Profile extends React.Component {
 						<span className="Display-2Primary">{nextLevel.rank}</span>
 					</div>
 
+          <div className="divider"></div>
+					<h1 className="Display-2Primary">Your Activity</h1>
+					{ !this.props.activityError && <Activities activities={this.props.activity} /> }
+					{  this.props.activityError && <p className="activity-error">{this.props.activityError}</p> }
+
 					<div className="divider"></div>
 					<div className="form-elem" style={{paddingBottom: '10px'}}>
 						<Button
@@ -227,10 +232,6 @@ export default class Profile extends React.Component {
 							onClick={this.props.logout} />
 					</div>
 
-					<div className="divider"></div>
-					<h1 className="Display-2Primary">Your Activity</h1>
-					{ !this.props.activityError && <Activities activities={this.props.activity} /> }
-					{  this.props.activityError && <p className="activity-error">{this.props.activityError}</p> }
 				</div>
 			</div>
 		);
