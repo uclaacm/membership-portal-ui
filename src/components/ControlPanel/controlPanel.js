@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from 'components/Button';
+import EventAnalytics from './eventAnalytics'
 
 export default class ControlPanel extends React.Component {
 	render() {
@@ -29,8 +30,9 @@ export default class ControlPanel extends React.Component {
 						<option>Studio</option>
 						<option>W</option>
 					</select>
-					
 				</div>
+
+				<EventAnalytics />
 			</div>
 		);
 	}
