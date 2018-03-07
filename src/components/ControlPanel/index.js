@@ -10,8 +10,9 @@ export default class ControlPanelComponent extends React.Component {
 			<div className="controlpanel">
 				<Topbar />
 				<Sidebar/>
-				<ControlPanel
-				   logout={this.props.logout}/>
+				<ControlPanel logout={this.props.logout}
+					 						createMilestone={this.props.createMilestone}
+											createSuccess={this.props.createSuccess}/>
 			</div>
 		);
 	}

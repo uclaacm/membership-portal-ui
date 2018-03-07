@@ -9,6 +9,7 @@ import {Events, GetCurrentEvents, PostNewEvent, UpdateEvent, UpdateEventDone, Cr
 import {Leaderboard, FetchLeaderboard, InvalidateLeaderboard} from './leaderboard';
 import {CheckIn, CheckInto, ResetCheckIn} from './checkin';
 import {Registration, RegisterUser, registerDone} from './registration';
+import {Milestone, CreateMilestone, CreateMilestoneDone} from './milestone.js';
 
 const history = createHistory();
 const routing = routerMiddleware(history);
@@ -21,6 +22,7 @@ const store = createStore(
     Leaderboard,
     CheckIn,
     Registration,
+    Milestone,
     router: routerReducer,
   }),
   applyMiddleware(routing, thunk)
@@ -32,7 +34,8 @@ const Action = {
   GetCurrentEvents, PostNewEvent, UpdateEvent, CreateEventDone, UpdateEventDone,
   FetchLeaderboard, InvalidateLeaderboard,
   RegisterUser, registerDone,
-  CheckInto, ResetCheckIn
+  CheckInto, ResetCheckIn,
+  CreateMilestone, CreateMilestoneDone
 };
 
 export {
