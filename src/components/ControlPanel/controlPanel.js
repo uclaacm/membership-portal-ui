@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from 'components/Button';
-import EventAnalytics from './eventAnalytics'
+import Event from './event'
 
 export default class ControlPanel extends React.Component {
 	render() {
@@ -32,7 +32,7 @@ export default class ControlPanel extends React.Component {
 					</select>
 				</div>
 
-				<EventAnalytics />
+				<Event />
 			</div>
 		);
 	}

@@ -43,4 +43,75 @@
 			padding: 5px 0px;
 		}
 	}
+
+	.event-card {
+		display: inline-block;
+		vertical-align: top;
+		text-align: left;
+		width: 500px;
+		margin: 20px;
+		border-radius: 4px;
+		box-shadow: 0px 0px 3px #D2D2D2;
+		background-color: white;
+		transition: 0.125s ease-in-out;
+		// border: 3px solid $light-green;
+	
+		@media (max-width: 690px) {
+			margin: 20px 0px;
+		}
+	
+		@media (max-width: 340px) {
+			width: 300px;
+		}
+	
+		&.selected {
+			transform: scale(1.02, 1.02);
+		}
+	
+		&.selected:hover {
+			background: white;
+		}
+	
+		&.admin-card {
+			margin-left: 10px;
+		}
+	
+		.content { 
+			padding: 20px; 
+		}
+	
+		h2 {
+			color: #333333;
+			margin: 0;
+		}
+	
+		h3 {
+			text-transform: uppercase;
+			font-size: 1.0em;
+			font-weight: 400;
+			color: #555555;
+			margin: 5px 0px;
+		}
+		
+		p {
+			padding-top: 5px;
+		}
+	
+		.subcontent {
+			border-top: 1px solid #F2F2F2;
+			margin-top: 10px;
+			padding-top: 10px;
+			color: #666666;
+			font-weight: 300;
+			font-size: 0.8em;
+	
+			.time {
+				font-weight: 400;
+			}
+	
+			.location {
+				padding-bottom: 0px;
+			}
+		}
+	}
 }
