@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from 'components/Button';
 import { Chart } from 'chart.js'
-import { Pie  } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 
 
 
@@ -76,9 +76,9 @@ export default class EventAnalytics extends React.Component {
 
 		return (
 			<div className="chartWrapper">
-				<Pie data={genderData} />
-				<Pie data={yearData} />
-				<Pie data={majorData} />
+				<Bar data={genderData} />
+				<Bar data={yearData} />
+				<Bar data={majorData} />
 			</div>
         );
 	}
