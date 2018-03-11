@@ -16,7 +16,7 @@ export default class EventCard extends React.Component {
 						<span className="time">7:00 am — 11:00 am</span>
 						<p className="location">Event Location</p>
 					</div>
-                    <EventAnalytics />
+					<EventAnalytics />
 				</div>
 			</div>
 		);
