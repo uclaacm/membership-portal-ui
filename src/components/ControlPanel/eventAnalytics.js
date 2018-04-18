@@ -2,7 +2,7 @@ import React from 'react';
 import Button from 'components/Button';
 import Event from './event.js';
 import { Chart } from 'chart.js'
-import { HorizontalBar } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 
 
 
@@ -33,7 +33,7 @@ export default class EventAnalytics extends React.Component {
 		}
 
 		const majorData = {
-			labels: ["Computer Science", "Linguistics and Computer Science", "Mathematics of Computation"],
+			labels: ["Computer Science", "Ling CS", "Math CS"],
 			datasets: [{
 				label: 'Top 3 Majors',
 				data: [520, 150, 30],
@@ -53,8 +53,9 @@ export default class EventAnalytics extends React.Component {
 
 		return (
 			<div className="chartWrapper">
-				<HorizontalBar data={yearData} />
-				<HorizontalBar data={majorData} />
+				<h1 className="TitlePrimary">Total Attendees: 100</h1>
+				<Bar data={yearData} />
+				<Bar data={majorData} />
 			</div>
         );
 	}
