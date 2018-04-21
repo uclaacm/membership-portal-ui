@@ -73,7 +73,7 @@
 		display: inline-block;
 		vertical-align: top;
 		text-align: left;
-		width: 500px;
+		width: calc((100vw - 550px)/2);
 		margin: 20px;
 		border-radius: 4px;
 		box-shadow: 0px 0px 3px #D2D2D2;
@@ -81,6 +81,10 @@
 		transition: 0.125s ease-in-out;
 		// border: 3px solid $light-green;
 	
+		@media (max-width: 1224px) {
+			width: calc((100vw - 500px));
+		}
+
 		@media (max-width: 690px) {
 			margin: 20px 0px;
 		}
@@ -102,7 +106,43 @@
 		}
 	
 		.content { 
-			padding: 20px; 
+			padding: 20px;
+			position: relative;
+
+			h2 {
+				margin-right: 100px;
+			}
+
+			.points-container {
+				position: absolute;
+				height: 60px;
+				width:  85px;
+				border-radius: 50px;
+				line-height: 50px;
+				right: 12px;
+				top: 12px;
+				border: 1px solid #DADADA;
+				background-color: white;
+				text-align: center;
+	
+				.label {
+					line-height: 0px;
+					margin-top: -10px;
+					font-size: 0.85em;
+				}
+	
+				.points {
+					font-size: 1.1em;
+				}
+			}
+
+			.chartWrapper {
+				margin-top: 20px;
+
+				.chart-title {
+					text-align: center;
+				}
+			}
 		}
 	
 		h2 {

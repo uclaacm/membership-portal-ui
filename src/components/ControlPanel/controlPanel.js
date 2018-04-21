@@ -45,6 +45,10 @@ export default class ControlPanelComponent extends React.Component {
 				</div>
 
 				<Event />
+				<Event />
+				<Event />
+				<Event />
+				<Event />
 			</div>
 		);
 	}

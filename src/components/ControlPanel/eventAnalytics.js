@@ -10,9 +10,9 @@ export default class EventAnalytics extends React.Component {
 
 	render() {
 		const yearData = {
-			labels: ["Freshman", "Sophomore", "Junior", "Senior", "Post-Senior"],
+			labels: ["1", "2", "3", "4", "5+"],
 			datasets: [{
-				label: 'Year',
+				label: 'Attendees',
 				data: [400, 150, 30, 15, 5],
 				backgroundColor: [
 					'rgba(255, 99, 132, 0.2)',
@@ -29,13 +29,18 @@ export default class EventAnalytics extends React.Component {
 					'rgba(54, 162, 235, 1)'
 				],
 				borderWidth: 1
-			}]
-		}
+			}],
+			options: {
+				legend: {
+					display: false
+				}
+			}
+		};
 
 		const majorData = {
-			labels: ["Computer Science", "Ling CS", "Math CS"],
+			labels: ["CS", "Ling CS", "Math CS"],
 			datasets: [{
-				label: 'Top 3 Majors',
+				label: 'Attendees',
 				data: [520, 150, 30],
 				backgroundColor: [
 					'rgba(255, 99, 132, 0.2)',
@@ -49,13 +54,14 @@ export default class EventAnalytics extends React.Component {
 				],
 				borderWidth: 1
 			}]
-		}
+		};
 
 		return (
 			<div className="chartWrapper">
-				<h1 className="TitlePrimary">Total Attendees: 100</h1>
-				<Bar data={yearData} />
-				<Bar data={majorData} />
+				<h3 className="chart-title">Attendees By Year</h3>
+				<Bar data={yearData} options={{legend: { display: false }}} />
+				<h3 className="chart-title">Attendees By Major</h3>
+				<Bar data={majorData} options={{legend: { display: false }}} />
 			</div>
         );
 	}
