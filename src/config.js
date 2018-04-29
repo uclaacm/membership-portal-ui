@@ -141,4 +141,129 @@ export default {
 		{ startsAt: 500, rank: "Constant Cheetah" },
 		{ startsAt: 800, rank: "Extraterrestrial Eagle" },
 	],
+	majorMap: [ //order of majors are significant
+		{
+			major: "Ling CS",
+			criteria: [
+				{ type: "regex", val: /ling.*comp.*sci/ },
+				{ type: "regex", val: /ling.*cs/ }
+			]
+		},
+		{
+			major: "Ling",
+			criteria: [
+				{ type: "regex", val: /ling/ }
+			]
+		},
+		{
+			major: "Math CS",
+			criteria: [
+				{ type: "regex", val: /math.*comp/ },
+				{ type: "regex", val: /comp.*math/ },
+				{ type: "regex", val: /math .*cs/ }
+			]
+		},
+		{
+			major: "CS/CSE/CE",
+			criteria: [
+				{ type: "regex", val: /comp.*sci/ },
+				{ type: "regex", val: /^cs$/ },
+				{ type: "regex", val: /^cse$/ },
+				{ type: "regex", val: /comp.*eng./ }
+			]
+		},
+		{
+			major: "EE",
+			criteria: [
+				{ type: "regex", val: /elec.*eng/ },
+				{ type: "regex", val: /^ee$/ }
+			]
+		},
+		{
+			major: "Cog Sci",
+			criteria: [
+				{ type: "regex", val: /cog.*sci/ }
+			]
+		},
+		{
+			major: "CS Bio",
+			criteria: [
+				{ type: "regex", val: /comp.*bio/ },
+				{ type: "regex", val: /cs.*bio/ },
+			]
+		},
+		{
+			major: "Stats",
+			criteria: [
+				{ type: "regex", val: /stat/ },
+			]
+		},
+		{
+			major: "Math",
+			criteria: [
+				{ type: "regex", val: /.*math/ }
+			]
+		},
+		{
+			major: "Econ",
+			criteria: [
+				{ type: "regex", val: /econ/ },
+			]
+		},
+		{
+			major: "Undeclared",
+			criteria: [
+				{ type: "regex", val: /undeclared/ },
+				{ type: "regex", val: /undecided/ }
+			]
+		},
+		{
+			major: "physics",
+			criteria: [
+				{ type: "regex", val: /physics/ }
+			]
+		},
+		{
+			major: "BioE",
+			criteria: [
+				{ type: "regex", val: /bioe.*/ }
+			]
+		},
+		{
+			major: "Biochem",
+			criteria: [
+				{ type: "regex", val: /bio.*chem/ }
+			]
+		},
+		{
+			major: "ChemE",
+			criteria: [
+				{ type: "regex", val: /chem.*e/ }
+			]
+		},
+		{
+			major: "MechE",
+			criteria: [
+				{ type: "regex", val: /mech.*e/ }
+			]
+		},
+		{
+			major: "CivilE",
+			criteria: [
+				{ type: "regex", val: /civil.*e/ }
+			]
+		},
+		{
+			major: "Chem",
+			criteria: [
+				{ type: "regex", val: /chem/ }
+			]
+		},
+		{
+			major: "Neuro",
+			criteria: [
+				{ type: "regex", val: /neuro/ }
+			]
+		}
+	]
 };
