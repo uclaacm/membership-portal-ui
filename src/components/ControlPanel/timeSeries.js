@@ -55,7 +55,10 @@ export default class TimeSeries extends React.Component {
         datasets: this.state.data.map((eventData, i) => ({
             label: eventData.event.title,
             data: chartDates.map(date => eventData.attendance[date] || 0),
+            radius: chartDates.map(date => eventData.attendance[date] ? 3 : 0),
+            pointHoverRadius: 5,
             backgroundColor: chartDates.map(date => DEFAULT_COLORS[i % DEFAULT_COLORS.length]),
+            pointHoverBackgroundColor: chartDates.map(date => DEFAULT_COLORS[i % DEFAULT_COLORS.length]),
             borderWidth: 1
         }))
     })
@@ -72,7 +75,7 @@ export default class TimeSeries extends React.Component {
                 <h3 className="chart-title">Event Time Series</h3>
                 <Line
                 data={this.renderChartData(this.getChartDates())}
-                options={{legend: { display: false }}}
+                options={{legend: { display: false }, hover: {mode: 'nearest'}}}
                 />
             </div>
 		);
