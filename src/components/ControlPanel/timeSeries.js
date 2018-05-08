@@ -3,7 +3,9 @@ import moment from 'moment';
 import { Chart } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
-const DEFAULT_COLORS = [
+const CHART_HOVER_RADIUS = 5;
+const CHART_BORDER_WIDTH = 1;
+const CHART_COLORS = [
     'rgba(223, 255, 255, 1)',
     'rgba(255, 99, 132, 1)',
     'rgba(54, 162, 235, 0.2)',
@@ -28,18 +30,34 @@ export default class TimeSeries extends React.Component {
             return accum;
         }, []).sort();
     }
+    
+    createDataSet (chartDates, eventData, i) {
+        const dataSet = {
+            data: [],
+            radius: [],
+            backgroundColor: [],
+            pointHoverBackgroundColor: []
+        };
+        chartDates.forEach((date) => {
+            dataSet.data.append(eventData.attendance[date] || 0);
+            dataSet.radius.append(eventData.attendance[date] ? 3 : 0);
+            dataSet.backgroundColor.append(CHART_COLORS[i % CHART_COLORS.length]);
+            dataSet.pointHoverBackgroundColor.append(dataSet.backgroundColor);
+        })
+        return dataSet;
+    }
 
     getChartData = (chartDates) => ({
         labels: chartDates.map(date => moment(date).format("MM/DD HH:mm")),
-        datasets: this.state.data.map((eventData, i) => ({
-            label: eventData.event.title,
-            data: chartDates.map(date => eventData.attendance[date] || 0),
-            radius: chartDates.map(date => eventData.attendance[date] ? 3 : 0),
-            pointHoverRadius: 5,
-            backgroundColor: chartDates.map(date => DEFAULT_COLORS[i % DEFAULT_COLORS.length]),
-            pointHoverBackgroundColor: chartDates.map(date => DEFAULT_COLORS[i % DEFAULT_COLORS.length]),
-            borderWidth: 1
-        }))
+        datasets: this.state.data.map((eventData, i) => {
+            const dataSet = this.createDataSet(chartDates, eventData, i);
+            return {
+                ...this.createDataSet(chartDates, eventData, i),
+                label: eventData.event.title,
+                pointHoverRadius: CHART_HOVER_RADIUS,
+                borderWidth: CHART_BORDER_WIDTH
+            }
+        })
     })
 
     constructor(props) {
@@ -53,7 +71,7 @@ export default class TimeSeries extends React.Component {
             <div className="chartWrapper">
                 <h3 className="chart-title">Event Time Series</h3>
                 <Line
-                data={this.renderChartData(this.getChartDates())}
+                data={this.createChartData(this.getChartDates())}
                 options={{legend: { display: false }, hover: {mode: 'nearest'}}}
                 />
             </div>
