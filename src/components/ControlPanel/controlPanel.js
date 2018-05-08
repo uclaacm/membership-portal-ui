@@ -42,7 +42,6 @@ export default class ControlPanelComponent extends React.Component {
 						<option>W</option>
 					</select>
 				</div>
-				<TimeSeries />
 			</div>
 		);
 	}
