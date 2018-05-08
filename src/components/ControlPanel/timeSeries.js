@@ -4,42 +4,21 @@ import { Chart } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
 const DEFAULT_COLORS = [
-    'rgba(255, 99, 132, 0.2)',
+    'rgba(223, 255, 255, 1)',
+    'rgba(255, 99, 132, 1)',
     'rgba(54, 162, 235, 0.2)',
     'rgba(255, 206, 86, 0.2)',
     'rgba(75, 192, 192, 0.2)',
     'rgba(153, 102, 255, 0.2)',
-    'rgba(255, 159, 64, 0.2)'
-]
-const committeeData = [
-    {
-        event: {
-            title: "Hack School"
-        },
-        attendance: {
-            [new Date(2018, 3, 1, 16, 0)]: 12,
-            [new Date(2018, 3, 1, 16, 1)]: 20,
-            [new Date(2018, 3, 1, 16, 2)]: 30,
-            [new Date(2018, 3, 1, 16, 4)]: 24,
-            [new Date(2018, 3, 1, 16, 6)]: 21,
-            [new Date(2018, 3, 1, 16, 7)]: 18,
-            [new Date(2018, 3, 1, 16, 10)]: 7,
-        }
-    },
-    {
-        event: {
-            title: "Mentorship Brunch"
-        },
-        attendance: {
-            [new Date(2018, 3, 1, 16, 8)]: 12,
-            [new Date(2018, 3, 1, 16, 9)]: 20,
-            [new Date(2018, 3, 1, 16, 10)]: 30,
-            [new Date(2018, 3, 1, 16, 11)]: 24,
-            [new Date(2018, 3, 1, 16, 12)]: 21,
-            [new Date(2018, 3, 1, 16, 13)]: 18,
-            [new Date(2018, 3, 1, 16, 14)]: 7,
-        }
-    },
+    'rgba(255, 159, 64, 0.2)',
+    'rgba(255, 215, 132, 1)',
+    'rgba(237, 244, 237, 1)',
+    'rgba(161, 193, 129, 1)',
+    'rgba(255, 231, 76, 1)',
+    'rgba(255, 89, 100, 1)',
+    'rgba(255, 255, 255, 1)',
+    'rgba(56, 97, 140, 1)',
+    'rgba(53, 167, 255, 1)'
 ]
 
 export default class TimeSeries extends React.Component {
@@ -50,7 +29,7 @@ export default class TimeSeries extends React.Component {
         }, []).sort();
     }
 
-    renderChartData = (chartDates) => ({
+    getChartData = (chartDates) => ({
         labels: chartDates.map(date => moment(date).format("MM/DD HH:mm")),
         datasets: this.state.data.map((eventData, i) => ({
             label: eventData.event.title,
