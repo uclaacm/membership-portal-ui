@@ -25,14 +25,14 @@ const CHART_COLORS = [
 ]
 
 export default class TimeSeries extends React.Component {
-    getChartDates() {
-        return this.state.data.reduce((accum, curr) => {
+    getChartDates = () => 
+        this.state.data.reduce((accum, curr) => {
             accum.push(...Object.keys(curr.attendance))
             return accum;
         }, []).sort();
-    }
     
-    createDataSet (chartDates, eventData, i) {
+    
+    createDataSet = (chartDates, eventData, i) => {
         const dataSet = {
             data: [],
             radius: [],
