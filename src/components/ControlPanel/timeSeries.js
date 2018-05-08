@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Chart } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
+const CHART_RADIUS = 3;
 const CHART_HOVER_RADIUS = 5;
 const CHART_BORDER_WIDTH = 1;
 const CHART_COLORS = [
@@ -38,9 +39,9 @@ export default class TimeSeries extends React.Component {
             backgroundColor: [],
             pointHoverBackgroundColor: []
         };
-        chartDates.forEach((date) => {
+        chartDates.forEach(date => {
             dataSet.data.append(eventData.attendance[date] || 0);
-            dataSet.radius.append(eventData.attendance[date] ? 3 : 0);
+            dataSet.radius.append(eventData.attendance[date] ? CHART_RADIUS : 0);
             dataSet.backgroundColor.append(CHART_COLORS[i % CHART_COLORS.length]);
             dataSet.pointHoverBackgroundColor.append(dataSet.backgroundColor);
         })
@@ -49,25 +50,22 @@ export default class TimeSeries extends React.Component {
 
     getChartData = (chartDates) => ({
         labels: chartDates.map(date => moment(date).format("MM/DD HH:mm")),
-        datasets: this.state.data.map((eventData, i) => {
-            const dataSet = this.createDataSet(chartDates, eventData, i);
-            return {
-                ...this.createDataSet(chartDates, eventData, i),
-                label: eventData.event.title,
-                pointHoverRadius: CHART_HOVER_RADIUS,
-                borderWidth: CHART_BORDER_WIDTH
-            }
-        })
+        datasets: this.state.data.map((eventData, i) => ({
+            ...this.createDataSet(chartDates, eventData, i),
+            label: eventData.event.title,
+            pointHoverRadius: CHART_HOVER_RADIUS,
+            borderWidth: CHART_BORDER_WIDTH
+        }))
     })
 
     constructor(props) {
-		super(props)
-		this.state = {
+        super(props)
+        this.state = {
             data: committeeData,
-		}
-	}
-	render() {
-		return (
+        }
+    }
+    render() {
+        return (
             <div className="chartWrapper">
                 <h3 className="chart-title">Event Time Series</h3>
                 <Line
@@ -75,6 +73,6 @@ export default class TimeSeries extends React.Component {
                 options={{legend: { display: false }, hover: {mode: 'nearest'}}}
                 />
             </div>
-		);
-	}
+        );
+    }
 }
