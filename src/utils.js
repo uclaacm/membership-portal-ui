@@ -17,5 +17,23 @@ const getLevel = points => {
 	return { currLevel, nextLevel, currLevelNumber };
 }
 
+const translate = majors => {
+	const majorMap = Config.majorMap;
+
+	const decideMajor = inputMajor => {
+		for (const { major, criteria } of majorMap) {
+			const output = criteria.find(({ val }) => inputMajor.match(val));
+			if (output) {
+				return major;
+			}
+		}
+		return "Other"
+	}
+
+	let reducedMajors = majors.map(decideMajor);
+	return reducedMajors;
+}
+
 export { getLevel };
+export { translate };
 export default { getLevel };

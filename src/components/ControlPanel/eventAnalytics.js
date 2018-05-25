@@ -13,7 +13,7 @@ export default class EventAnalytics extends React.Component {
 			labels: ["1", "2", "3", "4", "5+"],
 			datasets: [{
 				label: 'Attendees',
-				data: [400, 150, 30, 15, 5],
+				data: Object.values(this.props.yearData),
 				backgroundColor: [
 					'rgba(255, 99, 132, 0.2)',
 					'rgba(255, 159, 64, 0.2)',
@@ -38,10 +38,10 @@ export default class EventAnalytics extends React.Component {
 		};
 
 		const majorData = {
-			labels: ["CS", "Ling CS", "Math CS"],
+			labels: Object.keys(this.props.majorData),
 			datasets: [{
 				label: 'Attendees',
-				data: [520, 150, 30],
+				data: Object.values(this.props.majorData),
 				backgroundColor: [
 					'rgba(255, 99, 132, 0.2)',
 					'rgba(75, 192, 192, 0.2)',
