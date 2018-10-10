@@ -1,10 +1,10 @@
 import React from 'react';
 import Button from 'components/Button';
+import TimeSeries from './timeSeries'
 
 export default class ControlPanelComponent extends React.Component {
 	render() {
 		return (
-
 			<div className="control-panel-wrapper">
 				<h1>Control Panel</h1>
 				<div className="form-elem">
@@ -31,17 +31,16 @@ export default class ControlPanelComponent extends React.Component {
 
 				<div className="form-elem">
 					<h1 className="DisplayPrimary">Event Analytics</h1>
-					<select className="Headline-2Secondary">
-						<option>General</option>
-						<option>AI</option>
+					<select 
+						className="Headline-2Secondary" >
 						<option>Board</option>
+						<option>AI</option>
 						<option>Hack</option>
 						<option>ICPC</option>
 						<option>NetSec</option>
 						<option>Studio</option>
 						<option>W</option>
 					</select>
-
 				</div>
 			</div>
 		);
