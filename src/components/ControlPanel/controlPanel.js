@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from 'components/Button';
+import Event from './event'
 
 export default class ControlPanelComponent extends React.Component {
 	render() {
@@ -41,7 +42,7 @@ export default class ControlPanelComponent extends React.Component {
 						<option>Studio</option>
 						<option>W</option>
 					</select>
-
+					
 				</div>
 			</div>
 		);

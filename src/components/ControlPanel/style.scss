@@ -68,4 +68,115 @@
 			padding: 5px 0px;
 		}
 	}
+
+	.event-card {
+		display: inline-block;
+		vertical-align: top;
+		text-align: left;
+		width: calc((100vw - 550px)/2);
+		margin: 20px;
+		border-radius: 4px;
+		box-shadow: 0px 0px 3px #D2D2D2;
+		background-color: white;
+		transition: 0.125s ease-in-out;
+		// border: 3px solid $light-green;
+	
+		@media (max-width: 1224px) {
+			width: calc((100vw - 500px));
+		}
+
+		@media (max-width: 690px) {
+			margin: 20px 0px;
+		}
+	
+		@media (max-width: 340px) {
+			width: 300px;
+		}
+	
+		&.selected {
+			transform: scale(1.02, 1.02);
+		}
+	
+		&.selected:hover {
+			background: white;
+		}
+	
+		&.admin-card {
+			margin-left: 10px;
+		}
+	
+		.content { 
+			padding: 20px;
+			position: relative;
+
+			h2 {
+				margin-right: 100px;
+			}
+
+			.points-container {
+				position: absolute;
+				height: 60px;
+				width:  85px;
+				border-radius: 50px;
+				line-height: 50px;
+				right: 12px;
+				top: 12px;
+				border: 1px solid #DADADA;
+				background-color: white;
+				text-align: center;
+	
+				.label {
+					line-height: 0px;
+					margin-top: -10px;
+					font-size: 0.85em;
+				}
+	
+				.points {
+					font-size: 1.1em;
+				}
+			}
+
+			.chartWrapper {
+				margin-top: 20px;
+
+				.chart-title {
+					text-align: center;
+				}
+			}
+		}
+	
+		h2 {
+			color: #333333;
+			margin: 0;
+		}
+	
+		h3 {
+			text-transform: uppercase;
+			font-size: 1.0em;
+			font-weight: 400;
+			color: #555555;
+			margin: 5px 0px;
+		}
+		
+		p {
+			padding-top: 5px;
+		}
+	
+		.subcontent {
+			border-top: 1px solid #F2F2F2;
+			margin-top: 10px;
+			padding-top: 10px;
+			color: #666666;
+			font-weight: 300;
+			font-size: 0.8em;
+	
+			.time {
+				font-weight: 400;
+			}
+	
+			.location {
+				padding-bottom: 0px;
+			}
+		}
+	}
 }

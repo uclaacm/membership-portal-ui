@@ -53,7 +53,7 @@ const FetchLeaderboard = () => {
 			});
 
 			const status = await response.status;
-      if (status === 401 || status === 403) {
+			if (status === 401 || status === 403) {
 				return dispatch(LogoutUser());
 			}
 
