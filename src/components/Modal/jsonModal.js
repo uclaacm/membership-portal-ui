@@ -9,6 +9,7 @@ export default class JSONModal extends React.Component {
             data: JSON.parse(this.props.attendees).members
         };
     }
+    
     render() {
         return (
             <div className='modal-wrapper'>
@@ -27,16 +28,16 @@ export default class JSONModal extends React.Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {
-                                        this.state.data.map((member, index) => 
-                                            <tr key={index}>
-                                                <td><img src={member.picture} /></td>
-                                                <td>{`${member.firstName} ${member.lastName}`}</td>
-                                                <td>{member.year}</td>
-                                                <td>{member.major}</td>
-                                            </tr>
-                                        )
-                                    }
+                                {
+                                    this.state.data.map((member, index) => 
+                                        <tr key={index}>
+                                            <td><img src={member.picture} /></td>
+                                            <td>{`${member.firstName} ${member.lastName}`}</td>
+                                            <td>{member.year}</td>
+                                            <td>{member.major}</td>
+                                        </tr>
+                                    )
+                                }
                                 </tbody>
                             </table>
                         </div>
