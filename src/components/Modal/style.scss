@@ -11,8 +11,30 @@
     z-index: 999;
     min-width: 400px;
     
+    .confirmation-modal-container {
+        position: relative;
+        background-color: #F0F0F0;
+        display: flex;
+        flex-direction: column;
+        width: 30%;
+        height: 35%;
+        justify-content: flex-start;
+        border-radius: 25px;
+
+        .button-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            position: absolute;
+            padding-bottom: 30px;
+            width: 100%;
+            left: 0;
+        }
+    }
+
     .modal-container {
         position: absolute;
+        background-color: #F0F0F0;
         display: flex;
         flex-direction: column;
         width: 70%;
@@ -23,6 +45,15 @@
         .modal-table {
             overflow-y: scroll;
             height: 30vh;
+
+            img {
+				margin-right: 15px;
+				margin-left: 5px;
+				height: 30px;
+				width: 30px;
+				vertical-align: middle;
+				border-radius: 50%;
+			}
         }
     }
 }
@@ -32,8 +63,8 @@ thead tr td {
     font-size: 1.1em;
     color: #333333;
     padding: 12px 10px;
-    border-top: 2px solid #CCCCCC;
-    border-bottom: 1px solid #CCCCCC;
+    border-top: 2px solid #B4B4B4;
+    border-bottom: 1px solid #B4B4B4;
 
     &.name div img {
         visibility: hidden;
@@ -44,6 +75,6 @@ tr td {
     padding: 10px 10px;
     color: #666666;
     font-size: 0.9em;
-    border-bottom: 1px solid #DCDCDC;
+    border-bottom: 1px solid #B4B4B4;
     vertical-align: middle;
 }
