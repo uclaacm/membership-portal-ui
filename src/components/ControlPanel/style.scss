@@ -1,71 +1,76 @@
 .control-panel-wrapper {
-	margin-left: $sidebar-width;
-	padding: 60px;
-	overflow: visible;
-	transition: margin-left 0.125s ease-in-out;
+  margin-left: $sidebar-width;
+  padding: 60px;
+  overflow: visible;
+  transition: margin-left 0.125s ease-in-out;
 
-	.signout-action-button {
-		margin: 6px;
-	}
+  .signout-action-button {
+    margin: 6px;
+  }
 
-	.signout-action-button:first-child {
-		margin-left: 0px;
-	}
+  .signout-action-button:first-child {
+    margin-left: 0px;
+  }
 
-	.deleteevents-action-button {
-		margin: 6px;
-	}
+  .deleteevents-action-button {
+    margin: 6px;
+  }
 
-	.deleteevents-action-button:first-child {
-		margin-left: 0px;
-	}
+  .deleteevents-action-button:first-child {
+    margin-left: 0px;
+  }
 
-	.form-elem {
-		padding-bottom: 30px;
+  .form-elem {
+    padding-bottom: 30px;
 
-		p {
-			padding: 2px 0px;
-			font-size: 1.1em;
+    p {
+      padding: 2px 0px;
+      font-size: 1.1em;
 
-			span {
-				font-size: 1.1em;
-				padding: 0px 5px;
-			}
-		}
+      span {
+        font-size: 1.1em;
+        padding: 0px 5px;
+      }
+    }
 
-		.control-panel-action-button {
-			margin: 6px;
-		}
+    .control-panel-action-button {
+      margin: 6px;
+    }
 
-		.control-panel-action-button:first-child {
-			margin-left: 0px;
-		}
-		input[type=text] {
-			display: inline-block;
-			outline: none;
-			border:none;
-			width: 100%;
-			max-width: 400px;
-			border-bottom: 2px dashed #DADADA;
-			transition: 0.125s ease-in-out;
-			resize: none;
-			font-family: Lato,sans-serif;
-			font-size: 20px;
-		}
+    .control-panel-action-button:first-child {
+      margin-left: 0px;
+    }
+    input[type="text"] {
+      display: inline-block;
+      outline: none;
+      border: none;
+      width: 100%;
+      max-width: 400px;
+      border-bottom: 2px dashed #dadada;
+      transition: 0.125s ease-in-out;
+      resize: none;
+      font-family: Lato, sans-serif;
+      font-size: 20px;
+    }
 
-		input[type=text]:focus {
-			border-bottom: 2px solid #AAAAAA;
-		}
+    input[type="text"]:focus {
+      border-bottom: 2px solid #aaaaaa;
+    }
 
-		select {
-			-webkit-appearance: none;
-			-moz-appearance: none;
-			appearance: none;
-			border: none;
-			outline: none;
-			background: none;
-			border-bottom: 2px dashed #DADADA;
-			padding: 5px 0px;
-		}
-	}
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      border: none;
+      outline: none;
+      background: none;
+      border-bottom: 2px dashed #dadada;
+      padding: 5px 0px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    margin-left: 0px;
+    margin-top: 30px;
+  }
 }
