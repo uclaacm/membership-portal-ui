@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ConfirmationModal from './confirmationModal';
-import JSONModal from './jsonModal';
+import AttendeesModal from './attendeesModal';
 import './style.scss';
 
 export default class Modal extends React.Component {
@@ -23,7 +23,7 @@ export default class Modal extends React.Component {
       }
       if (type === 'json') {
         return (
-          <JSONModal
+          <AttendeesModal
             onChange={onChange}
             title={title}
             attendees={attendees}

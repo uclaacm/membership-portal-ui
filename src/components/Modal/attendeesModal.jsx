@@ -1,28 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../Button';
-import './style.scss';
+import Button from 'components/Button';
 
-export default class JSONModal extends React.Component {
-  constructor(props) {
-    super(props);
-    const { attendees } = this.props;
-    this.state = {
-      attendees: JSON.parse(attendees).members,
-    };
-  }
-
+export default class AttendeesModal extends React.Component {
   render() {
-    const { title, style, onChange } = this.props;
-    const { attendees } = this.state;
-    return (
+    const {
+      title, onChange, opened, attendees,
+    } = this.props;
+    return opened ? (
       <div className="modal-wrapper">
-        <div className="modal-container" style={style || null}>
-          <div style={{ padding: '30px' }}>
+        <div className="attendees-modal-container">
+          <div className="padding">
             <h1>{title}</h1>
             <br />
             <div className="modal-table">
-              <table style={{ width: '100%' }}>
+              <table>
                 <thead>
                   <tr>
                     <td />
@@ -36,7 +28,11 @@ export default class JSONModal extends React.Component {
                     attendees.map(member => (
                       <tr>
                         <td><img src={member.picture} alt="Attendee" /></td>
-                        <td>{`${member.firstName} ${member.lastName}`}</td>
+                        <td>
+                          {member.firstName}
+                          {' '}
+                          {member.lastName}
+                        </td>
                         <td>{member.year}</td>
                         <td>{member.major}</td>
                       </tr>
@@ -47,21 +43,17 @@ export default class JSONModal extends React.Component {
             </div>
             <br />
             <br />
-            <Button text="Close" color="red" onClick={() => onChange()} />
+            <Button text="Close" color="red" onClick={onChange} />
           </div>
         </div>
       </div>
-    );
+    ) : null;
   }
 }
 
-JSONModal.defaultProps = {
-  style: undefined,
-};
-
-JSONModal.propTypes = {
+AttendeesModal.propTypes = {
   title: PropTypes.string.isRequired,
-  style: PropTypes.shape,
   onChange: PropTypes.func.isRequired,
-  attendees: PropTypes.string.isRequired,
+  attendees: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  opened: PropTypes.bool.isRequired,
 };
