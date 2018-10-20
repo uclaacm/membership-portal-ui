@@ -21,6 +21,10 @@
     justify-content: flex-start;
     border-radius: 25px;
 
+    .padding {
+      padding: 30px;
+    }
+
     .button-container {
       display: flex;
       flex-direction: row;
@@ -29,6 +33,10 @@
       padding-bottom: 30px;
       width: 100%;
       left: 0;
+
+      .button-padding {
+        padding: 10px;
+      }
     }
   }
 
@@ -50,6 +58,10 @@
       overflow-y: scroll;
       height: 30vh;
 
+      table {
+        width: 100%;
+      }
+
       img {
         margin-right: 15px;
         margin-left: 5px;
@@ -60,10 +72,6 @@
       }
     }
   }
-}
-
-table {
-  width: 100%;
 }
 
 thead tr td {
