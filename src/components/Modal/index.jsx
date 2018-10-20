@@ -39,6 +39,7 @@ Modal.defaultProps = {
   submit: undefined,
   cancel: undefined,
   attendees: undefined,
+  message: undefined,
 };
 
 Modal.propTypes = {
@@ -46,7 +47,7 @@ Modal.propTypes = {
   type: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
+  message: PropTypes.string,
   submit: PropTypes.func,
   cancel: PropTypes.func,
   attendees: PropTypes.string,
