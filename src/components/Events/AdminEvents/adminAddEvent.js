@@ -99,7 +99,7 @@ export default class AdminAddEvent extends React.Component {
 							</div>
 							<div className="input-field half-width">
 								<p>Event URL</p>
-								<input type="text" value={this.state.event.eventLink} name="eventLink" onChange={this.handleChange} />
+ 								<input type="text" value={this.state.event.eventLink} name="eventLink" onChange={this.handleChange} />
 							</div>
 						</div>
 						<div className="input-row">
@@ -111,7 +111,17 @@ export default class AdminAddEvent extends React.Component {
 						<div className="input-row">
 							<div className="input-field">
 								<p>Committee</p>
-								<input type="text" value={this.state.event.committee} name="committee" onChange={this.handleChange} />
+								<select value={this.state.event.committee} name="committee" onChange={this.handleChange}>
+									<option value="AI">AI</option>
+									<option value="Cyber">Cyber</option>
+									<option value="Design">Design</option>
+									<option value="General">General</option>
+									<option value="Hack">Hack</option>
+									<option value="ICPC">ICPC</option>
+									<option value="Studio">Studio</option>
+									<option value="Teach LA">Teach LA</option>
+									<option value="W">W</option>
+								</select>
 							</div>
 						</div>
 						<div className="input-row">
