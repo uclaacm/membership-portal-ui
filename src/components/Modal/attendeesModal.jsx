@@ -43,7 +43,9 @@ export default class AttendeesModal extends React.Component {
             </div>
             <br />
             <br />
-            <Button text="Close" color="red" onClick={onChange} />
+            <div className="button-container">
+              <Button text="Close" color="red" onClick={onChange} />
+            </div>
           </div>
         </div>
       </div>

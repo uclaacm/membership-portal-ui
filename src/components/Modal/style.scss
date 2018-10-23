@@ -23,6 +23,8 @@
 
     .padding {
       padding: 30px;
+      position: absolute;
+      height: 100%;
     }
 
     .button-container {
@@ -33,6 +35,7 @@
       padding-bottom: 30px;
       width: 100%;
       left: 0;
+      bottom: 0;
 
       .button-padding {
         padding: 10px;
@@ -41,14 +44,19 @@
   }
 
   .attendees-modal-container {
-    position: absolute;
+    position: relative;
     background-color: #f0f0f0;
     display: flex;
     flex-direction: column;
-    width: 70%;
-    height: 70%;
+    width: 60%;
+    height: 80%;
     justify-content: flex-start;
     border-radius: 25px;
+
+    .button-container {
+      position: absolute;
+      bottom: 10%;
+    }
 
     .padding {
       padding: 30px;
@@ -56,7 +64,7 @@
 
     .modal-table {
       overflow-y: scroll;
-      height: 30vh;
+      height: 45vh;
 
       table {
         width: 100%;
