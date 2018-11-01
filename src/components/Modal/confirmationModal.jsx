@@ -5,9 +5,9 @@ import Button from 'components/Button';
 export default class ConfirmationModal extends React.Component {
   render() {
     const {
-      title, message, submit, cancel,
+      title, message, submit, cancel, opened,
     } = this.props;
-    return (
+    return opened ? (
       <div className="modal-wrapper">
         <div className="confirmation-modal-container">
           <div className="padding">
@@ -27,7 +27,7 @@ export default class ConfirmationModal extends React.Component {
           </div>
         </div>
       </div>
-    );
+    ) : null;
   }
 }
 
@@ -36,4 +36,5 @@ ConfirmationModal.propTypes = {
   message: PropTypes.string.isRequired,
   submit: PropTypes.func.isRequired,
   cancel: PropTypes.func.isRequired,
+  opened: PropTypes.bool.isRequired,
 };
