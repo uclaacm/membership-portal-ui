@@ -1,5 +1,5 @@
 .modal-wrapper {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 100%;
@@ -9,7 +9,6 @@
   align-items: center;
   justify-content: center;
   z-index: 999;
-  min-width: 400px;
 
   .confirmation-modal-container {
     position: relative;
@@ -20,6 +19,8 @@
     height: 35%;
     justify-content: flex-start;
     border-radius: 25px;
+    min-height: 300px;
+    min-width: 300px;
 
     .padding {
       padding: 30px;
@@ -53,6 +54,8 @@
     height: 80%;
     justify-content: flex-start;
     border-radius: 25px;
+    min-height: 300px;
+    min-width: 300px;
 
     .button-container {
       position: absolute;
