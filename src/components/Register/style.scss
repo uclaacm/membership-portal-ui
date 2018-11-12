@@ -140,7 +140,6 @@ input {
 
     &:focus {
       border: solid 1px $secondaryblue;
-      background-color: white;
     }
   }
 
@@ -194,12 +193,10 @@ input {
 
   .input-large {
     width: 383px;
-    background-color: white;
   }
   .input-invalid {
     width: 383px;
-    border: 1px solid #ff0000;
-    background-color: lightpink;
+    border: 1px solid $light-red;
   }
 
   .input-major {
@@ -223,6 +220,14 @@ input {
       font-size: 0.9em;
       font-weight: normal;
       color: $gray2;
+    }
+  }
+  &.text-invalid {
+    .text {
+      color: $light-red;
+      span.info {
+        color: $light-red;
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import Config from 'config';
+import PropTypes from 'prop-types';
 import Button from 'components/Button';
 
 export default class DetailsCard extends React.Component {
@@ -9,29 +10,35 @@ export default class DetailsCard extends React.Component {
     this.state = {
       passwordLength: 1,
     };
+    console.log('HI');
   }
 
   handleChange(e) {
-    if (this.props.onChange) {
-      this.props.onChange(e.target.name, e.target.value);
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange(e.target.name, e.target.value);
       const changed = e.target.name;
       const changedLength = e.target.value.length;
       if (changed === 'password') {
-        changedLength < 10 ? this.setState({
-          passwordLength: 0,
-					   }) : this.setState({
-          passwordLength: changedLength,
+        this.setState({
+          passwordLength: changedLength > 10 ? changedLength : 0,
         });
       }
     }
   }
 
   render() {
+    const {
+      passwordLength,
+    } = this.state;
+    const {
+      disableForm, onSubmit, profileValid,
+    } = this.props;
     return (
-      <div className={`card details-card${this.props.profileValid() ? ' confirm-details' : ''}`}>
-        <img src={Config.organization.logo} />
+      <div className={`card details-card${profileValid() ? ' confirm-details' : ''}`}>
+        <img src={Config.organization.logo} alt="ACM logo" />
         <div className="inner">
-          <form onSubmit={this.props.onSubmit} autoComplete="off">
+          <form onSubmit={onSubmit} autoComplete="off">
             <p className="header">Account Details</p>
 
             <div className="email">
@@ -42,11 +49,11 @@ School Email
               <input type="text" className="input-large" name="email" onChange={this.handleChange} />
             </div>
             <div className="password">
-              <p className="text">
+              <p className={` text ${passwordLength ? '' : ' text-invalid'}`}>
 Password
                 <span className="info">(at least 10 characters)</span>
               </p>
-              <input type="password" className={this.state.passwordLength ? 'input-large' : 'input-invalid'} name="password" onChange={this.handleChange} />
+              <input type="password" className={passwordLength ? 'input-large' : 'input-invalid'} name="password" onChange={this.handleChange} />
             </div>
             <div className="align align-input-major">
               <p className="text">
@@ -70,10 +77,17 @@ Year
               </select>
             </div>
             <br />
-            <Button className="btn" loading={this.props.disableForm} style={this.props.profileValid() ? 'green' : 'disabled'} text="Finish" onClick={this.props.onSubmit} />
+            <Button className="btn" loading={disableForm} style={profileValid() ? 'green' : 'disabled'} text="Finish" onClick={onSubmit} />
           </form>
         </div>
       </div>
     );
   }
 }
+
+DetailsCard.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  disableForm: PropTypes.bool.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  profileValid: PropTypes.bool.isRequired,
+};
