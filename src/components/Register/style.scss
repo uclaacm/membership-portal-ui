@@ -215,14 +215,19 @@ input {
     color: $--secondaryblack;
     text-align: left;
     margin-bottom: 5px;
-
     span.info {
       font-size: 0.9em;
       font-weight: normal;
       color: $gray2;
     }
+    &.invalid {
+      color: $light-red;
+      span.info {
+        color: $light-red;
+      }
+    }
   }
-  .invalid-length {
+  .invalid {
     font-size: 11px;
     font-family: "Lato", sans-serif;
     font-weight: bold;

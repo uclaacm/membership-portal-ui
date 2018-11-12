@@ -63,7 +63,7 @@ School Email
               <input type="text" className="input-large" name="email" onChange={this.handleChange} />
             </div>
             <div className="password">
-              <p className={passwordExited ? 'text' : 'invalid-length'}>
+              <p className={passwordExited ? 'text' : 'text invalid'}>
 Password
                 <span className="info">(at least 10 characters)</span>
               </p>
