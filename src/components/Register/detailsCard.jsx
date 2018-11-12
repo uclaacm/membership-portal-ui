@@ -7,10 +7,11 @@ export default class DetailsCard extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
     this.state = {
       passwordLength: 1,
+      passwordExited: 1,
     };
-    console.log('HI');
   }
 
   handleChange(e) {
@@ -21,15 +22,28 @@ export default class DetailsCard extends React.Component {
       const changedLength = e.target.value.length;
       if (changed === 'password') {
         this.setState({
-          passwordLength: changedLength > 10 ? changedLength : 0,
+          passwordLength: changedLength >= 10 ? changedLength : 0,
+        });
+      }
+      if (changedLength >= 10) {
+        this.setState({
+          passwordExited: changedLength,
         });
       }
     }
   }
 
+  handleBlur() {
+    const { passwordLength } = this.state;
+    this.setState({
+      passwordExited: passwordLength >= 10 ? passwordLength : 0,
+    });
+  }
+
+
   render() {
     const {
-      passwordLength,
+      passwordLength, passwordExited,
     } = this.state;
     const {
       disableForm, onSubmit, profileValid,
@@ -49,11 +63,17 @@ School Email
               <input type="text" className="input-large" name="email" onChange={this.handleChange} />
             </div>
             <div className="password">
-              <p className={` text ${passwordLength ? '' : ' text-invalid'}`}>
+              <p className={passwordExited ? 'text' : 'invalid-length'}>
 Password
                 <span className="info">(at least 10 characters)</span>
               </p>
-              <input type="password" className={passwordLength ? 'input-large' : 'input-invalid'} name="password" onChange={this.handleChange} />
+              <input
+                type="password"
+                className={passwordLength ? 'input-large' : 'input-invalid'}
+                name="password"
+                onChange={this.handleChange}
+                onBlur={this.handleBlur}
+              />
             </div>
             <div className="align align-input-major">
               <p className="text">

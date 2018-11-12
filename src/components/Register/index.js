@@ -3,16 +3,15 @@ import Config from 'config';
 import { NavLink } from 'react-router-dom';
 import BannerMessage from 'components/BannerMessage';
 
-import { pipeline } from 'stream';
 import NameCard from './nameCard';
 import DetailsCard from './detailsCard';
 import SuccessCard from './successCard';
 import FacebookLoginCard from './facebookLoginCard';
 
-const PAGE_FB_LOGIN = Symbol();
-const PAGE_NAME_CARD = Symbol();
-const PAGE_DETAILS_CARD = Symbol();
-const PAGE_SUCCESS_CARD = Symbol();
+const PAGE_FB_LOGIN = Symbol('FB Login');
+const PAGE_NAME_CARD = Symbol('Name Card');
+const PAGE_DETAILS_CARD = Symbol('Details Card');
+const PAGE_SUCCESS_CARD = Symbol('Success Card');
 
 export default class RegisterComponent extends React.Component {
   constructor(props) {
@@ -41,37 +40,16 @@ export default class RegisterComponent extends React.Component {
     this.renderComponentForPage = this.renderComponentForPage.bind(this);
   }
 
-  renderComponentForPage(page) {
-    switch (page) {
-      case PAGE_FB_LOGIN:
-        return (
-          <FacebookLoginCard
-            facebookCallback={this.handleFacebookLogin}
-            skipFacebookLogin={this.skipFacebookLogin}
-          />
-        );
-      case PAGE_NAME_CARD:
-        return (
-          <NameCard
-            onChange={this.handleProfileChange}
-            onSubmit={this.handleNameEntryComplete}
-            profileValid={this.nameValid}
-          />
-        );
-      case PAGE_DETAILS_CARD:
-        return (
-          <DetailsCard
-            profile={this.state.profile}
-            onChange={this.handleProfileChange}
-            onSubmit={this.handleProfileSubmit}
-            disableForm={this.state.disableForm}
-            profileValid={this.profileValid}
-          />
-        );
-      case PAGE_SUCCESS_CARD:
-        return <SuccessCard />;
-      default:
-        return null;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.created && nextProps.createSuccess) {
+      this.setState((prev) => {
+        const newState = Object.assign({}, prev);
+        newState.currentPage = PAGE_SUCCESS_CARD;
+        newState.disableForm = false;
+        return newState;
+      });
+    } else {
+      this.setState(prev => Object.assign({}, prev, { disableForm: false }));
     }
   }
 
@@ -95,7 +73,8 @@ export default class RegisterComponent extends React.Component {
 
   handleNameEntryComplete(e) {
     e.preventDefault();
-    if (!this.state.disableForm) {
+    const { disableForm } = this.state;
+    if (!disableForm) {
       if (!this.nameValid()) return;
       this.setState(prev => Object.assign({}, prev, { currentPage: PAGE_DETAILS_CARD }));
     }
@@ -110,55 +89,86 @@ export default class RegisterComponent extends React.Component {
   }
 
   handleProfileSubmit(e) {
+    const { disableForm, profile } = this.state;
     e.preventDefault();
-    if (!this.state.disableForm) {
+    if (!disableForm) {
       if (!this.profileValid()) {
         return;
       }
       this.setState(prev => Object.assign({}, prev, { disableForm: true }));
-      this.props.createUser(this.state.profile);
+      this.props.createUser(profile);
     }
   }
 
   profileValid() {
-    const p = this.state.profile;
+    const { profile } = this.state;
+    const p = profile;
     return p.firstName
-			&& p.lastName
-			&& p.major
-			&& p.email
-			&& /^.{2,}\@([^\.\@]{1,}\.)*ucla\.edu$/.test(p.email)
-			&& parseInt(p.year) !== NaN && parseInt(p.year) > 0
-			&& p.password && p.password.length >= 10;
+    && p.lastName
+    && p.major
+    && p.email
+    && /^.{2,}@([^.@]{1,}\.)*ucla\.edu$/.test(p.email)
+    && !Number.isNaN(parseInt(p.year, 10)) && parseInt(p.year, 10) > 0
+    && p.password && p.password.length >= 10;
   }
 
   nameValid() {
-    return this.state.profile.firstName && this.state.profile.lastName;
+    const { profile: { firstName, lastName } } = this.state;
+    return firstName && lastName;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.created && nextProps.createSuccess) {
-      this.setState((prev) => {
-        const newState = Object.assign({}, prev);
-        newState.currentPage = PAGE_SUCCESS_CARD;
-        newState.disableForm = false;
-        return newState;
-      });
-    } else {
-      this.setState(prev => Object.assign({}, prev, { disableForm: false }));
+  renderComponentForPage(page) {
+    const { profile, disableForm } = this.state;
+    switch (page) {
+      case PAGE_FB_LOGIN:
+        return (
+          <FacebookLoginCard
+            facebookCallback={this.handleFacebookLogin}
+            skipFacebookLogin={this.skipFacebookLogin}
+          />
+        );
+      case PAGE_NAME_CARD:
+        return (
+          <NameCard
+            onChange={this.handleProfileChange}
+            onSubmit={this.handleNameEntryComplete}
+            profileValid={this.nameValid}
+          />
+        );
+      case PAGE_DETAILS_CARD:
+        return (
+          <DetailsCard
+            profile={profile}
+            onChange={this.handleProfileChange}
+            onSubmit={this.handleProfileSubmit}
+            disableForm={disableForm}
+            profileValid={this.profileValid}
+          />
+        );
+      case PAGE_SUCCESS_CARD:
+        return <SuccessCard />;
+      default:
+        return null;
     }
   }
 
   render() {
+    const { currentPage } = this.state;
+    const { created, createSuccess, createError } = this.props;
     return (
       <div>
-        <BannerMessage showing={this.props.created && !this.props.createSuccess} success={false} message={this.props.createError} />
+        <BannerMessage
+          showing={created && !createSuccess}
+          success={false}
+          message={createError}
+        />
         <div className="register-component">
           <NavLink to="/login" className="no-style Title-2White login-link">
             <i className="fa fa-chevron-left" aria-hidden="true" />
 &nbsp; Back to Login
           </NavLink>
-          { this.renderComponentForPage(this.state.currentPage) }
-          <img src={Config.organization.logoLight} className="corner-logo" />
+          { this.renderComponentForPage(currentPage) }
+          <img src={Config.organization.logoLight} alt="logo light" className="corner-logo" />
         </div>
       </div>
     );
