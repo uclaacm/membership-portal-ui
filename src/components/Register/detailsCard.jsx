@@ -10,8 +10,8 @@ export default class DetailsCard extends React.Component {
     this.handleBlur = this.handleBlur.bind(this);
     this.handleFocus = this.handleFocus.bind(this);
     this.state = {
-      passwordLength: 1,
-      passwordExited: 1,
+      passwordLength: 0,
+      passwordValid: true,
     };
   }
 
@@ -32,22 +32,19 @@ export default class DetailsCard extends React.Component {
   handleBlur() {
     const { passwordLength } = this.state;
     this.setState({
-      passwordExited: passwordLength >= 10 ? passwordLength : 0,
+      passwordValid: passwordLength >= 10,
     });
   }
 
   handleFocus() {
-    const { passwordLength } = this.state;
     this.setState({
-      passwordExited: passwordLength,
+      passwordValid: true,
     });
   }
 
 
   render() {
-    const {
-      passwordLength, passwordExited,
-    } = this.state;
+    const { passwordValid } = this.state;
     const {
       disableForm, onSubmit, profileValid,
     } = this.props;
@@ -66,13 +63,13 @@ School Email
               <input type="text" className="input-large" name="email" onChange={this.handleChange} />
             </div>
             <div className="password">
-              <p className={(passwordExited || passwordLength >= 10) ? 'text' : 'text invalid'}>
+              <p className={passwordValid ? 'text' : 'text invalid'}>
 Password
                 <span className="info">(at least 10 characters)</span>
               </p>
               <input
                 type="password"
-                className={passwordExited ? 'input-large' : 'input-invalid'}
+                className={passwordValid ? 'input-large' : 'input-invalid'}
                 name="password"
                 onChange={this.handleChange}
                 onBlur={this.handleBlur}

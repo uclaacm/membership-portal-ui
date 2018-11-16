@@ -227,20 +227,6 @@ input {
       }
     }
   }
-  .invalid {
-    font-size: 11px;
-    font-family: "Lato", sans-serif;
-    font-weight: bold;
-    color: $light-red;
-    text-align: left;
-    margin-bottom: 5px;
-
-    span.info {
-      font-size: 0.9em;
-      font-weight: normal;
-      color: $light-red;
-    }
-  }
 
   .align {
     display: inline-block;
