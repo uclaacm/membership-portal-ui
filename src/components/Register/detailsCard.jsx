@@ -8,6 +8,7 @@ export default class DetailsCard extends React.Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
     this.state = {
       passwordLength: 1,
       passwordExited: 1,
@@ -22,12 +23,7 @@ export default class DetailsCard extends React.Component {
       const changedLength = e.target.value.length;
       if (changed === 'password') {
         this.setState({
-          passwordLength: changedLength >= 10 ? changedLength : 0,
-        });
-      }
-      if (changedLength >= 10) {
-        this.setState({
-          passwordExited: changedLength,
+          passwordLength: changedLength,
         });
       }
     }
@@ -37,6 +33,13 @@ export default class DetailsCard extends React.Component {
     const { passwordLength } = this.state;
     this.setState({
       passwordExited: passwordLength >= 10 ? passwordLength : 0,
+    });
+  }
+
+  handleFocus() {
+    const { passwordLength } = this.state;
+    this.setState({
+      passwordExited: passwordLength,
     });
   }
 
@@ -63,16 +66,17 @@ School Email
               <input type="text" className="input-large" name="email" onChange={this.handleChange} />
             </div>
             <div className="password">
-              <p className={passwordExited ? 'text' : 'text invalid'}>
+              <p className={(passwordExited || passwordLength >= 10) ? 'text' : 'text invalid'}>
 Password
                 <span className="info">(at least 10 characters)</span>
               </p>
               <input
                 type="password"
-                className={passwordLength ? 'input-large' : 'input-invalid'}
+                className={passwordExited ? 'input-large' : 'input-invalid'}
                 name="password"
                 onChange={this.handleChange}
                 onBlur={this.handleBlur}
+                onFocus={this.handleFocus}
               />
             </div>
             <div className="align align-input-major">
