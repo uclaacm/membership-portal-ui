@@ -188,8 +188,8 @@ Config.committees.map(committee => <option value={committee.name}>{committee.nam
               </div>
             </div>
             <div className="button-area">
-              <Button onClick={this.handleSubmit} style={{ color: 'green' }} text={isEdit ? 'Update' : 'Add'} icon="" />
-              <Button onClick={onClickCancel} style={{ color: 'red' }} text="Cancel" icon="" />
+              <Button onClick={this.handleSubmit} color="green" text={isEdit ? 'Update' : 'Add'} icon="" />
+              <Button onClick={onClickCancel} color="red" text="Cancel" icon="" />
             </div>
           </div>
         </div>
