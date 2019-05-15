@@ -3,10 +3,16 @@ import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 
 export default class LeaderboardModal extends React.Component {
+    constructor() {
+        super();
+        this.yearMap = ["Freshman", "Sophomore", "Junior", "Senior"];
+    }
+
     render() {
         const {
-        firstName, lastName, picture, major, year, opened, onChange
+            firstName, lastName, picture, major, year, opened, onChange
         } = this.props;
+        const gradeLevel = this.yearMap[year-1];
 
         return opened ? (
         <div className="modal-wrapper">
@@ -21,10 +27,8 @@ export default class LeaderboardModal extends React.Component {
                         </div>
                         <div className="text-container">
                             <h3>Name:  {firstName} {lastName}</h3>
-                            <h3>Major:  {major}</h3>
-                            <h3>
-                                Year:  {(year == 1) && "Freshman"}{(year == 2) && "Sophomore"}{(year == 3) && "Junior"}{(year == 4) && "Senior"}
-                            </h3>
+                            <h3>Major: {major}</h3>
+                            <h3>Year:  {gradeLevel}</h3>
                         </div>
                     </div>
                     <br />
