@@ -205,10 +205,19 @@ export default class Profile extends React.Component {
 						<p className="SubheaderSecondary">Your current rank is</p>
 						<span className="Display-2Primary">{currLevel.rank}</span>
 					</div>
-					<div className="form-elem">
-						<p className="SubheaderSecondary">You have <span className="Subheader-2Primary">{nextLevel.startsAt - this.props.profile.points}</span> more point(s) until you become a</p>
-						<span className="Display-2Primary">{nextLevel.rank}</span>
-					</div>
+					{ nextLevel
+						?	(
+						<div className="form-elem">
+							<p className="SubheaderSecondary">You have <span className="Subheader-2Primary">{nextLevel.startsAt - this.props.profile.points}</span> more point(s) until you become a</p>
+							<span className="Display-2Primary">{nextLevel.rank}</span>
+						</div>
+						)
+						:	(
+						<div className="form-elem">
+							<p className="SubheaderSecondary">You are at the max rank. Congratulations!</p>
+						</div>
+						)
+					}
 
 					<div className="divider"></div>
 					<div className="form-elem" style={{paddingBottom: '10px'}}>
