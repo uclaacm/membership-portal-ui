@@ -218,6 +218,7 @@ export default class Profile extends React.Component {
             <Button
               className="profile-action-button"
               style={this.profileUpdated() ? 'red' : 'disabled'}
+              // eslint-disable-next-line no-restricted-globals
               onClick={this.profileUpdated() ? () => location.reload() : null}
               text="Discard"
             />
