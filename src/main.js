@@ -1,12 +1,9 @@
 import 'main.scss';
-import 'babel-polyfill';
-import 'whatwg-fetch';
 
 import React from 'react';
-import { Provider, createStore } from 'react-redux';
+import { Provider } from 'react-redux';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { ConnectedRouter } from 'react-router-redux';
-import { render } from 'react-dom';
 
 import { store, history } from 'reducers';
 

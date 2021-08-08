@@ -1,6 +1,6 @@
 export default {
   // API_URL: process.env.WEBPACK ? 'http://localhost:8080/app' : 'https://members.uclaacm.com/app',
-  API_URL: 'https://members.uclaacm.com/app',
+  API_URL: 'http://members.uclaacm.com/app',
   CLIENT_ROOT_URL: '',
   facebook: {
     appId: '1356860031017067',

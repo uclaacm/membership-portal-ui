@@ -6,7 +6,6 @@ import BannerMessage from 'components/BannerMessage';
 
 import Activities from './activities';
 import YearSelector from './yearSelector';
-import MobileProfile from './mobileProfile';
 
 export default class Profile extends React.Component {
   constructor(props) {
@@ -85,7 +84,7 @@ export default class Profile extends React.Component {
       return;
     }
 
-    if (parseInt(this.state.profile.year) === NaN) {
+    if (isNaN(parseInt(this.state.profile.year))) {
       this.refs.banner.showBanner('Please select a valid year', false);
       return;
     }
