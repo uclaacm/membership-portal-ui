@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "frontend for the ACM membership portal",
   "private": true,
-  "main": "index.js",
   "scripts": {
-    "test": "jest --config jest.config.json",
-    "build": "NODE_ENV=production webpack -p --progress --color",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject",
     "dev": "WEBPACK=true NODE_ENV=development webpack-dev-server --cache --progress --color --display detailed --mode development",
     "lint": "eslint --fix --color 'src/**/*.js*' 'tests/**/*.js*' && prettier --write 'src/**/*.css' 'src/**/*.scss'"
   },
@@ -14,65 +14,12 @@
     "type": "git",
     "url": "git+https://github.com/uclaacm/membership-portal-ui.git"
   },
-  "author": "nkansal96",
+  "author": "uclaacm",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/uclaacm/membership-portal-ui/issues"
   },
-  "homepage": "https://github.com/uclaacm/membership-portal-ui#readme",
-  "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/plugin-transform-modules-commonjs": "^7.1.0",
-    "@babel/plugin-transform-object-assign": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/preset-react": "^7.0.0",
-    "@types/enzyme": "^3.1.14",
-    "@types/jest": "^23.3.2",
-    "@types/react": "^16.4.14",
-    "@types/react-dom": "^16.0.8",
-    "@types/react-redux": "^6.0.9",
-    "@types/react-router-dom": "^4.3.1",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^23.6.0",
-    "babel-loader": "^8.0.4",
-    "cache-loader": "^1.2.2",
-    "clean-webpack-plugin": "^0.1.19",
-    "compression-webpack-plugin": "^2.0.0",
-    "css-loader": "^1.0.0",
-    "enzyme": "^3.6.0",
-    "enzyme-adapter-react-16": "^1.5.0",
-    "enzyme-to-json": "^3.3.4",
-    "eslint": "^5.7.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^21.25.1",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
-    "html-minifier": "^3.5.20",
-    "html-webpack-plugin": "^3.2.0",
-    "husky": "^1.0.1",
-    "jest": "^23.6.0",
-    "lint-staged": "^7.3.0",
-    "node-sass": "^4.9.3",
-    "prettier": "^1.14.3",
-    "react-test-renderer": "^16.5.2",
-    "regenerator-runtime": "^0.12.1",
-    "sass-loader": "^7.1.0",
-    "script-ext-html-webpack-plugin": "^2.0.1",
-    "source-map-loader": "^0.2.4",
-    "style-loader": "^0.23.0",
-    "thread-loader": "^1.2.0",
-    "uglifyjs-webpack-plugin": "^2.0.1",
-    "webpack": "^4.20.2",
-    "webpack-bundle-analyzer": "^3.0.2",
-    "webpack-cli": "^3.1.1",
-    "webpack-dev-server": "^3.1.9"
-  },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
     "chart.js": "^2.7.2",
     "dompurify": "^0.9.0",
     "history": "^4.7.2",
@@ -89,8 +36,26 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
     "react-router-redux": "^5.0.0-alpha.4",
+    "react-scripts": "4.0.3",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "whatwg-fetch": "^2.0.3"
+    "sass": "^1.37.5"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

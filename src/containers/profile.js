@@ -5,13 +5,7 @@ import { replace } from 'react-router-redux';
 import { Action } from 'reducers';
 import ProfileComponent from 'components/Profile';
 
-import moment from 'moment';
-
 class Profile extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   saveChanges(newprofile) {
     this.props.updateUser(newprofile);
   }
