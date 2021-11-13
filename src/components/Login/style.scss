@@ -86,46 +86,4 @@ html, body {
 			width: $sidebar-input-width;
 		}
 	}
-
-	.sign-in {
-		margin-top: 20px;
-		text-align: center;
-
-		.forgot-password {
-			margin-top: 10px;
-			color: $white;
-			text-decoration: underline;
-		}
-	}
-
-	.sign-up {
-		margin-top: 100px;
-		text-align: center;
-
-		.new-account {
-			margin-bottom: 10px;
-		}
-	}
-
-	.input-button {
-		border: none;
-		outline: none; 
-	}
-
-	.sign-in-button {
-		background: $light-green;
-		box-shadow: 0 3px 0 $dark-green;    
-	}
-
-	.input-text {
-	  display: block;
-	  text-align: center;
-	}
-
-	a, a:link, a:visited, a:hover, a:active {
-		color: inherit;
-		text-decoration: inherit;
-		font-weight: inherit;
-		font-size: 14px;
-	}
 }
