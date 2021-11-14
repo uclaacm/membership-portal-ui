@@ -39,7 +39,7 @@ export default class LoginSidebar extends React.Component {
           <GoogleLogin
     clientId={Config.google.clientId}
     render={renderProps => (
-      <Button onClick={renderProps.onClick} disabled={renderProps.disabled} text="Sign in with Google" customIcon="assets/images/GoogleLogo.svg" color="gray" style="small-text" />
+      <Button onClick={renderProps.onClick} disabled={renderProps.disabled} text="Sign in with Google" customIcon="/assets/images/GoogleLogo.svg" color="gray" style="small-text" />
     )}
     buttonText="Sign in with Google"
     onSuccess={this.handleLogin.bind(this)}

@@ -7,15 +7,13 @@ import {
   User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity,
 } from './user';
 import {
-  Auth, LoginUser, LogoutUser, RequestResetPassword, ResetPassword, ResetPasswordDone,
-} from './auth';
+  Auth, LoginUser, LogoutUser } from './auth';
 import {
   Events, GetCurrentEvents, PostNewEvent, UpdateEvent,
   DeleteEvent, UpdateEventDone, CreateEventDone,
 } from './events';
 import { Leaderboard, FetchLeaderboard, InvalidateLeaderboard } from './leaderboard';
 import { CheckIn, CheckInto, ResetCheckIn } from './checkin';
-import { Registration, RegisterUser, registerDone } from './registration';
 
 const history = createHistory();
 const routing = routerMiddleware(history);
@@ -28,7 +26,6 @@ const store = createStore(
     User,
     Leaderboard,
     CheckIn,
-    Registration,
     router: routerReducer,
   }),
   composeEnhancers(applyMiddleware(routing, thunk)),
@@ -41,9 +38,6 @@ const Action = {
   UpdateUser,
   UserUpdateDone,
   FetchActivity,
-  RequestResetPassword,
-  ResetPassword,
-  ResetPasswordDone,
   GetCurrentEvents,
   PostNewEvent,
   UpdateEvent,
@@ -52,8 +46,6 @@ const Action = {
   UpdateEventDone,
   FetchLeaderboard,
   InvalidateLeaderboard,
-  RegisterUser,
-  registerDone,
   CheckInto,
   ResetCheckIn,
 };
