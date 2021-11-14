@@ -21,7 +21,7 @@ class Button extends React.Component {
     } = this.props;
     const buttonClass = `button-component ${className}`;
     const buttonIcon = icon ? <i className={`fa ${icon} button-icon`} aria-hidden="true" /> : null;
-    const buttonCustomIcon = customIcon ? <img src={customIcon} className="button-icon" /> : null;
+    const buttonCustomIcon = customIcon ? <img src={customIcon} className="button-icon button-custom-icon" /> : null;
     return (
       <div className={buttonClass} onClick={this.buttonAction}>
         <button className={`${style} ${color} button-inside`} type={type}>
