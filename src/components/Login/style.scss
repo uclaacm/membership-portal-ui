@@ -51,39 +51,16 @@ html, body {
 		span {
 			margin: 5px 0;
 		}
+
+		.sign-in {
+			text-align: center;
+		}
 	}
 
 	.login-logo {
 		display: block;
 		margin: auto;
 		height: 170px;
-		margin-bottom: 20px;
-	}
-
-	.login-input {
-		width: $sidebar-input-width;
-		margin: auto;
-		text-align: left;
-		margin-bottom: $sidebar-vertical-spacing;
-
-		input {
-			border: 1px solid $gray2;
-			box-sizing: border-box;
-			border-radius: 5px;
-			height: 30px;
-			padding: 5px;
-			margin-top: 5px;
-			margin-bottom: 10px;
-		}
-
-		p {
-			margin: 0px;
-			font-size: 0.8em;
-			font-weight: 600;
-		}
-
-		input {
-			width: $sidebar-input-width;
-		}
+		margin-bottom: 40px;
 	}
 }
