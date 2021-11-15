@@ -3,15 +3,11 @@ import Config from 'config';
 import { NavLink } from 'react-router-dom';
 import BannerMessage from 'components/BannerMessage';
 
-import NameCard from './nameCard';
 import DetailsCard from './detailsCard';
 import SuccessCard from './successCard';
-import GoogleLoginCard from './googleLoginCard';
 
-const PAGE_NAME_CARD = Symbol('Name Card');
 const PAGE_DETAILS_CARD = Symbol('Details Card');
 const PAGE_SUCCESS_CARD = Symbol('Success Card');
-const PAGE_GOOGLE_LOGIN = Symbol('Google Login');
 
 export default class RegisterComponent extends React.Component {
   constructor(props) {
@@ -20,23 +16,14 @@ export default class RegisterComponent extends React.Component {
       currentPage: PAGE_GOOGLE_LOGIN,
       disableForm: false,
       profile: {
-        firstName: '',
-        lastName: '',
-        email: '',
         year: 0,
         major: '',
-        password: '',
-        profileId: '',
       },
     };
 
-    this.nameValid = this.nameValid.bind(this);
     this.profileValid = this.profileValid.bind(this);
-    this.skipGoogleLogin = this.skipGoogleLogin.bind(this);
-    this.handleGoogleLogin = this.handleGoogleLogin.bind(this)
     this.handleProfileChange = this.handleProfileChange.bind(this);
     this.handleProfileSubmit = this.handleProfileSubmit.bind(this);
-    this.handleNameEntryComplete = this.handleNameEntryComplete.bind(this);
     this.renderComponentForPage = this.renderComponentForPage.bind(this);
   }
 
@@ -50,34 +37,6 @@ export default class RegisterComponent extends React.Component {
       });
     } else {
       this.setState(prev => Object.assign({}, prev, { disableForm: false }));
-    }
-  }
-
-  skipGoogleLogin(e) {
-    e.preventDefault();
-    this.setState(prev => Object.assign({}, prev, { currentPage: PAGE_NAME_CARD }));
-  }
-
-  handleGoogleLogin(response) {
-    if (!response || !response.profileObj || !response.profileObj.givenName
-      || !response.profileObj.familyName) return;
-
-    this.setState({
-      currentPage: PAGE_DETAILS_CARD,
-      profile: {
-        firstName: response.profileObj.givenName,
-        lastName: response.profileObj.familyName,
-        profileId: response.googleId,
-      },
-    });
-  }
-
-  handleNameEntryComplete(e) {
-    e.preventDefault();
-    const { disableForm } = this.state;
-    if (!disableForm) {
-      if (!this.nameValid()) return;
-      this.setState(prev => Object.assign({}, prev, { currentPage: PAGE_DETAILS_CARD }));
     }
   }
 
@@ -104,18 +63,8 @@ export default class RegisterComponent extends React.Component {
   profileValid() {
     const { profile } = this.state;
     const p = profile;
-    return p.firstName
-    && p.lastName
-    && p.major
-    && p.email
-    && /^.{2,}@([^.@]{1,}\.)*ucla\.edu$/.test(p.email)
-    && !Number.isNaN(parseInt(p.year, 10)) && parseInt(p.year, 10) > 0
-    && p.password && p.password.length >= 10;
-  }
-
-  nameValid() {
-    const { profile: { firstName, lastName } } = this.state;
-    return firstName && lastName;
+    return p.major
+    && !Number.isNaN(parseInt(p.year, 10)) && parseInt(p.year, 10) > 0;
   }
 
   renderComponentForPage(page) {
