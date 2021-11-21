@@ -18,7 +18,6 @@ import ControlPanel from 'containers/controlPanel';
 import Resources from 'containers/resources';
 import requireAuth from 'containers/requireAuth';
 
-
 class App extends React.Component {
   render() {
     return (
