@@ -16,7 +16,6 @@ import Profile from 'containers/profile';
 import Leaderboard from 'containers/leaderboard';
 import ControlPanel from 'containers/controlPanel';
 import Resources from 'containers/resources';
-import Register from 'containers/register';
 import requireAuth from 'containers/requireAuth';
 
 
