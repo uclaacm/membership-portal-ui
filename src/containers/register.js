@@ -34,10 +34,10 @@ class Register extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  //user: state.Registration.get('user'),
-  //error: state.Registration.get('error'),
-  //registered: state.Registration.get('registered'),
-  //registerSuccess: state.Registration.get('registerSuccess'),
+  user: state.Registration.get('user'),
+  error: state.Registration.get('error'),
+  registered: state.Registration.get('registered'),
+  registerSuccess: state.Registration.get('registerSuccess'),
 });
 
 const mapDispatchToProps = dispatch => ({

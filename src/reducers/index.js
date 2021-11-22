@@ -14,6 +14,7 @@ import {
 } from './events';
 import { Leaderboard, FetchLeaderboard, InvalidateLeaderboard } from './leaderboard';
 import { CheckIn, CheckInto, ResetCheckIn } from './checkin';
+import { Registration, RegisterUser, registerDone } from './registration';
 
 const history = createBrowserHistory();
 const routing = routerMiddleware(history);
@@ -26,6 +27,7 @@ const store = createStore(
     User,
     Leaderboard,
     CheckIn,
+    Registration,
     router: routerReducer,
   }),
   composeEnhancers(applyMiddleware(routing, thunk)),
@@ -46,6 +48,8 @@ const Action = {
   UpdateEventDone,
   FetchLeaderboard,
   InvalidateLeaderboard,
+  RegisterUser,
+  registerDone,
   CheckInto,
   ResetCheckIn,
 };

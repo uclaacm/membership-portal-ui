@@ -2,7 +2,6 @@ import React from 'react';
 import Config from 'config';
 import PropTypes from 'prop-types';
 import Button from 'components/Button';
-//import user from '../../../../membership-portal/app/db/schema/user'; // what's the issue here and with underscore?
 
 export default class DetailsCard extends React.Component {
   constructor(props) {
@@ -13,6 +12,7 @@ export default class DetailsCard extends React.Component {
     const {
       disableForm, onSubmit, profileValid,
     } = this.props;
+    console.log(profileValid());
     return (
       <div className={`card details-card${profileValid() ? ' confirm-details' : ''}`}>
         <img src={Config.organization.logo} alt="ACM logo" />
