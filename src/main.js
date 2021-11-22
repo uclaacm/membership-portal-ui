@@ -27,7 +27,7 @@ class App extends React.Component {
           <div>
             <Switch>
               <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
+              <Route path="/register" component={requireAuth(Register)} />
               <Route path="/events" component={requireAuth(Events)} />
               <Route path="/profile" component={requireAuth(Profile)} />
               <Route path="/resources" component={requireAuth(Resources)} />
