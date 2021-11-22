@@ -12,6 +12,7 @@ import { store, history } from 'reducers';
 
 import Events from 'containers/events';
 import Login from 'containers/login';
+import Register from 'containers/register';
 import Profile from 'containers/profile';
 import Leaderboard from 'containers/leaderboard';
 import ControlPanel from 'containers/controlPanel';
@@ -26,6 +27,7 @@ class App extends React.Component {
           <div>
             <Switch>
               <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
               <Route path="/events" component={requireAuth(Events)} />
               <Route path="/profile" component={requireAuth(Profile)} />
               <Route path="/resources" component={requireAuth(Resources)} />

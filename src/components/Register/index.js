@@ -1,6 +1,5 @@
 import React from 'react';
 import Config from 'config';
-import { NavLink } from 'react-router-dom';
 import BannerMessage from 'components/BannerMessage';
 
 import DetailsCard from './detailsCard';
@@ -13,7 +12,7 @@ export default class RegisterComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: PAGE_GOOGLE_LOGIN,
+      currentPage: PAGE_DETAILS_CARD,
       disableForm: false,
       profile: {
         year: 0,
@@ -70,21 +69,6 @@ export default class RegisterComponent extends React.Component {
   renderComponentForPage(page) {
     const { profile, disableForm } = this.state;
     switch (page) {
-      case PAGE_GOOGLE_LOGIN:
-        return (
-          <GoogleLoginCard
-            googleCallback={this.handleGoogleLogin}
-            skipGoogleLogin={this.skipGoogleLogin}
-          />
-        );
-      case PAGE_NAME_CARD:
-        return (
-          <NameCard
-            onChange={this.handleProfileChange}
-            onSubmit={this.handleNameEntryComplete}
-            profileValid={this.nameValid}
-          />
-        );
       case PAGE_DETAILS_CARD:
         return (
           <DetailsCard
@@ -113,10 +97,6 @@ export default class RegisterComponent extends React.Component {
           message={createError}
         />
         <div className="register-component">
-          <NavLink to="/login" className="no-style Title-2White login-link">
-            <i className="fa fa-chevron-left" aria-hidden="true" />
-&nbsp; Back to Login
-          </NavLink>
           { this.renderComponentForPage(currentPage) }
           <img src={Config.organization.logoLight} alt="logo light" className="corner-logo" />
         </div>

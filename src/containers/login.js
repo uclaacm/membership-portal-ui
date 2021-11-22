@@ -11,14 +11,18 @@ class Login extends React.Component {
   }
 
   componentWillMount() {
-    if (this.props.authenticated) {
+    if (this.props.authenticated && this.props.isRegistered) {
       this.props.redirectHome();
+    } else {
+      this.props.redirectRegister();
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.authenticated) {
+    if (nextProps.authenticated && this.props.isRegistered) {
       this.props.redirectHome();
+    } else {
+      this.props.redirectRegister();
     }
   }
 
@@ -29,6 +33,7 @@ class Login extends React.Component {
 
 const mapStateToProps = state => ({
   isAdmin: state.Auth.get('isAdmin'),
+  isRegistered: state.Auth.get('isRegistered'),
   timestamp: state.Auth.get('timestamp'),
   authenticated: state.Auth.get('authenticated'),
 });
@@ -39,6 +44,9 @@ const mapDispatchToProps = dispatch => ({
   },
   redirectHome: () => {
     dispatch(replace('/'));
+  },
+  redirectRegister: () => {
+    dispatch(replace('/register'));
   },
 });
 

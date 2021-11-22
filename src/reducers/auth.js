@@ -26,6 +26,8 @@ const initState = () => {
  ** Helper Functions                         **
  ******************************************** */
 
+// does this work for google tokens???
+// need to figure out how admin is determined and add something similar for registered
 const tokenGetClaims = (token) => {
   if (!token) {
     return {};
@@ -34,10 +36,14 @@ const tokenGetClaims = (token) => {
   if (tokenArray.length !== 3) {
     return {};
   }
+
+  console.log(JSON.parse(window.atob(tokenArray[1].replace('-', '+').replace('_', '/'))));
+  
   return JSON.parse(window.atob(tokenArray[1].replace('-', '+').replace('_', '/')));
 };
 
 const tokenIsAdmin = token => !!tokenGetClaims(token).admin;
+const tokenIsRegistered = token => !!tokenGetClaims(token).registered;
 
 /** ********************************************
  ** Auth States                              **
@@ -48,6 +54,7 @@ class State {
     return {
       type: error ? AUTH_ERROR : AUTH_USER,
       isAdmin: error ? undefined : tokenIsAdmin(token),
+      isRegistered: error ? undefined : tokenIsRegistered(token),
       error: error || undefined,
     };
   }
@@ -74,14 +81,13 @@ const LoginUser = (tokenId) => async (dispatch) => {
       body: JSON.stringify({ 'tokenId': tokenId }),
     });
 
-    const status = await response.status;
+    const status = response.status;
     const data = await response.json();
 
     if (!data) throw new Error('Empty response from server');
     if (data.error) throw new Error(data.error.message);
 
     Storage.set('token', data.token);
-    console.log(data)
     dispatch(State.Auth(null, data.token));
   } catch (err) {
     dispatch(State.Auth(err.message));
@@ -105,12 +111,14 @@ const Auth = (state = initState(), action) => {
         val.set('error', null);
         val.set('timestamp', Date.now());
         val.set('authenticated', true);
+        val.set('isRegistered', action.isRegistered);
         val.set('isAdmin', action.isAdmin);
       });
 
     case UNAUTH_USER:
       return state.withMutations((val) => {
         val.set('authenticated', false);
+        val.set('isRegistered', false);
         val.set('isAdmin', false);
       });
 
