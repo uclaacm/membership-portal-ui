@@ -128,8 +128,8 @@ export default {
       {
         type: 'website',
         title: 'Website',
-        subtitle: 'uclaacm.com',
-        link: 'https://uclaacm.com',
+        subtitle: 'acm.cs.ucla.edu',
+        link: 'https://acm.cs.ucla.edu',
       },
       {
         type: 'medium',
