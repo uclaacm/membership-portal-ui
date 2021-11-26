@@ -2,7 +2,7 @@ import Config from 'config';
 import Storage from 'storage';
 import Immutable from 'immutable';
 
-import { LoginUser } from './auth';
+import { RefreshToken } from './auth';
 
 /** ********************************************
  ** Constants                                **
@@ -55,6 +55,7 @@ const RegisterUser = info => async (dispatch) => {
     if (data.error) throw new Error(data.error.message);
 
     dispatch(State.Register(null, data.user));
+    dispatch(RefreshToken(data.token));
   } catch (err) {
     dispatch(State.Register(err.message));
   }

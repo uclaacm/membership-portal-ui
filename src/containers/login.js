@@ -19,9 +19,9 @@ class Login extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.authenticated && this.props.isRegistered) {
+    if (nextProps.authenticated && nextProps.isRegistered) {
       this.props.redirectHome();
-    } else {
+    } else if (nextProps.authenticated && !nextProps.isRegistered) {
       this.props.redirectRegister();
     }
   }

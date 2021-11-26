@@ -7,7 +7,7 @@ import {
   User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity,
 } from './user';
 import {
-  Auth, LoginUser, LogoutUser, } from './auth';
+  Auth, LoginUser, LogoutUser, RefreshToken, } from './auth';
 import {
   Events, GetCurrentEvents, PostNewEvent, UpdateEvent,
   DeleteEvent, UpdateEventDone, CreateEventDone,
@@ -36,6 +36,7 @@ const store = createStore(
 const Action = {
   LoginUser,
   LogoutUser,
+  RefreshToken,
   FetchUser,
   UpdateUser,
   UserUpdateDone,

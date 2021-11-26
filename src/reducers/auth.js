@@ -19,6 +19,7 @@ const initState = () => {
     timestamp: null,
     authenticated: !!token,
     isAdmin: !!token && tokenIsAdmin(token),
+    isRegistered: !!token && tokenIsRegistered(token),
   });
 };
 
@@ -97,6 +98,11 @@ const LogoutUser = error => async (dispatch) => {
   dispatch(replace('/login'));
 };
 
+const RefreshToken = (token) => async (dispatch) => {
+  Storage.set('token', token);
+  dispatch(State.Auth(null, token));
+};
+
 /** ********************************************
  ** Auth Reducer                             **
  ******************************************** */
@@ -131,5 +137,5 @@ const Auth = (state = initState(), action) => {
 };
 
 export {
-  Auth, LoginUser, LogoutUser,
+  Auth, LoginUser, LogoutUser, RefreshToken
 };
