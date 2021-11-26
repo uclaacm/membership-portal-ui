@@ -41,8 +41,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  registerUser: (newuser) => {
-    dispatch(Action.RegisterUser(newuser));
+  registerUser: (info) => {
+    dispatch(Action.RegisterUser(info));
   },
   registerDone: () => {
     dispatch(Action.registerDone());
