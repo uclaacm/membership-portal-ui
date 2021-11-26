@@ -2,6 +2,8 @@ import Config from 'config';
 import Storage from 'storage';
 import Immutable from 'immutable';
 
+import { LoginUser } from './auth';
+
 /** ********************************************
  ** Constants                                **
  ******************************************** */

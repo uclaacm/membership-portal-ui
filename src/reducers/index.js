@@ -7,7 +7,7 @@ import {
   User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity,
 } from './user';
 import {
-  Auth, LoginUser, LogoutUser } from './auth';
+  Auth, LoginUser, LogoutUser, } from './auth';
 import {
   Events, GetCurrentEvents, PostNewEvent, UpdateEvent,
   DeleteEvent, UpdateEventDone, CreateEventDone,

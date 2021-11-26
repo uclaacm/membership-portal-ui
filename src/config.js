@@ -13,7 +13,7 @@ export default {
     },
     activity: '/api/v1/activity',
     auth: {
-      register: '/api/v1/auth/register',
+      register: '/api/v1/register',
       login: '/api/v1/auth/login',
     },
     events: {

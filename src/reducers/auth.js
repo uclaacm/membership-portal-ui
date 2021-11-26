@@ -79,7 +79,6 @@ const LoginUser = (tokenId) => async (dispatch) => {
       body: JSON.stringify({ 'tokenId': tokenId }),
     });
 
-    const status = response.status;
     const data = await response.json();
 
     if (!data) throw new Error('Empty response from server');
@@ -132,5 +131,5 @@ const Auth = (state = initState(), action) => {
 };
 
 export {
-  Auth, LoginUser, LogoutUser
+  Auth, LoginUser, LogoutUser,
 };
