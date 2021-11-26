@@ -26,8 +26,8 @@ const initState = () => {
  ** Helper Functions                         **
  ******************************************** */
 
-// does this work for google tokens???
-// need to figure out how admin is determined and add something similar for registered
+// Get claims from JSON Web Token (JWT)
+// JWT is signed on backend, sent with every request, and verified on backend
 const tokenGetClaims = (token) => {
   if (!token) {
     return {};
@@ -36,8 +36,6 @@ const tokenGetClaims = (token) => {
   if (tokenArray.length !== 3) {
     return {};
   }
-
-  console.log(JSON.parse(window.atob(tokenArray[1].replace('-', '+').replace('_', '/'))));
   
   return JSON.parse(window.atob(tokenArray[1].replace('-', '+').replace('_', '/')));
 };

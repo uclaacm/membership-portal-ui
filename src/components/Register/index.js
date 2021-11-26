@@ -32,6 +32,8 @@ export default class RegisterComponent extends React.Component {
         const newState = Object.assign({}, prev);
         newState.currentPage = PAGE_SUCCESS_CARD;
         newState.disableForm = false;
+        console.log(newState);
+        console.log("componentWillReceiveProps");
         return newState;
       });
     } else {
@@ -43,6 +45,7 @@ export default class RegisterComponent extends React.Component {
     this.setState((prev) => {
       const newState = Object.assign({}, prev);
       newState.profile[name] = value;
+      console.log(newState);
       return newState;
     });
   }
@@ -62,8 +65,10 @@ export default class RegisterComponent extends React.Component {
   profileValid() {
     const { profile } = this.state;
     const p = profile;
-    return p.major
-    && !Number.isNaN(parseInt(p.year, 10)) && parseInt(p.year, 10) > 0;
+    console.log(profile);
+    console.log(!!(p.major && !Number.isNaN(parseInt(p.year, 10)) && parseInt(p.year, 10) > 0));
+    return !!(p.major
+    && !Number.isNaN(parseInt(p.year, 10)) && parseInt(p.year, 10) > 0);
   }
 
   renderComponentForPage(page) {

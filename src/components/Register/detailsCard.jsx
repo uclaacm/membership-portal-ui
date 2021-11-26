@@ -6,13 +6,20 @@ import Button from 'components/Button';
 export default class DetailsCard extends React.Component {
   constructor(props) {
     super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange(e.target.name, e.target.value);
+    }
   }
 
   render() {
     const {
       disableForm, onSubmit, profileValid,
     } = this.props;
-    console.log(profileValid());
     return (
       <div className={`card details-card${profileValid() ? ' confirm-details' : ''}`}>
         <img src={Config.organization.logo} alt="ACM logo" />
