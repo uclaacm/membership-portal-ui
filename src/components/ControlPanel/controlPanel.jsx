@@ -78,7 +78,7 @@ class ControlPanel extends React.Component {
             <option>Board</option>
             <option>Hack</option>
             <option>ICPC</option>
-            <option>NetSec</option>
+            <option>Cyber</option>
             <option>Studio</option>
             <option>W</option>
           </select>

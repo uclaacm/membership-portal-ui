@@ -45,7 +45,7 @@ export default class LoginSidebar extends React.Component {
     onSuccess={this.handleLogin.bind(this)}
     onFailure={this.handleError.bind(this)}
     cookiePolicy={'single_host_origin'}
-    hostedDomain="g.ucla.edu"
+    hostedDomain={Config.google.hostedDomain}
   />
   </div>
 

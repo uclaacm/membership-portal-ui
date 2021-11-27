@@ -45,7 +45,7 @@ export default class DetailsCard extends React.Component {
                 <option value={2}>Sophomore</option>
                 <option value={3}>Junior</option>
                 <option value={4}>Senior</option>
-                <option value={5}>Post-senior</option>
+                <option value={5}>Post-Senior</option>
               </select>
             </div>
             <br />
