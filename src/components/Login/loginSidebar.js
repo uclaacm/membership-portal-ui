@@ -18,15 +18,15 @@ export default class LoginSidebar extends React.Component {
 
   handleError(error) {
     let err = '';
-    switch (error) {
+    switch (error.error) {
       case "idpiframe_initialization_failed":
-        err = "Third party cookies disabled.";
+        err = "Third-party cookies disabled. Enable third-party cookies to sign in.";
         break;
       default:
         err = "Sign in failed."
         break;
     }
-    this.setState({err:err})
+    this.setState({err: err})
   }
 
   render() {
