@@ -43,7 +43,7 @@ class ControlPanel extends React.Component {
     return (
 
       <div className="control-panel-wrapper">
-        <h1>Control Panel</h1>
+        <h1 className="DisplayPrimary">Control Panel</h1>
         <div className="form-elem">
           <Button
             className="signout-action-button"
@@ -71,7 +71,7 @@ class ControlPanel extends React.Component {
         </div>
 
         <div className="form-elem">
-          <h1 className="DisplayPrimary">Event Analytics</h1>
+          <h1>Event analytics</h1>
           <select className="Headline-2Secondary">
             <option>General</option>
             <option>AI</option>
@@ -84,6 +84,33 @@ class ControlPanel extends React.Component {
             <option>TeachLA</option>
             <option>W</option>
           </select>
+        </div>
+
+        <h1>Manage roles</h1>
+        <div className="form-elem">
+          <Button
+            className="control-panel-action-button"
+            color="red"
+            text="Edit admins"
+          />
+        </div>
+
+        <div className="form-elem">
+          <h1>Change one-click API password</h1>
+          <input type="password" name="old-password" placeholder="Old password" />
+          <br />
+          <br />
+          <input type="password" name="new-password" placeholder="New password" />
+          <br />
+          <br />
+          <input type="password" name="new-password" placeholder="Confirm new password" />
+        </div>
+        <div className="form-elem">
+          <Button
+            className="control-panel-action-button"
+            color="red"
+            text="Change password"
+          />
         </div>
 
         <EventsModal
