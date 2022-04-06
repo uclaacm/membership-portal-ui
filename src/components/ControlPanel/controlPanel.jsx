@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from 'components/Button';
 import EventsModal from 'components/Modal/eventsModal';
+import AdminsModal from 'components/Modal/adminModal';
 import ConfirmationModal from 'components/Modal/confirmationModal';
 import PropTypes from 'prop-types';
 
@@ -11,6 +12,7 @@ class ControlPanel extends React.Component {
       showEventsModal: false,
       showConfirmationModal: false,
       deleteUUID: null,
+      showAdminsModal: false,
     };
   }
 
@@ -30,6 +32,14 @@ class ControlPanel extends React.Component {
     this.setState(prev => ({ showConfirmationModal: false }));
   }
 
+  openAdminsModal = () => {
+    this.setState(prev => ({ showAdminsModal: true }));
+  }
+
+  closeAdminsModal = () => {
+    this.setState(prev => ({ showAdminsModal: false }));
+  }
+
   triggerDelete = () => {
     const { deleteEvent } = this.props;
     const { deleteUUID } = this.state;
@@ -38,8 +48,8 @@ class ControlPanel extends React.Component {
   }
 
   render() {
-    const { logout, events } = this.props;
-    const { showEventsModal, showConfirmationModal } = this.state;
+    const { logout, events, admins } = this.props;
+    const { showEventsModal, showConfirmationModal, showAdminsModal } = this.state;
     return (
 
       <div className="control-panel-wrapper">
@@ -92,12 +102,13 @@ class ControlPanel extends React.Component {
             className="control-panel-action-button"
             color="red"
             text="Edit admins"
+            onClick={this.openAdminsModal}
           />
         </div>
 
         <div className="form-elem">
           <h1>Change one-click API password</h1>
-          <input type="password" name="old-password" placeholder="Old password" />
+          <input type="password" name="current-password" placeholder="Current password" />
           <br />
           <br />
           <input type="password" name="new-password" placeholder="New password" />
@@ -126,6 +137,13 @@ class ControlPanel extends React.Component {
           opened={showConfirmationModal}
           cancel={this.closeConfirmationModal}
           submit={this.triggerDelete}
+        />
+
+        <AdminsModal
+          opened={showAdminsModal}
+          admins={admins}
+          onDelete={this.openConfirmationModal}
+          onClose={this.closeAdminsModal}
         />
       </div>
     );
