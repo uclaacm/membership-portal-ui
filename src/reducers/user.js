@@ -20,7 +20,7 @@ const FETCH_ACTIVITY_SUCCESS = Symbol();
 const FETCH_ACTIVITY_ERR = Symbol();
 
 const FETCH_ADMINS = Symbol();
-const FETCH_ADMINSS_ERROR = Symbol();
+const FETCH_ADMINS_ERROR = Symbol();
 const DELETE_ADMIN_ERROR = Symbol();
 const DELETE_ADMIN_SUCCESS = Symbol();
 const ADD_ADMIN_SUCCESS = Symbol();
@@ -30,11 +30,14 @@ const ADD_ADMIN_DONE = Symbol();
 const defaultState = Immutable.fromJS({
   profile: {},
   activity: [],
-  updatedUser: false,
-  updateUserSuccess: false,
-  fetchUserSuccess: false,
-  
-  
+  admins: [],
+  userUpdated: false,
+  userUpdateSuccess: false,
+  userFetchSuccess: false,
+  adminAdded: false,
+  adminDeleted: false,
+  adminAddSuccess: false,
+  adminDeleteSuccess: false,
   error: null,
   activityError: null,
 });
@@ -63,6 +66,35 @@ class State {
     return {
       type: error ? FETCH_ACTIVITY_ERR : FETCH_ACTIVITY_SUCCESS,
       activity: error ? undefined : activity,
+      error: error || undefined,
+    };
+  }
+
+  static FetchAdmins(error, admins) {
+    return {
+      type: error ? FETCH_ADMINS_ERROR : FETCH_ADMINS,
+      admins: error ? undefined : admins,
+      error: error || undefined,
+    };
+  }
+
+  static AddAdmin(error) {
+    return {
+      type: error ? ADD_ADMIN_ERROR : ADD_ADMIN_SUCCESS,
+      error: error || undefined,
+    };
+  }
+
+  static UpdateAdmin(error) {
+    return {
+      type: error ? UPDATE_ADMIN_ERROR : UPDATE_ADMIN_SUCCESS,
+      error: error || undefined,
+    };
+  }
+
+  static DeleteAdmin(error) {
+    return {
+      type: error ? DELETE_ADMIN_ERROR : DELETE_ADMIN_SUCCESS,
       error: error || undefined,
     };
   }
