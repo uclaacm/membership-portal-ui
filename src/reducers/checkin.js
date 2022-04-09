@@ -95,6 +95,7 @@ const CheckIn = (state = defaultState, action) => {
 };
 
 const ResetCheckIn = () => ({ type: CHECK_IN_RESET });
+
 export {
   CheckIn, CheckInto, ResetCheckIn,
 };

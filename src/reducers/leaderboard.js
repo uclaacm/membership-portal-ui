@@ -98,6 +98,7 @@ const Leaderboard = (state = defaultState, action) => {
 };
 
 const InvalidateLeaderboard = () => ({ type: INVALIDATE });
+
 export {
   Leaderboard, FetchLeaderboard, InvalidateLeaderboard,
 };

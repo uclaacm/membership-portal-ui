@@ -19,12 +19,22 @@ const UPDATE_COMPLETED = Symbol();
 const FETCH_ACTIVITY_SUCCESS = Symbol();
 const FETCH_ACTIVITY_ERR = Symbol();
 
+const FETCH_ADMINS = Symbol();
+const FETCH_ADMINSS_ERROR = Symbol();
+const DELETE_ADMIN_ERROR = Symbol();
+const DELETE_ADMIN_SUCCESS = Symbol();
+const ADD_ADMIN_SUCCESS = Symbol();
+const ADD_ADMIN_ERROR = Symbol();
+const ADD_ADMIN_DONE = Symbol();
+
 const defaultState = Immutable.fromJS({
   profile: {},
   activity: [],
-  updated: false,
-  updateSuccess: false,
-  fetchSuccess: false,
+  updatedUser: false,
+  updateUserSuccess: false,
+  fetchUserSuccess: false,
+  
+  
   error: null,
   activityError: null,
 });
@@ -200,6 +210,7 @@ const User = (state = defaultState, action) => {
 };
 
 const UserUpdateDone = () => ({ type: UPDATE_COMPLETED });
+
 export {
   User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity,
 };

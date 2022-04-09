@@ -50,7 +50,7 @@ export default class AdminsModal extends React.Component {
   }
 }
 
-EventsModal.propTypes = {
+AdminsModal.propTypes = {
   admin: PropTypes.arrayOf(PropTypes.object).isRequired,
   onDelete: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,

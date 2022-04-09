@@ -277,6 +277,7 @@ const Events = (state = defaultState, action) => {
 
 const CreateEventDone = () => ({ type: POST_EVENT_DONE });
 const UpdateEventDone = () => ({ type: UPDATE_EVENT_DONE });
+
 export {
   Events, GetCurrentEvents, PostNewEvent, UpdateEvent,
   DeleteEvent, CreateEventDone, UpdateEventDone,
