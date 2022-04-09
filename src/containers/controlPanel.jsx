@@ -21,12 +21,14 @@ class ControlPanel extends React.Component {
   }
 
   render() {
-    const { logout, events, deleteEvent } = this.props;
+    const { logout, events, deleteEvent, admins, deleteAdmin } = this.props;
     return (
       <ControlPanelComponent
         logout={logout}
         events={events.reverse()}
         deleteEvent={deleteEvent}
+        admins={admins}
+        deleteAdmin={deleteAdmin}
       />
     );
   }
@@ -36,6 +38,7 @@ const mapStateToProps = state => ({
   authenticated: state.Auth.get('authenticated'),
   isAdmin: state.Auth.get('isAdmin'),
   events: state.Events.get('events'),
+  admins: state.Admins.get('admins'),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -48,6 +51,9 @@ const mapDispatchToProps = dispatch => ({
   deleteEvent: (uuid) => {
     dispatch(Action.DeleteEvent(uuid));
   },
+  deleteAdmin: (email)=> {
+    dispatch(Action.DeleteAdmin(email));
+  }
 });
 
 ControlPanel.propTypes = {
@@ -56,6 +62,8 @@ ControlPanel.propTypes = {
   logout: PropTypes.func.isRequired,
   events: PropTypes.arrayOf(PropTypes.object).isRequired,
   deleteEvent: PropTypes.func.isRequired,
+  admins: PropTypes.arrayOf(PropTypes.object).isRequired,
+  deleteAdmin: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ControlPanel);

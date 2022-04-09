@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from 'components/Button';
 import EventsModal from 'components/Modal/eventsModal';
-import AdminsModal from 'components/Modal/adminModal';
+import AdminsModal from 'components/Modal/adminsModal';
 import ConfirmationModal from 'components/Modal/confirmationModal';
 import PropTypes from 'prop-types';
 
@@ -10,9 +10,11 @@ class ControlPanel extends React.Component {
     super();
     this.state = {
       showEventsModal: false,
-      showConfirmationModal: false,
+      showEventsConfirmationModal: false,
       deleteUUID: null,
       showAdminsModal: false,
+      showAdminsConfirmationModal: false,
+      deleteEmail: null,
     };
   }
 
@@ -24,12 +26,12 @@ class ControlPanel extends React.Component {
     this.setState(prev => ({ showEventsModal: false }));
   }
 
-  openConfirmationModal = (uuid) => {
-    this.setState(prev => ({ showConfirmationModal: true, deleteUUID: uuid }));
+  openEventsConfirmationModal = (uuid) => {
+    this.setState(prev => ({ showEventsConfirmationModal: true, deleteUUID: uuid }));
   }
 
-  closeConfirmationModal = () => {
-    this.setState(prev => ({ showConfirmationModal: false }));
+  closeEventsConfirmationModal = () => {
+    this.setState(prev => ({ showEventsConfirmationModal: false }));
   }
 
   openAdminsModal = () => {
@@ -40,16 +42,31 @@ class ControlPanel extends React.Component {
     this.setState(prev => ({ showAdminsModal: false }));
   }
 
-  triggerDelete = () => {
+  openAdminssConfirmationModal = (email) => {
+    this.setState(prev => ({ showAdminsConfirmationModal: true, deleteEmail: email }));
+  }
+
+  closeAdminssConfirmationModal = () => {
+    this.setState(prev => ({ showAdminsConfirmationModal: false }));
+  }
+
+  triggerDeleteEvent = () => {
     const { deleteEvent } = this.props;
     const { deleteUUID } = this.state;
     deleteEvent(deleteUUID);
-    this.closeConfirmationModal();
+    this.closeEventsConfirmationModal();
+  }
+
+  triggerDeleteAdmin = () => {
+    const { deleteAdmin } = this.props;
+    const { deleteEmail } = this.state;
+    deleteAdmin(deleteEmail);
+    this.closeAdminsConfirmationModal();
   }
 
   render() {
     const { logout, events, admins } = this.props;
-    const { showEventsModal, showConfirmationModal, showAdminsModal } = this.state;
+    const { showEventsModal, showEventsConfirmationModal, showAdminsModal, showAdminsConfirmationModal } = this.state;
     return (
 
       <div className="control-panel-wrapper">
@@ -96,15 +113,18 @@ class ControlPanel extends React.Component {
           </select>
         </div>
 
-        <h1>Manage roles</h1>
-        <div className="form-elem">
-          <Button
-            className="control-panel-action-button"
-            color="red"
-            text="Edit admins"
-            onClick={this.openAdminsModal}
-          />
-        </div>
+        {isSuperAdmin ? 
+        <>
+          <h1>Manage roles</h1>
+          <div className="form-elem">
+            <Button
+              className="control-panel-action-button"
+              color="red"
+              text="Edit admins"
+              onClick={this.openAdminsModal}
+            />
+          </div>
+        </> : <></>}
 
         <div className="form-elem">
           <h1>Change one-click API password</h1>
@@ -127,22 +147,30 @@ class ControlPanel extends React.Component {
         <EventsModal
           opened={showEventsModal}
           events={events}
-          onDelete={this.openConfirmationModal}
+          onDelete={this.openEventsConfirmationModal}
           onClose={this.closeEventsModal}
         />
 
         <ConfirmationModal
           title="Delete Event"
           message="Are you sure you want to delete this event? This can't be undone!"
-          opened={showConfirmationModal}
-          cancel={this.closeConfirmationModal}
-          submit={this.triggerDelete}
+          opened={showEventsConfirmationModal}
+          cancel={this.closeEventsConfirmationModal}
+          submit={this.triggerDeleteEvent}
+        />
+
+        <ConfirmationModal
+          title="Remove Admin"
+          message="Are you sure you want to remove this admin?"
+          opened={showAdminsConfirmationModal}
+          cancel={this.closeAdminsConfirmationModal}
+          submit={this.triggerDeleteAdmin}
         />
 
         <AdminsModal
           opened={showAdminsModal}
           admins={admins}
-          onDelete={this.openConfirmationModal}
+          onDelete={this.openAdminsConfirmationModal}
           onClose={this.closeAdminsModal}
         />
       </div>
@@ -153,7 +181,9 @@ class ControlPanel extends React.Component {
 ControlPanel.propTypes = {
   logout: PropTypes.func.isRequired,
   deleteEvent: PropTypes.func.isRequired,
+  deleteAdmin: PropTypes.func.isRequired,
   events: PropTypes.arrayOf(PropTypes.object).isRequired,
+  admins: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default ControlPanel;
