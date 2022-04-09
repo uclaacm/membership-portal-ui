@@ -19,6 +19,7 @@ const initState = () => {
     timestamp: null,
     authenticated: !!token,
     isAdmin: !!token && tokenIsAdmin(token),
+    isSuperAdmin: !!token && tokenIsSuperAdmin(token),
     isRegistered: !!token && tokenIsRegistered(token),
   });
 };
@@ -42,6 +43,7 @@ const tokenGetClaims = (token) => {
 };
 
 const tokenIsAdmin = token => !!tokenGetClaims(token).admin;
+const tokenIsSuperAdmin = token => !!tokenGetClaims(token).superAdmin;
 const tokenIsRegistered = token => !!tokenGetClaims(token).registered;
 
 /** ********************************************
@@ -53,6 +55,7 @@ class State {
     return {
       type: error ? AUTH_ERROR : AUTH_USER,
       isAdmin: error ? undefined : tokenIsAdmin(token),
+      isSuperAdmin: error ? undefined : tokenIsSuperAdmin(token),
       isRegistered: error ? undefined : tokenIsRegistered(token),
       error: error || undefined,
     };
@@ -116,6 +119,7 @@ const Auth = (state = initState(), action) => {
         val.set('authenticated', true);
         val.set('isRegistered', action.isRegistered);
         val.set('isAdmin', action.isAdmin);
+        val.set('isSuperAdmin', action.isSuperAdmin);
       });
 
     case UNAUTH_USER:
@@ -123,6 +127,7 @@ const Auth = (state = initState(), action) => {
         val.set('authenticated', false);
         val.set('isRegistered', false);
         val.set('isAdmin', false);
+        val.set('isSuperAdmin', false);
       });
 
     case AUTH_ERROR:

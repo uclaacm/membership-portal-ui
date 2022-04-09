@@ -65,7 +65,7 @@ class ControlPanel extends React.Component {
   }
 
   render() {
-    const { logout, events, admins } = this.props;
+    const { logout, events, admins, isSuperAdmin } = this.props;
     const { showEventsModal, showEventsConfirmationModal, showAdminsModal, showAdminsConfirmationModal } = this.state;
     return (
 
@@ -159,20 +159,23 @@ class ControlPanel extends React.Component {
           submit={this.triggerDeleteEvent}
         />
 
-        <ConfirmationModal
-          title="Remove Admin"
-          message="Are you sure you want to remove this admin?"
-          opened={showAdminsConfirmationModal}
-          cancel={this.closeAdminsConfirmationModal}
-          submit={this.triggerDeleteAdmin}
-        />
+        {isSuperAdmin ? 
+        <>
+          <AdminsModal
+            opened={showAdminsModal}
+            admins={admins}
+            onDelete={this.openAdminsConfirmationModal}
+            onClose={this.closeAdminsModal}
+          />
 
-        <AdminsModal
-          opened={showAdminsModal}
-          admins={admins}
-          onDelete={this.openAdminsConfirmationModal}
-          onClose={this.closeAdminsModal}
-        />
+          <ConfirmationModal
+            title="Remove Admin"
+            message="Are you sure you want to remove this admin?"
+            opened={showAdminsConfirmationModal}
+            cancel={this.closeAdminsConfirmationModal}
+            submit={this.triggerDeleteAdmin}
+          />
+        </> : <></>}
       </div>
     );
   }
@@ -184,6 +187,7 @@ ControlPanel.propTypes = {
   deleteAdmin: PropTypes.func.isRequired,
   events: PropTypes.arrayOf(PropTypes.object).isRequired,
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isSuperAdmin: PropTypes.bool.isRequired,
 };
 
 export default ControlPanel;
