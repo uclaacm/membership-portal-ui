@@ -40,7 +40,7 @@ const mapStateToProps = state => ({
   isAdmin: state.Auth.get('isAdmin'),
   isSuperAdmin: state.Auth.get('isSuperAdmin'),
   events: state.Events.get('events'),
-  admins: state.Admins.get('admins'),
+  admins: [{}, {}]/*state.Admins.get('admins')*/,
 });
 
 const mapDispatchToProps = dispatch => ({

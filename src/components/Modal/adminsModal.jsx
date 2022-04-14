@@ -5,7 +5,7 @@ import Button from 'components/Button';
 export default class AdminsModal extends React.Component {
   render() {
     const {
-      admins, onDelete, onClose, opened,
+      admins, onAdd, onDelete, onClose, opened,
     } = this.props;
 
     return opened ? (
@@ -23,6 +23,18 @@ export default class AdminsModal extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                      <td>
+
+                      </td>
+                      <td>
+                      <div className="form-elem">
+          <input type="email" name="email" pattern=".+@g.ucla.edu" title="Please provide a g.ucla.edu email address." className="modal-input" id="addAdminEmailField" placeholder="example@g.ucla.edu" />
+          </div>
+                      </td>
+                      <td className="center"><Button color="blue" text="Add" onClick={() => onAdd(document.getElementById("addAdminEmailField").value)} /></td>
+
+                    </tr>
                   {
                     admins.map(admin => (
                       <tr key={admin.email}>
@@ -52,6 +64,7 @@ export default class AdminsModal extends React.Component {
 
 AdminsModal.propTypes = {
   admin: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onAdd: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   opened: PropTypes.bool.isRequired,

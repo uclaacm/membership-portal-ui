@@ -64,6 +64,10 @@ class ControlPanel extends React.Component {
     this.closeAdminsConfirmationModal();
   }
 
+  triggerAddAdmin = () => {
+    // TODO
+  }
+
   render() {
     const { logout, events, admins, isSuperAdmin } = this.props;
     const { showEventsModal, showEventsConfirmationModal, showAdminsModal, showAdminsConfirmationModal } = this.state;
@@ -85,6 +89,8 @@ class ControlPanel extends React.Component {
             onClick={this.openEventsModal}
           />
         </div>
+
+        {/* This input and button don't do anything? */}
         <div className="form-elem">
           <h1>Create a milestone</h1>
           <input type="text" name="name" placeholder="Quarter (e.g. Fall 2017)" />
@@ -141,7 +147,9 @@ class ControlPanel extends React.Component {
             className="control-panel-action-button"
             color="red"
             text="Change password"
+            onClick={() => {/* TODO */}}
           />
+          <div className="passwordResetStatus"><div/>
         </div>
 
         <EventsModal
@@ -164,6 +172,7 @@ class ControlPanel extends React.Component {
           <AdminsModal
             opened={showAdminsModal}
             admins={admins}
+            onAdd={this.triggerAddAdmin}
             onDelete={this.openAdminsConfirmationModal}
             onClose={this.closeAdminsModal}
           />
