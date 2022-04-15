@@ -2,6 +2,7 @@ import React from 'react';
 import Button from 'components/Button';
 import EventsModal from 'components/Modal/eventsModal';
 import AdminsModal from 'components/Modal/adminsModal';
+import OneClickPasswordModal from 'components/Modal/oneClickPasswordModal';
 import ConfirmationModal from 'components/Modal/confirmationModal';
 import PropTypes from 'prop-types';
 
@@ -15,7 +16,7 @@ class ControlPanel extends React.Component {
       showAdminsModal: false,
       showAdminsConfirmationModal: false,
       deleteEmail: null,
-      passwordResetMessage: "",
+      showOneClickPasswordModal: false,
     };
   }
 
@@ -51,6 +52,14 @@ class ControlPanel extends React.Component {
     this.setState(prev => ({ showAdminsConfirmationModal: false }));
   }
 
+  openOneClickPasswordModal = () => {
+    this.setState(prev => ({ showOneClickPasswordModal: true }));
+  }
+
+  closeOneClickPasswordModal = () => {
+    this.setState(prev => ({ showOneClickPasswordModal: false }));
+  }
+
   triggerDeleteEvent = () => {
     const { deleteEvent } = this.props;
     const { deleteUUID } = this.state;
@@ -69,13 +78,9 @@ class ControlPanel extends React.Component {
     // TODO
   }
 
-  changePasswordResetMessage = (msg) => {
-    this.setState(prev => ({passwordResetMessage: msg}));
-  }
-
   render() {
     const { logout, events, admins, isSuperAdmin } = this.props;
-    const { showEventsModal, showEventsConfirmationModal, showAdminsModal, showAdminsConfirmationModal, passwordResetMessage } = this.state;
+    const { showEventsModal, showEventsConfirmationModal, showAdminsModal, showAdminsConfirmationModal, showOneClickPasswordModal } = this.state;
     return (
 
       <div className="control-panel-wrapper">
@@ -87,15 +92,32 @@ class ControlPanel extends React.Component {
             text="Sign Out"
             onClick={logout}
           />
+
           <Button
             className="deleteevents-action-button"
             color="red"
             text="Delete Events"
             onClick={this.openEventsModal}
           />
+
+          {isSuperAdmin ? 
+            <Button
+              className="control-panel-action-button"
+              color="red"
+              text="Edit Admins"
+              onClick={this.openAdminsModal}
+            />: <></>}
+
+          <Button
+            className="control-panel-action-button"
+            color="red"
+            text="Change One-Click API Password"
+            onClick={this.openOneClickPasswordModal}
+          />
         </div>
 
         {/* This input and button don't do anything? */}
+        {/*
         <div className="form-elem">
           <h1>Create a milestone</h1>
           <input type="text" name="name" placeholder="Quarter (e.g. Fall 2017)" />
@@ -107,7 +129,10 @@ class ControlPanel extends React.Component {
             text="Create"
           />
         </div>
+        */}
 
+        {/* Event analytics were never implemented? */}
+        {/*
         <div className="form-elem">
           <h1>Event analytics</h1>
           <select className="Headline-2Secondary">
@@ -123,45 +148,7 @@ class ControlPanel extends React.Component {
             <option>W</option>
           </select>
         </div>
-
-        {isSuperAdmin ? 
-        <>
-          <h1>Manage roles</h1>
-          <div className="form-elem">
-            <Button
-              className="control-panel-action-button"
-              color="red"
-              text="Edit admins"
-              onClick={this.openAdminsModal}
-            />
-          </div>
-        </> : <></>}
-
-        <div className="form-elem">
-          <h1>Change one-click API password</h1>
-          <input type="password" name="current-password" placeholder="Current password" id="passwordResetOldPassword" />
-          <br />
-          <br />
-          <input type="password" name="new-password" placeholder="New password" id="passwordResetNewPassword" />
-          <br />
-          <br />
-          <input type="password" name="new-password" placeholder="Confirm new password" id="passwordResetConfirmNewPassword" />
-        </div>
-        <div className="form-elem">
-          <div className="passwordResetBar">
-          <Button
-            className="control-panel-action-button"
-            color="red"
-            text="Change password"
-            onClick={() => {
-              if (document.getElementById("passwordResetNewPassword").value !== document.getElementById("passwordResetConfirmNewPassword").value) 
-            this.changePasswordResetMessage("New password does not match.");
-            else
-            this.changePasswordResetMessage("Successfully updated password!");}}
-          />
-          <div className="passwordResetStatus">{passwordResetMessage}</div>
-          </div>
-        </div>
+        */}
 
         <EventsModal
           opened={showEventsModal}
@@ -196,6 +183,11 @@ class ControlPanel extends React.Component {
             submit={this.triggerDeleteAdmin}
           />
         </> : <></>}
+
+        <OneClickPasswordModal
+            opened={showOneClickPasswordModal}
+            onClose={this.closeOneClickPasswordModal}
+        />
       </div>
     );
   }

@@ -28,8 +28,8 @@ export default class AdminsModal extends React.Component {
 
                       </td>
                       <td>
-                      <div className="form-elem">
-          <input type="email" name="email" pattern=".+@g.ucla.edu" title="Please provide a g.ucla.edu email address." className="modal-input" id="addAdminEmailField" placeholder="example@g.ucla.edu" />
+                      <div className="form-elem table-form-elem">
+          <input type="email" name="email" pattern=".+@g.ucla.edu" title="Please provide a g.ucla.edu email address." id="addAdminEmailField" placeholder="example@g.ucla.edu" />
           </div>
                       </td>
                       <td className="center"><Button color="blue" text="Add" onClick={() => onAdd(document.getElementById("addAdminEmailField").value)} /></td>
