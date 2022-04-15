@@ -37,8 +37,8 @@
       display: flex;
       align-items: center;
       justify-content: start;
-      
-      .passwordResetStatus { 
+
+      .passwordResetStatus {
         margin-left: 18px;
       }
     }
@@ -50,7 +50,9 @@
     .control-panel-action-button:first-child {
       margin-left: 0px;
     }
-    input[type="text"], input[type="password"], input[type="email"] {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
       display: inline-block;
       outline: none;
       border: none;
@@ -63,7 +65,8 @@
       font-size: 20px;
     }
 
-    input[type="text"]:focus, input[type="password"]:focus {
+    input[type="text"]:focus,
+    input[type="password"]:focus {
       border-bottom: 2px solid #aaaaaa;
     }
 

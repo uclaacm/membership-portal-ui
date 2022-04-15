@@ -1,9 +1,9 @@
-import Immutable from 'immutable';
-import Storage from 'storage';
-import Config from 'config';
-import moment from 'moment';
+import Immutable from "immutable";
+import Storage from "storage";
+import Config from "config";
+import moment from "moment";
 
-import { LogoutUser } from './auth';
+import { LogoutUser } from "./auth";
 
 /** ********************************************
  ** Constants                                **
@@ -104,14 +104,14 @@ class State {
  ** Actions                                  **
  ******************************************** */
 
-const FetchUser = () => async (dispatch) => {
+const FetchUser = () => async dispatch => {
   try {
     const response = await fetch(Config.API_URL + Config.routes.user.user, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${Storage.get('token')}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
       },
     });
 
@@ -121,7 +121,7 @@ const FetchUser = () => async (dispatch) => {
     }
 
     const data = await response.json();
-    if (!data) throw new Error('Empty response from server');
+    if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
     dispatch(State.FetchUser(null, data.user));
@@ -130,14 +130,14 @@ const FetchUser = () => async (dispatch) => {
   }
 };
 
-const UpdateUser = user => async (dispatch) => {
+const UpdateUser = user => async dispatch => {
   try {
     const response = await fetch(Config.API_URL + Config.routes.user.user, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${Storage.get('token')}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
       },
       body: JSON.stringify({ user }),
     });
@@ -148,7 +148,7 @@ const UpdateUser = user => async (dispatch) => {
     }
 
     const data = await response.json();
-    if (!data) throw new Error('Empty response from server');
+    if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
     dispatch(State.FetchUser(null, data.user));
@@ -158,23 +158,23 @@ const UpdateUser = user => async (dispatch) => {
   }
 };
 
-const FetchActivity = () => async (dispatch) => {
+const FetchActivity = () => async dispatch => {
   try {
     const response = await fetch(Config.API_URL + Config.routes.user.activity, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${Storage.get('token')}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
       },
     });
 
     const status = await response.status;
     const data = await response.json();
-    if (!data) throw new Error('Empty response from server');
+    if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
-    const activity = data.activity.map((a) => {
+    const activity = data.activity.map(a => {
       a.date = moment(a.date);
       return a;
     });
@@ -192,48 +192,48 @@ const FetchActivity = () => async (dispatch) => {
 const User = (state = defaultState, action) => {
   switch (action.type) {
     case FETCH_USER:
-      return state.withMutations((val) => {
-        val.set('error', null);
-        val.set('profile', action.user);
-        val.set('fetchSuccess', true);
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("profile", action.user);
+        val.set("fetchSuccess", true);
       });
 
     case FETCH_USER_ERR:
-      return state.withMutations((val) => {
-        val.set('error', action.error);
-        val.set('profile', {});
-        val.set('fetchSuccess', false);
+      return state.withMutations(val => {
+        val.set("error", action.error);
+        val.set("profile", {});
+        val.set("fetchSuccess", false);
       });
 
     case UPDATE_USER_ERR:
-      return state.withMutations((val) => {
-        val.set('error', action.error);
-        val.set('updated', true);
-        val.set('updateSuccess', false);
+      return state.withMutations(val => {
+        val.set("error", action.error);
+        val.set("updated", true);
+        val.set("updateSuccess", false);
       });
 
     case UPDATE_USER_SUCCESS:
-      return state.withMutations((val) => {
-        val.set('error', null);
-        val.set('updated', true);
-        val.set('updateSuccess', true);
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("updated", true);
+        val.set("updateSuccess", true);
       });
 
     case UPDATE_COMPLETED:
-      return state.withMutations((val) => {
-        val.set('updated', false);
+      return state.withMutations(val => {
+        val.set("updated", false);
       });
 
     case FETCH_ACTIVITY_SUCCESS:
-      return state.withMutations((val) => {
-        val.set('activity', action.activity);
-        val.set('activityError', null);
+      return state.withMutations(val => {
+        val.set("activity", action.activity);
+        val.set("activityError", null);
       });
 
     case FETCH_ACTIVITY_ERR:
-      return state.withMutations((val) => {
-        val.set('activity', []);
-        val.set('activityError', action.error);
+      return state.withMutations(val => {
+        val.set("activity", []);
+        val.set("activityError", action.error);
       });
 
     default:
@@ -243,6 +243,4 @@ const User = (state = defaultState, action) => {
 
 const UserUpdateDone = () => ({ type: UPDATE_COMPLETED });
 
-export {
-  User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity,
-};
+export { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity };

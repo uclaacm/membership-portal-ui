@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Button from 'components/Button';
+import React from "react";
+import PropTypes from "prop-types";
+import Button from "components/Button";
 
 export default class OneClickPasswordModal extends React.Component {
   constructor() {
@@ -11,9 +11,7 @@ export default class OneClickPasswordModal extends React.Component {
   }
 
   render() {
-    const {
-      onClose, opened,
-    } = this.props;
+    const { onClose, opened } = this.props;
     const { passwordResetMessage } = this.state;
 
     return opened ? (
@@ -22,30 +20,43 @@ export default class OneClickPasswordModal extends React.Component {
           <div className="padding">
             <h1>Change One-Click API Password</h1>
             <div className="form-elem">
-          <input type="password" name="current-password" placeholder="Current password" id="passwordResetOldPassword" />
-          <br />
-          <br />
-          <input type="password" name="new-password" placeholder="New password" id="passwordResetNewPassword" />
-          <br />
-          <br />
-          <input type="password" name="new-password" placeholder="Confirm new password" id="passwordResetConfirmNewPassword" />
-        </div>
+              <input
+                type="password"
+                name="current-password"
+                placeholder="Current password"
+                id="passwordResetOldPassword"
+              />
+              <br />
+              <br />
+              <input type="password" name="new-password" placeholder="New password" id="passwordResetNewPassword" />
+              <br />
+              <br />
+              <input
+                type="password"
+                name="new-password"
+                placeholder="Confirm new password"
+                id="passwordResetConfirmNewPassword"
+              />
+            </div>
 
-        <div className="form-elem">
-          <div className="passwordResetBar">
-          <Button
-            className="control-panel-action-button"
-            color="red"
-            text="Change password"
-            onClick={() => {
-              if (document.getElementById("passwordResetNewPassword").value !== document.getElementById("passwordResetConfirmNewPassword").value) 
-            this.changePasswordResetMessage("New password does not match.");
-            else
-            this.changePasswordResetMessage("Successfully updated password!");}}
-          />
-          <div className="passwordResetStatus">{passwordResetMessage}</div>
-          </div>
-        </div>
+            <div className="form-elem">
+              <div className="passwordResetBar">
+                <Button
+                  className="control-panel-action-button"
+                  color="red"
+                  text="Change password"
+                  onClick={() => {
+                    if (
+                      document.getElementById("passwordResetNewPassword").value !==
+                      document.getElementById("passwordResetConfirmNewPassword").value
+                    )
+                      this.changePasswordResetMessage("New password does not match.");
+                    else this.changePasswordResetMessage("Successfully updated password!");
+                  }}
+                />
+                <div className="passwordResetStatus">{passwordResetMessage}</div>
+              </div>
+            </div>
             <br />
             <br />
             <br />

@@ -1,8 +1,8 @@
-import Config from 'config';
-import Storage from 'storage';
-import Immutable from 'immutable';
+import Config from "config";
+import Storage from "storage";
+import Immutable from "immutable";
 
-import { LogoutUser } from './auth';
+import { LogoutUser } from "./auth";
 
 /** ********************************************
  ** Constants                                **
@@ -39,14 +39,14 @@ class State {
  ** Actions                                  **
  ******************************************** */
 
-const FetchLeaderboard = () => async (dispatch) => {
+const FetchLeaderboard = () => async dispatch => {
   try {
     const response = await fetch(Config.API_URL + Config.routes.leaderboard, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${Storage.get('token')}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
       },
     });
 
@@ -56,7 +56,7 @@ const FetchLeaderboard = () => async (dispatch) => {
     }
 
     const data = await response.json();
-    if (!data) throw new Error('Empty response from server');
+    if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
     dispatch(State.FetchLeaderboard(null, data.leaderboard));
@@ -72,24 +72,24 @@ const FetchLeaderboard = () => async (dispatch) => {
 const Leaderboard = (state = defaultState, action) => {
   switch (action.type) {
     case FETCH_SUCCESS:
-      return state.withMutations((val) => {
-        val.set('error', null);
-        val.set('fetched', true);
-        val.set('fetchTime', action.time);
-        val.set('fetchSuccess', true);
-        val.set('leaderboard', action.leaderboard);
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("fetched", true);
+        val.set("fetchTime", action.time);
+        val.set("fetchSuccess", true);
+        val.set("leaderboard", action.leaderboard);
       });
 
     case FETCH_ERR:
-      return state.withMutations((val) => {
-        val.set('error', action.error);
-        val.set('fetched', true);
-        val.set('fetchSuccess', false);
+      return state.withMutations(val => {
+        val.set("error", action.error);
+        val.set("fetched", true);
+        val.set("fetchSuccess", false);
       });
 
     case INVALIDATE:
-      return state.withMutations((val) => {
-        val.set('fetchTime', 0);
+      return state.withMutations(val => {
+        val.set("fetchTime", 0);
       });
 
     default:
@@ -99,6 +99,4 @@ const Leaderboard = (state = defaultState, action) => {
 
 const InvalidateLeaderboard = () => ({ type: INVALIDATE });
 
-export {
-  Leaderboard, FetchLeaderboard, InvalidateLeaderboard,
-};
+export { Leaderboard, FetchLeaderboard, InvalidateLeaderboard };

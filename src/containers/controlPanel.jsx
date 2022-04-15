@@ -1,10 +1,10 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { replace } from 'react-router-redux';
-import PropTypes from 'prop-types';
+import React from "react";
+import { connect } from "react-redux";
+import { replace } from "react-router-redux";
+import PropTypes from "prop-types";
 
-import { Action } from 'reducers';
-import ControlPanelComponent from 'components/ControlPanel';
+import { Action } from "reducers";
+import ControlPanelComponent from "components/ControlPanel";
 
 class ControlPanel extends React.Component {
   componentWillMount() {
@@ -36,26 +36,26 @@ class ControlPanel extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  authenticated: state.Auth.get('authenticated'),
-  isAdmin: state.Auth.get('isAdmin'),
-  isSuperAdmin: state.Auth.get('isSuperAdmin'),
-  events: state.Events.get('events'),
-  admins: [{}, {}]/*state.Admins.get('admins')*/,
+  authenticated: state.Auth.get("authenticated"),
+  isAdmin: state.Auth.get("isAdmin"),
+  isSuperAdmin: state.Auth.get("isSuperAdmin"),
+  events: state.Events.get("events"),
+  admins: [{}, {}] /*state.Admins.get('admins')*/,
 });
 
 const mapDispatchToProps = dispatch => ({
   redirectHome: () => {
-    dispatch(replace('/'));
+    dispatch(replace("/"));
   },
   logout: () => {
     dispatch(Action.LogoutUser());
   },
-  deleteEvent: (uuid) => {
+  deleteEvent: uuid => {
     dispatch(Action.DeleteEvent(uuid));
   },
-  deleteAdmin: (email)=> {
+  deleteAdmin: email => {
     dispatch(Action.DeleteAdmin(email));
-  }
+  },
 });
 
 ControlPanel.propTypes = {

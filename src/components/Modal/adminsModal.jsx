@@ -1,12 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Button from 'components/Button';
+import React from "react";
+import PropTypes from "prop-types";
+import Button from "components/Button";
 
 export default class AdminsModal extends React.Component {
   render() {
-    const {
-      admins, onAdd, onDelete, onClose, opened,
-    } = this.props;
+    const { admins, onAdd, onDelete, onClose, opened } = this.props;
 
     return opened ? (
       <div className="modal-wrapper">
@@ -23,29 +21,37 @@ export default class AdminsModal extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                      <td>
-
-                      </td>
-                      <td>
+                  <tr>
+                    <td></td>
+                    <td>
                       <div className="form-elem table-form-elem">
-          <input type="email" name="email" pattern=".+@g.ucla.edu" title="Please provide a g.ucla.edu email address." id="addAdminEmailField" placeholder="example@g.ucla.edu" />
-          </div>
+                        <input
+                          type="email"
+                          name="email"
+                          pattern=".+@g.ucla.edu"
+                          title="Please provide a g.ucla.edu email address."
+                          id="addAdminEmailField"
+                          placeholder="example@g.ucla.edu"
+                        />
+                      </div>
+                    </td>
+                    <td className="center">
+                      <Button
+                        color="blue"
+                        text="Add"
+                        onClick={() => onAdd(document.getElementById("addAdminEmailField").value)}
+                      />
+                    </td>
+                  </tr>
+                  {admins.map(admin => (
+                    <tr key={admin.email}>
+                      <td>{admin.name}</td>
+                      <td>{admin.email}</td>
+                      <td className="center">
+                        <Button color="red" text="Delete" onClick={() => onDelete(admin.email)} />
                       </td>
-                      <td className="center"><Button color="blue" text="Add" onClick={() => onAdd(document.getElementById("addAdminEmailField").value)} /></td>
-
                     </tr>
-                  {
-                    admins.map(admin => (
-                      <tr key={admin.email}>
-                        <td>
-                          {admin.name}
-                        </td>
-                        <td>{admin.email}</td>
-                        <td className="center"><Button color="red" text="Delete" onClick={() => onDelete(admin.email)} /></td>
-                      </tr>
-                    ))
-                  }
+                  ))}
                 </tbody>
               </table>
             </div>
