@@ -15,6 +15,7 @@ class ControlPanel extends React.Component {
       showAdminsModal: false,
       showAdminsConfirmationModal: false,
       deleteEmail: null,
+      passwordResetMessage: "",
     };
   }
 
@@ -68,9 +69,13 @@ class ControlPanel extends React.Component {
     // TODO
   }
 
+  changePasswordResetMessage = (msg) => {
+    this.setState(prev => ({passwordResetMessage: msg}));
+  }
+
   render() {
     const { logout, events, admins, isSuperAdmin } = this.props;
-    const { showEventsModal, showEventsConfirmationModal, showAdminsModal, showAdminsConfirmationModal } = this.state;
+    const { showEventsModal, showEventsConfirmationModal, showAdminsModal, showAdminsConfirmationModal, passwordResetMessage } = this.state;
     return (
 
       <div className="control-panel-wrapper">
@@ -134,22 +139,28 @@ class ControlPanel extends React.Component {
 
         <div className="form-elem">
           <h1>Change one-click API password</h1>
-          <input type="password" name="current-password" placeholder="Current password" />
+          <input type="password" name="current-password" placeholder="Current password" id="passwordResetOldPassword" />
           <br />
           <br />
-          <input type="password" name="new-password" placeholder="New password" />
+          <input type="password" name="new-password" placeholder="New password" id="passwordResetNewPassword" />
           <br />
           <br />
-          <input type="password" name="new-password" placeholder="Confirm new password" />
+          <input type="password" name="new-password" placeholder="Confirm new password" id="passwordResetConfirmNewPassword" />
         </div>
         <div className="form-elem">
+          <div className="passwordResetBar">
           <Button
             className="control-panel-action-button"
             color="red"
             text="Change password"
-            onClick={() => {/* TODO */}}
+            onClick={() => {
+              if (document.getElementById("passwordResetNewPassword").value !== document.getElementById("passwordResetConfirmNewPassword").value) 
+            this.changePasswordResetMessage("New password does not match.");
+            else
+            this.changePasswordResetMessage("Successfully updated password!");}}
           />
-          <div className="passwordResetStatus"><div/>
+          <div className="passwordResetStatus">{passwordResetMessage}</div>
+          </div>
         </div>
 
         <EventsModal

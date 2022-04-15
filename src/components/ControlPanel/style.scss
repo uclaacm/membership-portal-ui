@@ -33,6 +33,16 @@
       }
     }
 
+    .passwordResetBar {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      
+      .passwordResetStatus { 
+        margin-left: 18px;
+      }
+    }
+
     .control-panel-action-button {
       margin: 6px;
     }
