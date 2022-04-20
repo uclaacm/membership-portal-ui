@@ -11,6 +11,7 @@ export default {
     user: {
       user: "/api/v1/user",
       activity: "/api/v1/user/activity",
+      admins: "/api/v1/user/admins",
     },
     activity: "/api/v1/activity",
     auth: {
@@ -32,8 +33,8 @@ export default {
     logo: "/assets/images/logo.png",
     logoLight: "/assets/images/logo-white.png",
     loginTileBackground: "/assets/images/login-tile-bg.jpg",
-    shortName: "ACM at UCLA",
-    name: "Association for Computing Machinery at UCLA",
+    shortName: "ACM chapter at UCLA",
+    name: "Association for Computing Machinery chapter at UCLA",
     mission:
       "To create and support an inclusive community for all of those interested in computer science at UCLA and cultivate the next generation of technology leaders by fostering the spirit of innovation, a culture of creativity, and promoting equity, diversity, and inclusion within tech.",
     officers: [

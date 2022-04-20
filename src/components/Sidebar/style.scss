@@ -16,7 +16,7 @@
   color: $white;
 
   .sidebar-container {
-    min-height: 680px;
+    min-height: 680px; /* nit: not *needed* for admin view */
   }
 
   .side-tag {
