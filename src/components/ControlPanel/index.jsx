@@ -7,7 +7,8 @@ import ControlPanel from "./controlPanel";
 
 export default class ControlPanelComponent extends React.Component {
   render() {
-    const { logout, events, deleteEvent, admins, deleteAdmin, addAdmin, isSuperAdmin } = this.props;
+    const { logout, events, deleteEvent, admins, removeAdmin, addAdmin, reassignAdmin, isSuperAdmin, userEmail } =
+      this.props;
     return (
       <div className="controlpanel">
         <Topbar />
@@ -15,10 +16,12 @@ export default class ControlPanelComponent extends React.Component {
         <ControlPanel
           logout={logout}
           events={events}
+          userEmail={userEmail}
           deleteEvent={deleteEvent}
           admins={admins}
-          deleteAdmin={deleteAdmin}
+          removeAdmin={removeAdmin}
           addAdmin={addAdmin}
+          reassignAdmin={reassignAdmin}
           isSuperAdmin={isSuperAdmin}
         />
       </div>
@@ -31,7 +34,9 @@ ControlPanelComponent.propTypes = {
   events: PropTypes.arrayOf(PropTypes.object).isRequired,
   deleteEvent: PropTypes.func.isRequired,
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
-  deleteAdmin: PropTypes.func.isRequired,
+  removeAdmin: PropTypes.func.isRequired,
   addAdmin: PropTypes.func.isRequired,
+  reassignAdmin: PropTypes.func.isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
+  userEmail: PropTypes.string.isRequired,
 };

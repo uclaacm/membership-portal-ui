@@ -26,14 +26,17 @@ class ControlPanel extends React.Component {
   }
 
   render() {
-    const { logout, events, deleteEvent, admins, deleteAdmin, addAdmin, isSuperAdmin } = this.props;
+    const { logout, events, userEmail, deleteEvent, admins, removeAdmin, addAdmin, reassignAdmin, isSuperAdmin } =
+      this.props;
     return (
       <ControlPanelComponent
         logout={logout}
+        userEmail={userEmail}
         events={events.reverse()}
         deleteEvent={deleteEvent}
         admins={admins}
-        deleteAdmin={deleteAdmin}
+        removeAdmin={removeAdmin}
+        reassignAdmin={reassignAdmin}
         addAdmin={addAdmin}
         isSuperAdmin={isSuperAdmin}
       />
@@ -42,6 +45,7 @@ class ControlPanel extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  userEmail: state.User.get("profile").email,
   authenticated: state.Auth.get("authenticated"),
   isAdmin: state.Auth.get("isAdmin"),
   isSuperAdmin: state.Auth.get("isSuperAdmin"),
@@ -53,15 +57,23 @@ const mapDispatchToProps = dispatch => ({
   redirectHome: () => {
     dispatch(replace("/"));
   },
+
   logout: () => {
     dispatch(Action.LogoutUser());
   },
+
   deleteEvent: uuid => {
     dispatch(Action.DeleteEvent(uuid));
   },
+
   deleteAdmin: email => {
     dispatch(Action.DeleteAdmin(email));
   },
+
+  reassignAdmin: email => {
+    dispatch(Action.ChangeSuperAdmin(email));
+  },
+
   addAdmin: email => {
     dispatch(Action.AddAdmin(email));
   },
@@ -78,12 +90,14 @@ const mapDispatchToProps = dispatch => ({
 ControlPanel.propTypes = {
   isAdmin: PropTypes.bool.isRequired,
   redirectHome: PropTypes.func.isRequired,
+  userEmail: PropTypes.string.isRequired,
   logout: PropTypes.func.isRequired,
   events: PropTypes.arrayOf(PropTypes.object).isRequired,
   deleteEvent: PropTypes.func.isRequired,
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
-  deleteAdmin: PropTypes.func.isRequired,
+  removeAdmin: PropTypes.func.isRequired,
   addAdmin: PropTypes.func.isRequired,
+  reassignAdmin: PropTypes.func.isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
 };
 

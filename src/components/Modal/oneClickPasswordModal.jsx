@@ -18,7 +18,7 @@ export default class OneClickPasswordModal extends React.Component {
       <div className="modal-wrapper">
         <div className="attendees-modal-container">
           <div className="padding">
-            <h1>Change One-Click API Password</h1>
+            <h1>Manage One-Click API</h1>
             <div className="form-elem">
               <input
                 type="password"

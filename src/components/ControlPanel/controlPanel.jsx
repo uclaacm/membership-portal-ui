@@ -14,8 +14,10 @@ class ControlPanel extends React.Component {
       showEventsConfirmationModal: false,
       deleteUUID: null,
       showAdminsModal: false,
-      showAdminsConfirmationModal: false,
-      deleteEmail: null,
+      showRemoveAdminConfirmationModal: false,
+      showReassignAdminConfirmationModal: false,
+      removeEmail: null,
+      reassignEmail: null,
       addEmail: null,
       showOneClickPasswordModal: false,
     };
@@ -45,12 +47,20 @@ class ControlPanel extends React.Component {
     this.setState(prev => ({ showAdminsModal: false }));
   };
 
-  openAdminsConfirmationModal = email => {
-    this.setState(prev => ({ showAdminsConfirmationModal: true, deleteEmail: email }));
+  openRemoveAdminConfirmationModal = email => {
+    this.setState(prev => ({ showRemoveAdminConfirmationModal: true, removeEmail: email }));
   };
 
-  closeAdminsConfirmationModal = () => {
-    this.setState(prev => ({ showAdminsConfirmationModal: false }));
+  closeRemoveAdminConfirmationModal = () => {
+    this.setState(prev => ({ showRemoveAdminConfirmationModal: false }));
+  };
+
+  openReassignAdminConfirmationModal = email => {
+    this.setState(prev => ({ showReassignAdminConfirmationModal: true, reassignEmail: email }));
+  };
+
+  closeReassignAdminConfirmationModal = () => {
+    this.setState(prev => ({ showReassignAdminConfirmationModal: false }));
   };
 
   openOneClickPasswordModal = () => {
@@ -68,11 +78,11 @@ class ControlPanel extends React.Component {
     this.closeEventsConfirmationModal();
   };
 
-  triggerDeleteAdmin = () => {
-    const { deleteAdmin } = this.props;
-    const { deleteEmail } = this.state;
-    deleteAdmin(deleteEmail);
-    this.closeAdminsConfirmationModal();
+  triggerRemoveAdmin = () => {
+    const { removeAdmin } = this.props;
+    const { removeEmail } = this.state;
+    removeAdmin(removeEmail);
+    this.closeRemoveAdminConfirmationModal();
   };
 
   triggerAddAdmin = () => {
@@ -83,12 +93,13 @@ class ControlPanel extends React.Component {
   };
 
   render() {
-    const { logout, events, admins, isSuperAdmin } = this.props;
+    const { logout, events, admins, isSuperAdmin, userEmail } = this.props;
     const {
       showEventsModal,
       showEventsConfirmationModal,
       showAdminsModal,
-      showAdminsConfirmationModal,
+      showRemoveAdminConfirmationModal,
+      showReassignAdminConfirmationModal,
       showOneClickPasswordModal,
     } = this.state;
     return (
@@ -176,18 +187,28 @@ class ControlPanel extends React.Component {
           <>
             <AdminsModal
               opened={showAdminsModal}
+              userEmail={userEmail}
               admins={admins}
               onAdd={this.triggerAddAdmin}
-              onDelete={this.openAdminsConfirmationModal}
+              onRemove={this.openRemoveAdminConfirmationModal}
+              onReassign={this.openReassignAdminCofirmationModal}
               onClose={this.closeAdminsModal}
             />
 
             <ConfirmationModal
               title="Remove Admin"
               message="Are you sure you want to remove this admin?"
-              opened={showAdminsConfirmationModal}
-              cancel={this.closeAdminsConfirmationModal}
-              submit={this.triggerDeleteAdmin}
+              opened={showRemoveAdminConfirmationModal}
+              cancel={this.closeRemoveAdminConfirmationModal}
+              submit={this.triggerRemoveAdmin}
+            />
+
+            <ConfirmationModal
+              title="Reassign Super Admin"
+              message="Are you sure you want to reassign super admin?"
+              opened={showReassignAdminConfirmationModal}
+              cancel={this.closeReassignAdminConfirmationModal}
+              submit={this.triggerReassignAdmin}
             />
           </>
         ) : (
@@ -203,11 +224,13 @@ class ControlPanel extends React.Component {
 ControlPanel.propTypes = {
   logout: PropTypes.func.isRequired,
   deleteEvent: PropTypes.func.isRequired,
-  deleteAdmin: PropTypes.func.isRequired,
+  removeAdmin: PropTypes.func.isRequired,
+  reassignAdmin: PropTypes.func.isRequired,
   addAdmin: PropTypes.func.isRequired,
   events: PropTypes.arrayOf(PropTypes.object).isRequired,
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
+  userEmail: PropTypes.string.isRequired,
 };
 
 export default ControlPanel;

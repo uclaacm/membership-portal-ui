@@ -4,13 +4,13 @@ import Button from "components/Button";
 
 export default class AdminsModal extends React.Component {
   render() {
-    const { admins, onAdd, onDelete, onClose, opened } = this.props;
+    const { admins, userEmail, onAdd, onRemove, onReassign, onClose, opened } = this.props;
 
     return opened ? (
       <div className="modal-wrapper">
         <div className="attendees-modal-container">
           <div className="padding">
-            <h1>Admins</h1>
+            <h1>Manage Admins</h1>
             <div className="modal-table">
               <table>
                 <thead>
@@ -49,9 +49,11 @@ export default class AdminsModal extends React.Component {
                       <td>{admin.email}</td>
                       <td className="center">
                         {admin.accessType !== "SUPERADMIN" ? (
-                          <Button color="red" text="Delete" onClick={() => onDelete(admin.email)} />
+                          <Button color="red" text="Remove" onClick={() => onRemove(admin.email)} />
+                        ) : admin.email === userEmail ? (
+                          <Button color="red" text="Reassign" onClick={() => onReassign(admin.email)} />
                         ) : (
-                          <Button color="red" text="Reassign" onClick={() => "pass" /*onReassign(admin.email)*/} />
+                          <Button color="disabled" text="Reassign" />
                         )}
                       </td>
                     </tr>
@@ -75,7 +77,8 @@ export default class AdminsModal extends React.Component {
 AdminsModal.propTypes = {
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
   onAdd: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
+  onReassign: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   opened: PropTypes.bool.isRequired,
 };
