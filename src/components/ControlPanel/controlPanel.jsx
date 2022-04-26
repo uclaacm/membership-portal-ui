@@ -16,6 +16,7 @@ class ControlPanel extends React.Component {
       showAdminsModal: false,
       showAdminsConfirmationModal: false,
       deleteEmail: null,
+      addEmail: null,
       showOneClickPasswordModal: false,
     };
   }
@@ -44,11 +45,11 @@ class ControlPanel extends React.Component {
     this.setState(prev => ({ showAdminsModal: false }));
   };
 
-  openAdminssConfirmationModal = email => {
+  openAdminsConfirmationModal = email => {
     this.setState(prev => ({ showAdminsConfirmationModal: true, deleteEmail: email }));
   };
 
-  closeAdminssConfirmationModal = () => {
+  closeAdminsConfirmationModal = () => {
     this.setState(prev => ({ showAdminsConfirmationModal: false }));
   };
 
@@ -75,7 +76,10 @@ class ControlPanel extends React.Component {
   };
 
   triggerAddAdmin = () => {
-    // TODO
+    const { addAdmin } = this.props;
+    const { addEmail } = this.state;
+    addAdmin(addEmail);
+    this.closeAdminsModal();
   };
 
   render() {
@@ -104,7 +108,7 @@ class ControlPanel extends React.Component {
             <Button
               className="control-panel-action-button"
               color="red"
-              text="Edit Admins"
+              text="Manage Admins"
               onClick={this.openAdminsModal}
             />
           ) : (
@@ -114,7 +118,7 @@ class ControlPanel extends React.Component {
           <Button
             className="control-panel-action-button"
             color="red"
-            text="Change One-Click API Password"
+            text="Manage One-Click API"
             onClick={this.openOneClickPasswordModal}
           />
         </div>
@@ -200,6 +204,7 @@ ControlPanel.propTypes = {
   logout: PropTypes.func.isRequired,
   deleteEvent: PropTypes.func.isRequired,
   deleteAdmin: PropTypes.func.isRequired,
+  addAdmin: PropTypes.func.isRequired,
   events: PropTypes.arrayOf(PropTypes.object).isRequired,
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,

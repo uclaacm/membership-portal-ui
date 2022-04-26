@@ -17,6 +17,7 @@ export default {
     auth: {
       register: "/api/v1/register",
       login: "/api/v1/auth/login",
+      oneclick: "/api/v1/one-click", 
     },
     events: {
       event: "/api/v1/event",

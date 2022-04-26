@@ -185,6 +185,47 @@ const FetchActivity = () => async dispatch => {
   }
 };
 
+const FetchAdmins = () => async dispatch => {
+  try {
+    const response = await fetch(Config.API_URL + Config.routes.user.admins, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
+      },
+    });
+
+    const status = await response.status;
+    if (status === 401 || status === 403) {
+      return dispatch(LogoutUser());
+    }
+
+    const data = await response.json();
+    if (!data) throw new Error("Empty response from server");
+    if (data.error) throw new Error(data.error.message);
+
+    const order = ["SUPERADMIN", "ADMIN"];
+    const admins = data.admins.sort(function(a, b) { return order.indexOf(a.accessType) - order.indexOf(b.accessType)});
+
+    dispatch(State.FetchAdmins(null, admins));
+  } catch (err) {
+    dispatch(State.FetchAdmins(err.message));
+  }
+};
+
+const AddAdmin = () => async dispatch => {
+
+};
+
+const DeleteAdmin = () => async dispatch => {
+
+};
+
+const ChangeSuperAdmin = () => async dispatch => {
+
+};
+
 /** ********************************************
  ** User Reducer                             **
  ******************************************** */
@@ -236,6 +277,11 @@ const User = (state = defaultState, action) => {
         val.set("activityError", action.error);
       });
 
+    case FETCH_ADMINS:
+      return state.withMutations(val => {
+        val.set("admins", action.admins);
+      });
+
     default:
       return state;
   }
@@ -243,4 +289,4 @@ const User = (state = defaultState, action) => {
 
 const UserUpdateDone = () => ({ type: UPDATE_COMPLETED });
 
-export { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity };
+export { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity, AddAdmin, DeleteAdmin, FetchAdmins };

@@ -1,7 +1,6 @@
 import React from "react";
-import Config from "config";
-import Button from "components/Button";
 
+import Config from "config";
 import Points from "./points";
 import Username from "./username";
 import Navigation from "./navigation";

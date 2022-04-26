@@ -45,10 +45,13 @@ export default class AdminsModal extends React.Component {
                   </tr>
                   {admins.map(admin => (
                     <tr key={admin.email}>
-                      <td>{admin.name}</td>
+                      <td>{admin.firstName + " " + admin.lastName}</td>
                       <td>{admin.email}</td>
                       <td className="center">
-                        <Button color="red" text="Delete" onClick={() => onDelete(admin.email)} />
+                        {
+                          admin.accessType !== "SUPERADMIN" ?
+<Button color="red" text="Delete" onClick={() => onDelete(admin.email)} /> : <Button color="red" text="Reassign" onClick={() => 'pass'/*onReassign(admin.email)*/} />
+}
                       </td>
                     </tr>
                   ))}
@@ -69,7 +72,7 @@ export default class AdminsModal extends React.Component {
 }
 
 AdminsModal.propTypes = {
-  admin: PropTypes.arrayOf(PropTypes.object).isRequired,
+  admins: PropTypes.arrayOf(PropTypes.object).isRequired,
   onAdd: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,

@@ -3,7 +3,7 @@ import { createBrowserHistory } from "history";
 import { routerReducer, routerMiddleware } from "react-router-redux";
 import thunk from "redux-thunk";
 
-import { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity } from "./user";
+import { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity, AddAdmin, DeleteAdmin, FetchAdmins } from "./user";
 import { Auth, LoginUser, LogoutUser, RefreshToken } from "./auth";
 import {
   Events,
@@ -43,6 +43,9 @@ const Action = {
   UpdateUser,
   UserUpdateDone,
   FetchActivity,
+  AddAdmin,
+  DeleteAdmin,
+  FetchAdmins,
   GetCurrentEvents,
   PostNewEvent,
   UpdateEvent,

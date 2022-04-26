@@ -12,6 +12,8 @@ class ControlPanel extends React.Component {
     if (!isAdmin) {
       return redirectHome();
     }
+    this.props.fetchEvents();
+    this.props.fetchAdmins();   
   }
 
   componentWillReceiveProps(nextProps) {
@@ -21,7 +23,7 @@ class ControlPanel extends React.Component {
   }
 
   render() {
-    const { logout, events, deleteEvent, admins, deleteAdmin, isSuperAdmin } = this.props;
+    const { logout, events, deleteEvent, admins, deleteAdmin, addAdmin, isSuperAdmin } = this.props;
     return (
       <ControlPanelComponent
         logout={logout}
@@ -29,6 +31,7 @@ class ControlPanel extends React.Component {
         deleteEvent={deleteEvent}
         admins={admins}
         deleteAdmin={deleteAdmin}
+        addAdmin={addAdmin}
         isSuperAdmin={isSuperAdmin}
       />
     );
@@ -40,7 +43,7 @@ const mapStateToProps = state => ({
   isAdmin: state.Auth.get("isAdmin"),
   isSuperAdmin: state.Auth.get("isSuperAdmin"),
   events: state.Events.get("events"),
-  admins: [{}, {}] /*state.Admins.get('admins')*/,
+  admins: state.User.get("admins"),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -56,6 +59,17 @@ const mapDispatchToProps = dispatch => ({
   deleteAdmin: email => {
     dispatch(Action.DeleteAdmin(email));
   },
+  addAdmin: email => {
+    dispatch(Action.AddAdmin(email));
+  },
+
+  fetchEvents: () => {
+    dispatch(Action.GetCurrentEvents());
+  },
+
+  fetchAdmins: () => {
+    dispatch(Action.FetchAdmins());
+  }
 });
 
 ControlPanel.propTypes = {
@@ -66,6 +80,7 @@ ControlPanel.propTypes = {
   deleteEvent: PropTypes.func.isRequired,
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
   deleteAdmin: PropTypes.func.isRequired,
+  addAdmin: PropTypes.func.isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
 };
 
