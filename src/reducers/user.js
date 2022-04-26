@@ -206,7 +206,9 @@ const FetchAdmins = () => async dispatch => {
     if (data.error) throw new Error(data.error.message);
 
     const order = ["SUPERADMIN", "ADMIN"];
-    const admins = data.admins.sort(function(a, b) { return order.indexOf(a.accessType) - order.indexOf(b.accessType)});
+    const admins = data.admins.sort(function (a, b) {
+      return order.indexOf(a.accessType) - order.indexOf(b.accessType);
+    });
 
     dispatch(State.FetchAdmins(null, admins));
   } catch (err) {
@@ -214,17 +216,11 @@ const FetchAdmins = () => async dispatch => {
   }
 };
 
-const AddAdmin = () => async dispatch => {
+const AddAdmin = () => async dispatch => {};
 
-};
+const DeleteAdmin = () => async dispatch => {};
 
-const DeleteAdmin = () => async dispatch => {
-
-};
-
-const ChangeSuperAdmin = () => async dispatch => {
-
-};
+const ChangeSuperAdmin = () => async dispatch => {};
 
 /** ********************************************
  ** User Reducer                             **

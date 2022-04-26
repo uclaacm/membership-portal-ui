@@ -12,11 +12,11 @@ export default class Sidebar extends React.Component {
     return (
       <div className="sidebar">
         <div className="sidebar-container">
-          <ProfilePicture
-            picture={this.props.isAdmin ? Config.organization.logo : this.props.picture}
-          />
+          <ProfilePicture picture={this.props.isAdmin ? Config.organization.logo : this.props.picture} />
           <Organization org={Config.organization.shortName} />
-          <Username username={this.props.isSuperAdmin ? "Super Admin" : this.props.isAdmin ? "Admin" : this.props.username} />
+          <Username
+            username={this.props.isSuperAdmin ? "Super Admin" : this.props.isAdmin ? "Admin" : this.props.username}
+          />
           <Navigation isAdmin={this.props.isAdmin} />
           {!this.props.isAdmin && <Points points={this.props.points} />}
         </div>

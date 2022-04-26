@@ -14,9 +14,9 @@ class ControlPanel extends React.Component {
     }
     // when data is actually fetched
     // note: previously left out when only events were needed to be fetched for control panel
-    // this led to bug where admin had to navigate to events page first to load events in control panel modal 
+    // this led to bug where admin had to navigate to events page first to load events in control panel modal
     this.props.fetchEvents();
-    this.props.fetchAdmins();   
+    this.props.fetchAdmins();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -72,7 +72,7 @@ const mapDispatchToProps = dispatch => ({
 
   fetchAdmins: () => {
     dispatch(Action.FetchAdmins());
-  }
+  },
 });
 
 ControlPanel.propTypes = {

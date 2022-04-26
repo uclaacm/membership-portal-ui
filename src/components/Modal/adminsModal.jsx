@@ -48,10 +48,11 @@ export default class AdminsModal extends React.Component {
                       <td>{admin.firstName + " " + admin.lastName}</td>
                       <td>{admin.email}</td>
                       <td className="center">
-                        {
-                          admin.accessType !== "SUPERADMIN" ?
-<Button color="red" text="Delete" onClick={() => onDelete(admin.email)} /> : <Button color="red" text="Reassign" onClick={() => 'pass'/*onReassign(admin.email)*/} />
-}
+                        {admin.accessType !== "SUPERADMIN" ? (
+                          <Button color="red" text="Delete" onClick={() => onDelete(admin.email)} />
+                        ) : (
+                          <Button color="red" text="Reassign" onClick={() => "pass" /*onReassign(admin.email)*/} />
+                        )}
                       </td>
                     </tr>
                   ))}
