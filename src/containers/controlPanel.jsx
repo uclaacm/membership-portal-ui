@@ -12,6 +12,9 @@ class ControlPanel extends React.Component {
     if (!isAdmin) {
       return redirectHome();
     }
+    // when data is actually fetched
+    // note: previously left out when only events were needed to be fetched for control panel
+    // this led to bug where admin had to navigate to events page first to load events in control panel modal 
     this.props.fetchEvents();
     this.props.fetchAdmins();   
   }
