@@ -2,6 +2,7 @@ import React from "react";
 import Button from "components/Button";
 import EventsModal from "components/Modal/eventsModal";
 import AdminsModal from "components/Modal/adminsModal";
+import ReassignModal from "components/Modal/reassignModal";
 import OneClickPasswordModal from "components/Modal/oneClickPasswordModal";
 import ConfirmationModal from "components/Modal/confirmationModal";
 import PropTypes from "prop-types";
@@ -10,15 +11,20 @@ class ControlPanel extends React.Component {
   constructor() {
     super();
     this.state = {
+      // Delete events
       showEventsModal: false,
       showEventsConfirmationModal: false,
       deleteUUID: null,
+
+      // Manage admins
       showAdminsModal: false,
+      showReassignModal: false,
       showRemoveAdminConfirmationModal: false,
       showReassignAdminConfirmationModal: false,
       removeEmail: null,
       reassignEmail: null,
       addEmail: null,
+
       showOneClickPasswordModal: false,
     };
   }
@@ -45,6 +51,14 @@ class ControlPanel extends React.Component {
 
   closeAdminsModal = () => {
     this.setState(prev => ({ showAdminsModal: false }));
+  };
+
+  openReassignModal = () => {
+    this.setState(prev => ({ showReassignModal: true }));
+  };
+
+  closeReassignModal = () => {
+    this.setState(prev => ({ showReassignModal: false }));
   };
 
   openRemoveAdminConfirmationModal = email => {
@@ -85,11 +99,19 @@ class ControlPanel extends React.Component {
     this.closeRemoveAdminConfirmationModal();
   };
 
+  triggerReassignAdmin = () => {
+    const { reassignAdmin } = this.props;
+    const { reassignEmail } = this.state;
+    reassignAdmin(reassignEmail);
+    this.closeReassignAdminConfirmationModal();
+  };
+
   triggerAddAdmin = () => {
     const { addAdmin } = this.props;
     const { addEmail } = this.state;
     addAdmin(addEmail);
-    this.closeAdminsModal();
+    // this.closeAdminsModal();
+    // refetch data after any update event
   };
 
   render() {
@@ -97,9 +119,12 @@ class ControlPanel extends React.Component {
     const {
       showEventsModal,
       showEventsConfirmationModal,
+
       showAdminsModal,
+      showReassignModal,
       showRemoveAdminConfirmationModal,
       showReassignAdminConfirmationModal,
+
       showOneClickPasswordModal,
     } = this.state;
     return (
@@ -191,8 +216,14 @@ class ControlPanel extends React.Component {
               admins={admins}
               onAdd={this.triggerAddAdmin}
               onRemove={this.openRemoveAdminConfirmationModal}
-              onReassign={this.openReassignAdminCofirmationModal}
+              onReassign={this.openReassignModal}
               onClose={this.closeAdminsModal}
+            />
+
+            <ReassignModal
+              opened={showReassignModal}
+              onReassign={this.openReassignAdminConfirmationModal}
+              onClose={this.closeReassignModal}
             />
 
             <ConfirmationModal

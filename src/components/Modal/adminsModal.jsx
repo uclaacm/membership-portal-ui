@@ -39,7 +39,10 @@ export default class AdminsModal extends React.Component {
                       <Button
                         color="blue"
                         text="Add"
-                        onClick={() => onAdd(document.getElementById("addAdminEmailField").value)}
+                        onClick={() => {
+                          const input = document.getElementById("addAdminEmailField");
+                          if (input.value !== "" && input.checkValidity()) onAdd(input.value);
+                        }}
                       />
                     </td>
                   </tr>
