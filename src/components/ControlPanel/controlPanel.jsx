@@ -137,13 +137,22 @@ class ControlPanel extends React.Component {
         <h1 className="DisplayPrimary">Control Panel</h1>
         <div className="form-elem">
           <Button className="signout-action-button" color="blue" text="Sign Out" onClick={logout} />
-
+          <br />
           <Button
             className="deleteevents-action-button"
             color="red"
             text="Delete Events"
             onClick={this.openEventsModal}
           />
+          <br />
+
+          <Button
+            className="control-panel-action-button"
+            color="red"
+            text="Manage One-Click API"
+            onClick={this.openOneClickPasswordModal}
+          />
+          <br />
 
           {isSuperAdmin ? (
             <Button
@@ -155,13 +164,6 @@ class ControlPanel extends React.Component {
           ) : (
             <></>
           )}
-
-          <Button
-            className="control-panel-action-button"
-            color="red"
-            text="Manage One-Click API"
-            onClick={this.openOneClickPasswordModal}
-          />
         </div>
 
         {/* This input and button don't do anything? */}

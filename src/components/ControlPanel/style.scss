@@ -6,17 +6,11 @@
 
   .signout-action-button {
     margin: 6px;
-  }
-
-  .signout-action-button:first-child {
     margin-left: 0px;
   }
 
   .deleteevents-action-button {
     margin: 6px;
-  }
-
-  .deleteevents-action-button:first-child {
     margin-left: 0px;
   }
 
@@ -45,11 +39,9 @@
 
     .control-panel-action-button {
       margin: 6px;
-    }
-
-    .control-panel-action-button:first-child {
       margin-left: 0px;
     }
+
     input[type="text"],
     input[type="password"],
     input[type="email"] {
