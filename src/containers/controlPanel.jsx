@@ -114,7 +114,7 @@ ControlPanel.propTypes = {
   addAdmin: PropTypes.func.isRequired,
   reassignAdmin: PropTypes.func.isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
-  ChangeOneClickPassword: PropTypes.func.isRequired,
+  changeOneClickPassword: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ControlPanel);

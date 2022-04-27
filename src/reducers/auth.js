@@ -61,11 +61,11 @@ class State {
     };
   }
 
-  static UnAuth(error) {
+/*  static UnAuth(error) {
     return {
       type: UNAUTH_USER,
     };
-  }
+  }*/
 }
 
 /***********************************************
@@ -88,10 +88,8 @@ const LoginUser = tokenId => async dispatch => {
     if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
-    Storage.set("token", data.token);
-    dispatch(State.Auth(null, data.token));
   } catch (err) {
-    dispatch(State.Auth(err.message));
+    //dispatch(State.OneClickError(err.message));
   }
 };
 
