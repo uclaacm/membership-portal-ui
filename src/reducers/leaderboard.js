@@ -4,9 +4,9 @@ import Immutable from "immutable";
 
 import { LogoutUser } from "./auth";
 
-/** ********************************************
- ** Constants                                **
- ******************************************** */
+/***********************************************
+ ** Constants                                 **
+ ***********************************************/
 
 const FETCH_SUCCESS = Symbol();
 const FETCH_ERR = Symbol();
@@ -20,9 +20,9 @@ const defaultState = Immutable.fromJS({
   fetchTime: 0,
 });
 
-/** ********************************************
- ** Leaderboard States                       **
- ******************************************** */
+/***********************************************
+ ** Leaderboard States                        **
+ ***********************************************/
 
 class State {
   static FetchLeaderboard(error, leaderboard) {
@@ -35,9 +35,9 @@ class State {
   }
 }
 
-/** ********************************************
- ** Actions                                  **
- ******************************************** */
+/***********************************************
+ ** Actions                                   **
+ ***********************************************/
 
 const FetchLeaderboard = () => async dispatch => {
   try {
@@ -65,9 +65,9 @@ const FetchLeaderboard = () => async dispatch => {
   }
 };
 
-/** ********************************************
- ** Leaderboard Reducer                      **
- ******************************************** */
+/***********************************************
+ ** Leaderboard Reducer                       **
+ ***********************************************/
 
 const Leaderboard = (state = defaultState, action) => {
   switch (action.type) {

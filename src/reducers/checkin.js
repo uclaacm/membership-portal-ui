@@ -3,9 +3,9 @@ import Storage from "storage";
 import Immutable from "immutable";
 import { Action } from "reducers";
 
-/** ********************************************
- ** Constants                                **
- ******************************************** */
+/***********************************************
+ ** Constants                                 **
+ ***********************************************/
 
 const CHECK_IN_SUCCESS = Symbol();
 const CHECK_IN_ERROR = Symbol();
@@ -18,9 +18,9 @@ const defaultState = Immutable.fromJS({
   error: null,
 });
 
-/** ********************************************
- ** Check In States                          **
- ******************************************** */
+/***********************************************
+ ** Check In States                           **
+ ***********************************************/
 
 class State {
   static CheckIn(error, points) {
@@ -32,9 +32,9 @@ class State {
   }
 }
 
-/** ********************************************
- ** Actions                                  **
- ******************************************** */
+/***********************************************
+ ** Actions                                   **
+ ***********************************************/
 
 const CheckInto = attendanceCode => async dispatch => {
   try {
@@ -65,9 +65,9 @@ const CheckInto = attendanceCode => async dispatch => {
   }
 };
 
-/** ********************************************
- ** Check In Reducer                         **
- ******************************************** */
+/***********************************************
+ ** Check In Reducer                          **
+ ***********************************************/
 
 const CheckIn = (state = defaultState, action) => {
   switch (action.type) {

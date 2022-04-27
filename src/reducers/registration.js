@@ -4,9 +4,9 @@ import Immutable from "immutable";
 
 import { RefreshToken } from "./auth";
 
-/** ********************************************
- ** Constants                                **
- ******************************************** */
+/***********************************************
+ ** Constants                                 **
+ ***********************************************/
 
 const REGISTER_SUCCESS = Symbol();
 const REGISTER_ERR = Symbol();
@@ -19,9 +19,9 @@ const defaultState = Immutable.fromJS({
   error: null,
 });
 
-/** ********************************************
- ** Registration States                      **
- ******************************************** */
+/***********************************************
+ ** Registration States                       **
+ ***********************************************/
 
 class State {
   static Register(error, user) {
@@ -33,9 +33,9 @@ class State {
   }
 }
 
-/** ********************************************
- ** Actions                                  **
- ******************************************** */
+/***********************************************
+ ** Actions                                   **
+ ***********************************************/
 
 const RegisterUser = info => async dispatch => {
   try {
@@ -61,9 +61,9 @@ const RegisterUser = info => async dispatch => {
   }
 };
 
-/** ********************************************
- ** Registration Reducer                     **
- ******************************************** */
+/***********************************************
+ ** Registration Reducer                      **
+ ***********************************************/
 
 const Registration = (state = defaultState, action) => {
   switch (action.type) {

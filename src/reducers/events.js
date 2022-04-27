@@ -203,9 +203,9 @@ const DeleteEvent = uuid => async dispatch => {
   }
 };
 
-/** ********************************************
- ** Events Reducer                           **
- ******************************************** */
+/***********************************************
+ ** Events Reducer                            **
+ ***********************************************/
 
 const Events = (state = defaultState, action) => {
   switch (action.type) {

@@ -4,9 +4,9 @@ import Immutable from "immutable";
 
 import { replace } from "react-router-redux";
 
-/** ********************************************
- ** Constants                                **
- ******************************************** */
+/***********************************************
+ ** Constants                                 **
+ ***********************************************/
 
 const AUTH_USER = Symbol();
 const UNAUTH_USER = Symbol();
@@ -24,9 +24,9 @@ const initState = () => {
   });
 };
 
-/** ********************************************
- ** Helper Functions                         **
- ******************************************** */
+/***********************************************
+ ** Helper Functions                          **
+ ***********************************************/
 
 // Get claims from JSON Web Token (JWT)
 // JWT is signed on backend, sent with every request, and verified on backend
@@ -46,9 +46,9 @@ const tokenIsAdmin = token => !!tokenGetClaims(token).admin;
 const tokenIsSuperAdmin = token => !!tokenGetClaims(token).superAdmin;
 const tokenIsRegistered = token => !!tokenGetClaims(token).registered;
 
-/** ********************************************
- ** Auth States                              **
- ******************************************** */
+/***********************************************
+ ** Auth States                               **
+ ***********************************************/
 
 class State {
   static Auth(error, token) {
@@ -68,9 +68,9 @@ class State {
   }
 }
 
-/** ********************************************
- ** Actions                                  **
- ******************************************** */
+/***********************************************
+ ** Actions                                   **
+ ***********************************************/
 
 const LoginUser = tokenId => async dispatch => {
   try {
@@ -107,14 +107,15 @@ const RefreshToken = token => async dispatch => {
 };
 
 const ChangeOneClickPassword = (oldPassword, newPassword) => async dispatch => {
-  /*try {
-    const response = await fetch(Config.API_URL + Config.routes.auth.login, {
-      method: "POST",
+  try {
+    const response = await fetch(Config.API_URL + Config.routes.auth.oneclick, {
+      method: "PATCH",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
       },
-      body: JSON.stringify({ tokenId: tokenId }),
+      body: JSON.stringify({ oldPassword: oldPassword, newPassword: newPassword }),
     });
 
     const data = await response.json();
@@ -122,16 +123,13 @@ const ChangeOneClickPassword = (oldPassword, newPassword) => async dispatch => {
     if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
-    Storage.set("token", data.token);
-    dispatch(State.Auth(null, data.token));
   } catch (err) {
-    dispatch(State.Auth(err.message));
-  }*/
+  }
 };
 
-/** ********************************************
- ** Auth Reducer                             **
- ******************************************** */
+/***********************************************
+ ** Auth Reducer                              **
+ ***********************************************/
 
 const Auth = (state = initState(), action) => {
   switch (action.type) {

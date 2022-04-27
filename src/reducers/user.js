@@ -5,9 +5,9 @@ import moment from "moment";
 
 import { LogoutUser } from "./auth";
 
-/** ********************************************
- ** Constants                                **
- ******************************************** */
+/***********************************************
+ ** Constants                                 **
+ ***********************************************/
 
 const FETCH_USER = Symbol();
 const FETCH_USER_ERR = Symbol();
@@ -42,9 +42,9 @@ const defaultState = Immutable.fromJS({
   activityError: null,
 });
 
-/** ********************************************
- ** User States                              **
- ******************************************** */
+/***********************************************
+ ** User States                               **
+ ***********************************************/
 
 class State {
   static FetchUser(error, user) {
@@ -100,9 +100,9 @@ class State {
   }
 }
 
-/** ********************************************
- ** Actions                                  **
- ******************************************** */
+/***********************************************
+ ** Actions                                   **
+ ***********************************************/
 
 const FetchUser = () => async dispatch => {
   try {
@@ -216,15 +216,69 @@ const FetchAdmins = () => async dispatch => {
   }
 };
 
-const AddAdmin = () => async dispatch => {};
+const AddAdmin = email => async dispatch => {
+  try {
+    const response = await fetch(Config.API_URL + Config.routes.user.admins, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
+      },
+      body: JSON.stringify({ email }),
+    });
 
-const DeleteAdmin = () => async dispatch => {};
+    const data = await response.json();
+    if (!data) throw new Error("Empty response from server");
+    if (data.error) throw new Error(data.error.message);
 
-const ChangeSuperAdmin = () => async dispatch => {};
+  } catch (err) {
+  }
+};
 
-/** ********************************************
- ** User Reducer                             **
- ******************************************** */
+const DeleteAdmin = email => async dispatch => {
+  try {
+    const response = await fetch(Config.API_URL + Config.routes.user.admins, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+    if (!data) throw new Error("Empty response from server");
+    if (data.error) throw new Error(data.error.message);
+
+  } catch (err) {
+  }
+};
+
+const ChangeSuperAdmin = email => async dispatch => {
+  try {
+    const response = await fetch(Config.API_URL + Config.routes.user.admins, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+    if (!data) throw new Error("Empty response from server");
+    if (data.error) throw new Error(data.error.message);
+
+  } catch (err) {
+  }
+};
+
+/***********************************************
+ ** User Reducer                              **
+ ***********************************************/
 
 const User = (state = defaultState, action) => {
   switch (action.type) {
@@ -285,4 +339,4 @@ const User = (state = defaultState, action) => {
 
 const UserUpdateDone = () => ({ type: UPDATE_COMPLETED });
 
-export { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity, AddAdmin, DeleteAdmin, FetchAdmins };
+export { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity, AddAdmin, DeleteAdmin, FetchAdmins, ChangeSuperAdmin };
