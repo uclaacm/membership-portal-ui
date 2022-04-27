@@ -106,6 +106,29 @@ const RefreshToken = token => async dispatch => {
   dispatch(State.Auth(null, token));
 };
 
+const ChangeOneClickPassword = (oldPassword, newPassword) => async dispatch => {
+  /*try {
+    const response = await fetch(Config.API_URL + Config.routes.auth.login, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tokenId: tokenId }),
+    });
+
+    const data = await response.json();
+
+    if (!data) throw new Error("Empty response from server");
+    if (data.error) throw new Error(data.error.message);
+
+    Storage.set("token", data.token);
+    dispatch(State.Auth(null, data.token));
+  } catch (err) {
+    dispatch(State.Auth(err.message));
+  }*/
+};
+
 /** ********************************************
  ** Auth Reducer                             **
  ******************************************** */
@@ -141,4 +164,4 @@ const Auth = (state = initState(), action) => {
   }
 };
 
-export { Auth, LoginUser, LogoutUser, RefreshToken };
+export { Auth, LoginUser, LogoutUser, RefreshToken, ChangeOneClickPassword };

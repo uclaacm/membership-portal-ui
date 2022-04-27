@@ -4,7 +4,7 @@ import { routerReducer, routerMiddleware } from "react-router-redux";
 import thunk from "redux-thunk";
 
 import { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity, AddAdmin, DeleteAdmin, FetchAdmins } from "./user";
-import { Auth, LoginUser, LogoutUser, RefreshToken } from "./auth";
+import { Auth, LoginUser, LogoutUser, RefreshToken, ChangeOneClickPassword } from "./auth";
 import {
   Events,
   GetCurrentEvents,
@@ -39,6 +39,7 @@ const Action = {
   LoginUser,
   LogoutUser,
   RefreshToken,
+  ChangeOneClickPassword,
   FetchUser,
   UpdateUser,
   UserUpdateDone,

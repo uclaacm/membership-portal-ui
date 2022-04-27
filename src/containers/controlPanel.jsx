@@ -26,8 +26,18 @@ class ControlPanel extends React.Component {
   }
 
   render() {
-    const { logout, events, userEmail, deleteEvent, admins, removeAdmin, addAdmin, reassignAdmin, isSuperAdmin } =
-      this.props;
+    const {
+      logout,
+      events,
+      userEmail,
+      deleteEvent,
+      admins,
+      removeAdmin,
+      addAdmin,
+      reassignAdmin,
+      isSuperAdmin,
+      changeOneClickPassword,
+    } = this.props;
     return (
       <ControlPanelComponent
         logout={logout}
@@ -39,6 +49,7 @@ class ControlPanel extends React.Component {
         reassignAdmin={reassignAdmin}
         addAdmin={addAdmin}
         isSuperAdmin={isSuperAdmin}
+        changeOneClickPassword={changeOneClickPassword}
       />
     );
   }
@@ -85,6 +96,10 @@ const mapDispatchToProps = dispatch => ({
   fetchAdmins: () => {
     dispatch(Action.FetchAdmins());
   },
+
+  changeOneClickPassword: (oldPassword, newPassword) => {
+    dispatch(Action.ChangeOneClickPassword(oldPassword, newPassword));
+  },
 });
 
 ControlPanel.propTypes = {
@@ -99,6 +114,7 @@ ControlPanel.propTypes = {
   addAdmin: PropTypes.func.isRequired,
   reassignAdmin: PropTypes.func.isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
+  ChangeOneClickPassword: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ControlPanel);

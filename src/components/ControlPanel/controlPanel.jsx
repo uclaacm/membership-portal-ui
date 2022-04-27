@@ -114,6 +114,11 @@ class ControlPanel extends React.Component {
     // refetch data after any update event
   };
 
+  triggerChangePassword = (oldPassword, newPassword) => {
+    const { changeOneClickPassword } = this.props;
+    changeOneClickPassword(oldPassword, newPassword);
+  };
+
   render() {
     const { logout, events, admins, isSuperAdmin, userEmail } = this.props;
     const {
@@ -246,7 +251,11 @@ class ControlPanel extends React.Component {
           <></>
         )}
 
-        <OneClickPasswordModal opened={showOneClickPasswordModal} onClose={this.closeOneClickPasswordModal} />
+        <OneClickPasswordModal
+          opened={showOneClickPasswordModal}
+          onClose={this.closeOneClickPasswordModal}
+          onChange={this.triggerChangePassword}
+        />
       </div>
     );
   }
@@ -262,6 +271,7 @@ ControlPanel.propTypes = {
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
   userEmail: PropTypes.string.isRequired,
+  changePassword: PropTypes.func.isRequired,
 };
 
 export default ControlPanel;

@@ -10,8 +10,12 @@ export default class OneClickPasswordModal extends React.Component {
     };
   }
 
+  changePasswordResetMessage = msg => {
+    this.setState(prev => ({ passwordResetMessage: msg }));
+  };
+
   render() {
-    const { onClose, opened } = this.props;
+    const { onChange, onClose, opened } = this.props;
     const { passwordResetMessage } = this.state;
 
     return opened ? (
@@ -44,14 +48,24 @@ export default class OneClickPasswordModal extends React.Component {
                 <Button
                   className="control-panel-action-button"
                   color="red"
-                  text="Change password"
+                  text="Change Password"
                   onClick={() => {
-                    if (
-                      document.getElementById("passwordResetNewPassword").value !==
-                      document.getElementById("passwordResetConfirmNewPassword").value
-                    )
+                    const oldPassword = document.getElementById("passwordResetOldPassword").value;
+                    const newPassword = document.getElementById("passwordResetNewPassword").value;
+                    const confirmNewPassword = document.getElementById("passwordResetConfirmNewPassword").value;
+                    if (oldPassword === "" || newPassword === "" || confirmNewPassword === "") {
+                      this.changePasswordResetMessage("At least one field is empty.");
+                    } else if (newPassword !== confirmNewPassword) {
                       this.changePasswordResetMessage("New password does not match.");
-                    else this.changePasswordResetMessage("Successfully updated password!");
+                    } else {
+                      onChange(oldPassword, newPassword);
+                      // TODO: actual status message
+                      this.changePasswordResetMessage("Successfully updated password!");
+                      document.getElementById("passwordResetOldPassword").value =
+                        document.getElementById("passwordResetNewPassword").value =
+                        document.getElementById("passwordResetConfirmNewPassword").value =
+                          "";
+                    }
                   }}
                 />
                 <div className="passwordResetStatus">{passwordResetMessage}</div>
