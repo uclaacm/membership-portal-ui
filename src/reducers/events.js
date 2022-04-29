@@ -9,13 +9,16 @@ import { LogoutUser } from "./auth";
  ** Constants                                 **
  ***********************************************/
 
-const FETCH_EVENTS = Symbol();
+const FETCH_EVENTS_SUCCESS = Symbol();
 const FETCH_EVENTS_ERROR = Symbol();
-const DELETE_EVENT_ERROR = Symbol();
+
 const DELETE_EVENT_SUCCESS = Symbol();
+const DELETE_EVENT_ERROR = Symbol();
+
 const POST_EVENT_SUCCESS = Symbol();
 const POST_EVENT_ERROR = Symbol();
 const POST_EVENT_DONE = Symbol();
+
 const UPDATE_EVENT_SUCCESS = Symbol();
 const UPDATE_EVENT_ERROR = Symbol();
 const UPDATE_EVENT_DONE = Symbol();
@@ -38,7 +41,7 @@ const defaultState = Immutable.fromJS({
 class State {
   static FetchEvents(error, events) {
     return {
-      type: error ? FETCH_EVENTS_ERROR : FETCH_EVENTS,
+      type: error ? FETCH_EVENTS_ERROR : FETCH_EVENTS_SUCCESS,
       events: error ? undefined : events,
       error: error || undefined,
     };
@@ -209,7 +212,7 @@ const DeleteEvent = uuid => async dispatch => {
 
 const Events = (state = defaultState, action) => {
   switch (action.type) {
-    case FETCH_EVENTS:
+    case FETCH_EVENTS_SUCCESS:
       return state.withMutations(val => {
         val.set("events", action.events);
       });

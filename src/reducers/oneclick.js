@@ -6,9 +6,9 @@ import Storage from "storage";
  ** Constants                                 **
  ***********************************************/
 
- const RESET_ONECLICK_PASSWORD_SUCCESS = Symbol();
- const RESET_ONE_CLICK_PASSWORD_ERROR = Symbol();
- const RESET_ONECLICK_PASSWORD_DONE = Symbol(); 
+const RESET_ONECLICK_PASSWORD_SUCCESS = Symbol();
+const RESET_ONECLICK_PASSWORD_ERROR = Symbol();
+const RESET_ONECLICK_PASSWORD_DONE = Symbol();
 
 const defaultState = Immutable.fromJS({
   passwordChanged: false,
@@ -22,9 +22,9 @@ const defaultState = Immutable.fromJS({
 class State {
   static ChangeOneClickPassword(error) {
     return {
-      type: error ? RESET_ONE_CLICK_PASSWORD_ERROR : RESET_ONECLICK_PASSWORD_SUCCESS,
+      type: error ? RESET_ONECLICK_PASSWORD_ERROR : RESET_ONECLICK_PASSWORD_SUCCESS,
       error: error || undefined,
-    }
+    };
   }
 }
 
@@ -67,7 +67,7 @@ const OneClick = (state = defaultState, action) => {
         val.set("passwordChanged", true);
       });
 
-    case RESET_ONE_CLICK_PASSWORD_ERROR:
+    case RESET_ONECLICK_PASSWORD_ERROR:
       return state.withMutations(val => {
         val.set("error", action.error);
         val.set("passwordChanged", false); // should this be true? https://github.com/uclaacm/membership-portal-ui/blob/e4eb1d217d6be49c47fbbb61f35b390ce6bb6fc8/src/reducers/auth.js#L215

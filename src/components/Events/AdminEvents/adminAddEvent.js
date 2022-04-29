@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 export default class AdminAddEvent extends React.Component {
   constructor(props) {
     super(props);
-  this.state = { event: this.props.event, startTimeError: false, endTimeError: false, /*validImage: false*/ };
+    this.state = { event: this.props.event, startTimeError: false, endTimeError: false /*validImage: false*/ };
     this.resizeTextArea = this.resizeTextArea.bind(this);
     this.handleChangeStartDate = this.handleChangeStartDate.bind(this);
     this.handleChangeEndDate = this.handleChangeEndDate.bind(this);

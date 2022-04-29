@@ -72,7 +72,7 @@ class State {
  ** Actions                                   **
  ***********************************************/
 
- const LoginUser = tokenId => async dispatch => {
+const LoginUser = tokenId => async dispatch => {
   try {
     const response = await fetch(Config.API_URL + Config.routes.auth.login, {
       method: "POST",
