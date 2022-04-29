@@ -1,6 +1,6 @@
 import Config from "config";
-import Storage from "storage";
 import Immutable from "immutable";
+import Storage from "storage";
 
 import { replace } from "react-router-redux";
 
@@ -106,27 +106,6 @@ const RefreshToken = token => async dispatch => {
   dispatch(State.Auth(null, token));
 };
 
-const ChangeOneClickPassword = (oldPassword, newPassword) => async dispatch => {
-  try {
-    const response = await fetch(Config.API_URL + Config.routes.auth.oneclick, {
-      method: "PATCH",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Storage.get("token")}`,
-      },
-      body: JSON.stringify({ oldPassword: oldPassword, newPassword: newPassword }),
-    });
-
-    const data = await response.json();
-
-    if (!data) throw new Error("Empty response from server");
-    if (data.error) throw new Error(data.error.message);
-
-  } catch (err) {
-  }
-};
-
 /***********************************************
  ** Auth Reducer                              **
  ***********************************************/
@@ -162,4 +141,4 @@ const Auth = (state = initState(), action) => {
   }
 };
 
-export { Auth, LoginUser, LogoutUser, RefreshToken, ChangeOneClickPassword };
+export { Auth, LoginUser, LogoutUser, RefreshToken };

@@ -3,8 +3,10 @@ import { createBrowserHistory } from "history";
 import { routerReducer, routerMiddleware } from "react-router-redux";
 import thunk from "redux-thunk";
 
-import { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity, AddAdmin, DeleteAdmin, FetchAdmins, ChangeSuperAdmin } from "./user";
-import { Auth, LoginUser, LogoutUser, RefreshToken, ChangeOneClickPassword } from "./auth";
+import { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity } from "./user";
+import { AddAdmin, DeleteAdmin, FetchAdmins, ChangeSuperAdmin } from "./admins";
+import { Auth, LoginUser, LogoutUser, RefreshToken } from "./auth";
+import { ChangeOneClickPassword } from "./oneclick";
 import {
   Events,
   GetCurrentEvents,
