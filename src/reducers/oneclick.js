@@ -11,7 +11,7 @@ import Storage from "storage";
  const RESET_ONECLICK_PASSWORD_DONE = Symbol(); 
 
 const defaultState = Immutable.fromJS({
-  passwordUpdated: false,
+  passwordChanged: false,
   error: null,
 });
 
@@ -20,20 +20,11 @@ const defaultState = Immutable.fromJS({
  ***********************************************/
 
 class State {
-  static Auth(error, token) {
+  static ChangeOneClickPassword(error) {
     return {
-      type: error ? AUTH_ERROR : AUTH_USER,
-      isAdmin: error ? undefined : tokenIsAdmin(token),
-      isSuperAdmin: error ? undefined : tokenIsSuperAdmin(token),
-      isRegistered: error ? undefined : tokenIsRegistered(token),
+      type: error ? RESET_ONE_CLICK_PASSWORD_ERROR : RESET_ONECLICK_PASSWORD_SUCCESS,
       error: error || undefined,
-    };
-  }
-
-  static UnAuth(error) {
-    return {
-      type: UNAUTH_USER,
-    };
+    }
   }
 }
 
@@ -58,7 +49,9 @@ const ChangeOneClickPassword = (oldPassword, newPassword) => async dispatch => {
     if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
+    dispatch(State.ChangeOneClickPassword());
   } catch (err) {
+    dispatch(State.ChangeOneClickPassword(err));
   }
 };
 
@@ -68,28 +61,22 @@ const ChangeOneClickPassword = (oldPassword, newPassword) => async dispatch => {
 
 const OneClick = (state = defaultState, action) => {
   switch (action.type) {
-    case AUTH_USER:
+    case RESET_ONECLICK_PASSWORD_SUCCESS:
       return state.withMutations(val => {
         val.set("error", null);
-        val.set("timestamp", Date.now());
-        val.set("authenticated", true);
-        val.set("isRegistered", action.isRegistered);
-        val.set("isAdmin", action.isAdmin);
-        val.set("isSuperAdmin", action.isSuperAdmin);
+        val.set("passwordChanged", true);
       });
 
-    case UNAUTH_USER:
-      return state.withMutations(val => {
-        val.set("authenticated", false);
-        val.set("isRegistered", false);
-        val.set("isAdmin", false);
-        val.set("isSuperAdmin", false);
-      });
-
-    case AUTH_ERROR:
+    case RESET_ONE_CLICK_PASSWORD_ERROR:
       return state.withMutations(val => {
         val.set("error", action.error);
-        val.set("timestamp", Date.now());
+        val.set("passwordChanged", false); // should this be true? https://github.com/uclaacm/membership-portal-ui/blob/e4eb1d217d6be49c47fbbb61f35b390ce6bb6fc8/src/reducers/auth.js#L215
+      });
+
+    case RESET_ONECLICK_PASSWORD_DONE:
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("passwordChanged", false);
       });
 
     default:
@@ -97,4 +84,6 @@ const OneClick = (state = defaultState, action) => {
   }
 };
 
-export { OneClick, ChangeOneClickPassword };
+const ChangeOneClickPasswordDone = () => ({ type: RESET_ONECLICK_PASSWORD_DONE });
+
+export { OneClick, ChangeOneClickPassword, ChangeOneClickPasswordDone };
