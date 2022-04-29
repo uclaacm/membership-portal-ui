@@ -86,7 +86,11 @@ export default class AdminAddEvent extends React.Component {
       <div className={`add-event-overlay${this.props.showing ? " showing" : ""}`} onClick={this.props.onClickCancel}>
         <div className="event-sidebar" onClick={e => e.stopPropagation()}>
           <div className="cover-img">
-            <img src={this.state.event.cover} id="event-cover-img" onError={() => document.getElementById("event-cover-img").style.display = "none"}/>
+            <img
+              src={this.state.event.cover}
+              id="event-cover-img"
+              onError={() => (document.getElementById("event-cover-img").style.display = "none")}
+            />
           </div>
           <div className="editor">
             <div className="input-row">

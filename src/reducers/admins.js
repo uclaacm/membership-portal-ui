@@ -197,7 +197,7 @@ const Admins = (state = defaultState, action) => {
         val.set("adminDeleted", true);
         val.set("adminDeleteSuccess", true);
       });
-      
+
     case DELETE_ADMIN_ERROR:
       return state.withMutations(val => {
         val.set("error", action.error);
@@ -240,13 +240,13 @@ const Admins = (state = defaultState, action) => {
         val.set("adminPromoteSuccess", false);
       });
 
-      case PROMOTE_ADMIN_DONE:
-        return state.withMutations(val => {
-          val.set("error", null);
-          val.set("adminPromoted", false);
-          val.set("adminPromoteSuccess", false);
-        });
-  
+    case PROMOTE_ADMIN_DONE:
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("adminPromoted", false);
+        val.set("adminPromoteSuccess", false);
+      });
+
     default:
       return state;
   }
