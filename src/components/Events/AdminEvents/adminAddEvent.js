@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 export default class AdminAddEvent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { event: this.props.event, startTimeError: false, endTimeError: false };
+  this.state = { event: this.props.event, startTimeError: false, endTimeError: false, /*validImage: false*/ };
     this.resizeTextArea = this.resizeTextArea.bind(this);
     this.handleChangeStartDate = this.handleChangeStartDate.bind(this);
     this.handleChangeEndDate = this.handleChangeEndDate.bind(this);
@@ -43,6 +43,9 @@ export default class AdminAddEvent extends React.Component {
   handleChange(e) {
     const name = e.target.name;
     const value = e.target.value;
+    // https://stackoverflow.com/questions/55880196/is-there-a-way-to-easily-check-if-the-image-url-is-valid-or-not
+    /*if (name == "cover")
+      this.checkImage(value);*/
     this.setState(prev => {
       const newState = Object.assign({}, prev);
       newState.event[name] = value;
@@ -86,7 +89,7 @@ export default class AdminAddEvent extends React.Component {
       <div className={`add-event-overlay${this.props.showing ? " showing" : ""}`} onClick={this.props.onClickCancel}>
         <div className="event-sidebar" onClick={e => e.stopPropagation()}>
           <div className="cover-img">
-            <img src={this.state.event.cover} />
+            {this.state.event.cover !== "" /*&& this.state.validImage*/ ? <img src={this.state.event.cover} /> : <></>}
           </div>
           <div className="editor">
             <div className="input-row">
