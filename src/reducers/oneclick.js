@@ -70,7 +70,7 @@ const OneClick = (state = defaultState, action) => {
     case RESET_ONECLICK_PASSWORD_ERROR:
       return state.withMutations(val => {
         val.set("error", action.error);
-        val.set("passwordChanged", false); // should this be true? https://github.com/uclaacm/membership-portal-ui/blob/e4eb1d217d6be49c47fbbb61f35b390ce6bb6fc8/src/reducers/auth.js#L215
+        val.set("passwordChanged", true); // technically no, more like password change attempt completed
       });
 
     case RESET_ONECLICK_PASSWORD_DONE:

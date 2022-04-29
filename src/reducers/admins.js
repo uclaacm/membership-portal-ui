@@ -66,7 +66,6 @@ class State {
       error: error || undefined,
     };
   }
-
 }
 
 /***********************************************
@@ -168,7 +167,7 @@ const ChangeSuperAdmin = email => async dispatch => {
     if (data.error) throw new Error(data.error.message);
 
     dispatch(State.PromoteAdmin());
-    dispatch(LogoutUser());
+    dispatch(LogoutUser()); // should be just an admin when they log back in
   } catch (err) {
     dispatch(State.PromoteAdmin(err.message));
   }
@@ -182,47 +181,72 @@ const Admins = (state = defaultState, action) => {
   switch (action.type) {
     case FETCH_ADMINS_SUCCESS:
       return state.withMutations(val => {
+        val.set("error", null);
         val.set("admins", action.admins);
       });
 
     case FETCH_ADMINS_ERROR:
       return state.withMutations(val => {
-        val.set("admins", action.admins);
+        val.set("error", action.error);
+        val.set("admins", []);
       });
 
     case DELETE_ADMIN_SUCCESS:
       return state.withMutations(val => {
-        val.set("admins", action.admins);
+        val.set("error", null);
+        val.set("adminDeleted", true);
+        val.set("adminDeleteSuccess", true);
       });
+      
     case DELETE_ADMIN_ERROR:
       return state.withMutations(val => {
-        val.set("admins", action.admins);
-      });
-    case ADD_ADMIN_SUCCESS:
-      return state.withMutations(val => {
-        val.set("admins", action.admins);
-      });
-    case ADD_ADMIN_ERROR:
-      return state.withMutations(val => {
-        val.set("admins", action.admins);
-      });
-    case ADD_ADMIN_DONE:
-      return state.withMutations(val => {
-        val.set("admins", action.admins);
-      });
-    case PROMOTE_ADMIN_SUCCESS:
-      return state.withMutations(val => {
-        val.set("admins", action.admins);
-      });
-    case PROMOTE_ADMIN_ERROR:
-      return state.withMutations(val => {
-        val.set("admins", action.admins);
-      });
-    case PROMOTE_ADMIN_DONE:
-      return state.withMutations(val => {
-        val.set("admins", action.admins);
+        val.set("error", action.error);
+        val.set("adminDeleted", true);
+        val.set("adminDeleteSuccess", false);
       });
 
+    case ADD_ADMIN_SUCCESS:
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("adminAdded", true);
+        val.set("adminAddSuccess", true);
+      });
+
+    case ADD_ADMIN_ERROR:
+      return state.withMutations(val => {
+        val.set("error", action.error);
+        val.set("adminAdded", true);
+        val.set("adminAddSuccess", false);
+      });
+
+    case ADD_ADMIN_DONE:
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("adminAdded", false);
+        val.set("adminAddSuccess", false);
+      });
+
+    case PROMOTE_ADMIN_SUCCESS:
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("adminPromoted", true);
+        val.set("adminPromoteSuccess", true);
+      });
+
+    case PROMOTE_ADMIN_ERROR:
+      return state.withMutations(val => {
+        val.set("error", action.error);
+        val.set("adminPromoted", true);
+        val.set("adminPromoteSuccess", false);
+      });
+
+      case PROMOTE_ADMIN_DONE:
+        return state.withMutations(val => {
+          val.set("error", null);
+          val.set("adminPromoted", false);
+          val.set("adminPromoteSuccess", false);
+        });
+  
     default:
       return state;
   }

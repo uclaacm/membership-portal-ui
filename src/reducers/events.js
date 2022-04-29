@@ -214,6 +214,7 @@ const Events = (state = defaultState, action) => {
   switch (action.type) {
     case FETCH_EVENTS_SUCCESS:
       return state.withMutations(val => {
+        val.set("error", null);
         val.set("events", action.events);
       });
 
