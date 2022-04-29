@@ -4,9 +4,9 @@ import { routerReducer, routerMiddleware } from "react-router-redux";
 import thunk from "redux-thunk";
 
 import { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity } from "./user";
-import { AddAdmin, DeleteAdmin, FetchAdmins, ChangeSuperAdmin } from "./admins";
+import { Admins, AddAdmin, DeleteAdmin, FetchAdmins, ChangeSuperAdmin } from "./admins";
 import { Auth, LoginUser, LogoutUser, RefreshToken } from "./auth";
-import { ChangeOneClickPassword } from "./oneclick";
+import { OneClick, ChangeOneClickPassword } from "./oneclick";
 import {
   Events,
   GetCurrentEvents,
@@ -27,8 +27,10 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   combineReducers({
     Auth,
+    OneClick,
     Events,
     User,
+    Admins,
     Leaderboard,
     CheckIn,
     Registration,
