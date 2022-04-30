@@ -49,6 +49,7 @@ class ControlPanel extends React.Component {
       changeOneClickPassword,
       oneClickUpdated,
       oneClickUpdateSuccess,
+      oneClickError,
     } = this.props;
     return (
       <ControlPanelComponent
@@ -64,6 +65,7 @@ class ControlPanel extends React.Component {
         changeOneClickPassword={changeOneClickPassword}
         oneClickUpdated={oneClickUpdated}
         oneClickUpdateSuccess={oneClickUpdateSuccess}
+        oneClickError={oneClickError}
       />
     );
   }
@@ -78,6 +80,7 @@ const mapStateToProps = state => ({
   admins: state.Admins.get("admins"),
   oneClickUpdated: state.OneClick.get("updated"),
   oneClickUpdateSuccess: state.OneClick.get("updateSuccess"),
+  oneClickError: state.OneClick.get("error"),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -135,6 +138,9 @@ ControlPanel.propTypes = {
   reassignAdmin: PropTypes.func.isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
   changeOneClickPassword: PropTypes.func.isRequired,
+  oneClickUpdated: PropTypes.bool.isRequired,
+  oneClickUpdateSuccess: PropTypes.bool.isRequired,
+  oneClickError: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ControlPanel);

@@ -117,8 +117,8 @@ class ControlPanel extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.updated && nextProps.updateSuccess) {
-      this.setState(prev => ({}));
+    if (nextProps.oneClickUpdated && nextProps.oneClickUpdateSuccess) {
+      this.closeOneClickPasswordModal();
     }
   }
 
@@ -135,8 +135,14 @@ class ControlPanel extends React.Component {
 
       showOneClickPasswordModal,
     } = this.state;
+
     return (
       <div className="control-panel-wrapper">
+        <BannerMessage
+          showing={this.props.oneClickUpdated}
+          success={this.props.oneClickUpdateSuccess}
+          message={this.props.oneClickUpdateSuccess ? "Password updated successfully" : this.props.oneClickError}
+        />
         <h1 className="DisplayPrimary">Control Panel</h1>
         <div className="form-elem">
           <Button className="signout-action-button" color="blue" text="Sign Out" onClick={logout} />
@@ -277,7 +283,10 @@ ControlPanel.propTypes = {
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
   userEmail: PropTypes.string.isRequired,
-  changePassword: PropTypes.func.isRequired,
+  changeOneClickPassword: PropTypes.func.isRequired,
+  oneClickUpdated: PropTypes.bool.isRequired,
+  oneClickUpdateSuccess: PropTypes.bool.isRequired,
+  oneClickError: PropTypes.string.isRequired,
 };
 
 export default ControlPanel;

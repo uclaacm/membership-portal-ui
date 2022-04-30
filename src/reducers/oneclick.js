@@ -66,14 +66,14 @@ const OneClick = (state = defaultState, action) => {
       return state.withMutations(val => {
         val.set("error", null);
         val.set("updated", true);
-        val.set("updateSucess", true);
+        val.set("updateSuccess", true);
       });
 
     case RESET_ONECLICK_PASSWORD_ERROR:
       return state.withMutations(val => {
         val.set("error", action.error);
         val.set("updated", true);
-        val.set("updateSucess", false);
+        val.set("updateSuccess", false);
       });
 
     case RESET_ONECLICK_PASSWORD_DONE:

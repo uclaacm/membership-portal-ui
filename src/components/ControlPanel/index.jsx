@@ -18,6 +18,9 @@ export default class ControlPanelComponent extends React.Component {
       reassignAdmin,
       isSuperAdmin,
       changeOneClickPassword,
+      oneClickUpdated,
+      oneClickUpdateSuccess,
+      oneClickError,
     } = this.props;
     return (
       <div className="controlpanel">
@@ -34,6 +37,9 @@ export default class ControlPanelComponent extends React.Component {
           reassignAdmin={reassignAdmin}
           isSuperAdmin={isSuperAdmin}
           changeOneClickPassword={changeOneClickPassword}
+          oneClickUpdated={oneClickUpdated}
+          oneClickUpdateSuccess={oneClickUpdateSuccess}
+          oneClickError={oneClickError}
         />
       </div>
     );
@@ -51,4 +57,7 @@ ControlPanelComponent.propTypes = {
   reassignAdmin: PropTypes.func.isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
   changeOneClickPassword: PropTypes.func.isRequired,
+  oneClickUpdated: PropTypes.bool.isRequired,
+  oneClickUpdateSuccess: PropTypes.bool.isRequired,
+  oneClickError: PropTypes.string.isRequired,
 };

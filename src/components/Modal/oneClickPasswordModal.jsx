@@ -29,10 +29,17 @@ export default class OneClickPasswordModal extends React.Component {
                 name="current-password"
                 placeholder="Current password"
                 id="passwordResetOldPassword"
+                onChange={() => this.changePasswordResetMessage("")}
               />
               <br />
               <br />
-              <input type="password" name="new-password" placeholder="New password" id="passwordResetNewPassword" />
+              <input
+                type="password"
+                name="new-password"
+                placeholder="New password"
+                id="passwordResetNewPassword"
+                onChange={() => this.changePasswordResetMessage("")}
+              />
               <br />
               <br />
               <input
@@ -40,6 +47,7 @@ export default class OneClickPasswordModal extends React.Component {
                 name="new-password"
                 placeholder="Confirm new password"
                 id="passwordResetConfirmNewPassword"
+                onChange={() => this.changePasswordResetMessage("")}
               />
             </div>
 
