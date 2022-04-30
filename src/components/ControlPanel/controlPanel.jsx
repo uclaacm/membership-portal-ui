@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "components/Button";
+import BannerMessage from "components/BannerMessage";
 import EventsModal from "components/Modal/eventsModal";
 import AdminsModal from "components/Modal/adminsModal";
 import ReassignModal from "components/Modal/reassignModal";
@@ -114,6 +115,12 @@ class ControlPanel extends React.Component {
     const { changeOneClickPassword } = this.props;
     changeOneClickPassword(oldPassword, newPassword);
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.updated && nextProps.updateSuccess) {
+      this.setState(prev => ({}));
+    }
+  }
 
   render() {
     const { logout, events, admins, isSuperAdmin, userEmail } = this.props;

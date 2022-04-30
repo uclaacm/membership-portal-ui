@@ -59,12 +59,6 @@ export default class OneClickPasswordModal extends React.Component {
                       this.changePasswordResetMessage("New password does not match.");
                     } else {
                       onChange(oldPassword, newPassword);
-                      // TODO: actual status message
-                      this.changePasswordResetMessage("Successfully updated password!");
-                      document.getElementById("passwordResetOldPassword").value =
-                        document.getElementById("passwordResetNewPassword").value =
-                        document.getElementById("passwordResetConfirmNewPassword").value =
-                          "";
                     }
                   }}
                 />
