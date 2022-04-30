@@ -11,8 +11,9 @@ const RESET_ONECLICK_PASSWORD_ERROR = Symbol();
 const RESET_ONECLICK_PASSWORD_DONE = Symbol();
 
 const defaultState = Immutable.fromJS({
-  passwordChanged: false,
   error: null,
+  updated: false,
+  updateSuccess: false,
 });
 
 /***********************************************
@@ -64,19 +65,21 @@ const OneClick = (state = defaultState, action) => {
     case RESET_ONECLICK_PASSWORD_SUCCESS:
       return state.withMutations(val => {
         val.set("error", null);
-        val.set("passwordChanged", true);
+        val.set("updated", true);
+        val.set("updateSucess", true);
       });
 
     case RESET_ONECLICK_PASSWORD_ERROR:
       return state.withMutations(val => {
         val.set("error", action.error);
-        val.set("passwordChanged", true); // technically no, more like password change attempt completed
+        val.set("updated", true);
+        val.set("updateSucess", false);
       });
 
     case RESET_ONECLICK_PASSWORD_DONE:
       return state.withMutations(val => {
         val.set("error", null);
-        val.set("passwordChanged", false);
+        val.set("updated", false);
       });
 
     default:
