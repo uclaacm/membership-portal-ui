@@ -105,7 +105,7 @@ class ControlPanel extends React.Component {
     this.closeReassignAdminConfirmationModal();
   };
 
-  triggerAddAdmin = (email) => {
+  triggerAddAdmin = email => {
     const { addAdmin } = this.props;
     addAdmin(email);
   };

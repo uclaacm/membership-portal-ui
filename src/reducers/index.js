@@ -51,7 +51,7 @@ const Action = {
   AddAdmin,
   DeleteAdmin,
   ChangeSuperAdmin,
-  AddAdminDone, 
+  AddAdminDone,
   PromoteAdminDone,
   FetchAdmins,
   GetCurrentEvents,
