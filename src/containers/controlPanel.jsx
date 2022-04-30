@@ -27,6 +27,12 @@ class ControlPanel extends React.Component {
     if (!nextProps.isAdmin) {
       return nextProps.redirectHome();
     }
+
+    if (nextProps.oneClickUpdated) {
+      setTimeout(() => {
+        this.props.updateDone();
+      }, 250);
+    }
   }
 
   render() {
@@ -41,6 +47,8 @@ class ControlPanel extends React.Component {
       reassignAdmin,
       isSuperAdmin,
       changeOneClickPassword,
+      oneClickUpdated,
+      oneClickUpdateSuccess,
     } = this.props;
     return (
       <ControlPanelComponent
@@ -54,6 +62,8 @@ class ControlPanel extends React.Component {
         addAdmin={addAdmin}
         isSuperAdmin={isSuperAdmin}
         changeOneClickPassword={changeOneClickPassword}
+        oneClickUpdated={oneClickUpdated}
+        oneClickUpdateSuccess={oneClickUpdateSuccess}
       />
     );
   }
@@ -66,6 +76,8 @@ const mapStateToProps = state => ({
   isSuperAdmin: state.Auth.get("isSuperAdmin"),
   events: state.Events.get("events"),
   admins: state.Admins.get("admins"),
+  oneClickUpdated: state.OneClick.get("updated"),
+  oneClickUpdateSuccess: state.OneClick.get("updateSuccess"),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -103,6 +115,10 @@ const mapDispatchToProps = dispatch => ({
 
   changeOneClickPassword: (oldPassword, newPassword) => {
     dispatch(Action.ChangeOneClickPassword(oldPassword, newPassword));
+  },
+
+  updateDone: () => {
+    dispatch(Action.ChangeOneClickPasswordDone());
   },
 });
 
