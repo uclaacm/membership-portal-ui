@@ -9,6 +9,7 @@ import ControlPanelComponent from "components/ControlPanel";
 class ControlPanel extends React.Component {
   componentWillMount() {
     const { isAdmin, isSuperAdmin, redirectHome } = this.props;
+
     if (!isAdmin) {
       return redirectHome();
     }

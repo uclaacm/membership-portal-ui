@@ -16,11 +16,9 @@ const DELETE_ADMIN_ERROR = Symbol();
 
 const ADD_ADMIN_SUCCESS = Symbol();
 const ADD_ADMIN_ERROR = Symbol();
-const ADD_ADMIN_DONE = Symbol();
 
 const PROMOTE_ADMIN_SUCCESS = Symbol();
 const PROMOTE_ADMIN_ERROR = Symbol();
-const PROMOTE_ADMIN_DONE = Symbol();
 
 const defaultState = Immutable.fromJS({
   admins: [],
@@ -219,13 +217,6 @@ const Admins = (state = defaultState, action) => {
         val.set("adminAddSuccess", false);
       });
 
-    case ADD_ADMIN_DONE:
-      return state.withMutations(val => {
-        val.set("error", null);
-        val.set("adminAdded", false);
-        val.set("adminAddSuccess", false);
-      });
-
     case PROMOTE_ADMIN_SUCCESS:
       return state.withMutations(val => {
         val.set("error", null);
@@ -240,19 +231,9 @@ const Admins = (state = defaultState, action) => {
         val.set("adminPromoteSuccess", false);
       });
 
-    case PROMOTE_ADMIN_DONE:
-      return state.withMutations(val => {
-        val.set("error", null);
-        val.set("adminPromoted", false);
-        val.set("adminPromoteSuccess", false);
-      });
-
     default:
       return state;
   }
 };
 
-const AddAdminDone = () => ({ type: ADD_ADMIN_DONE });
-const PromoteAdminDone = () => ({ type: PROMOTE_ADMIN_DONE });
-
-export { Admins, FetchAdmins, AddAdmin, DeleteAdmin, ChangeSuperAdmin, AddAdminDone, PromoteAdminDone };
+export { Admins, FetchAdmins, AddAdmin, DeleteAdmin, ChangeSuperAdmin };
