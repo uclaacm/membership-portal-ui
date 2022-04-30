@@ -54,7 +54,7 @@ export default class AdminsModal extends React.Component {
                         {admin.accessType !== "SUPERADMIN" ? (
                           <Button color="red" text="Remove" onClick={() => onRemove(admin.email)} />
                         ) : admin.email === userEmail ? (
-                          <Button color="red" text="Reassign" onClick={() => onReassign(admin.email)} />
+                          <Button color="red" text="Reassign" onClick={() => onReassign(admins)} />
                         ) : (
                           <Button color="disabled" text="Reassign" />
                         )}

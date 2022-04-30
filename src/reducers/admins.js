@@ -255,4 +255,4 @@ const Admins = (state = defaultState, action) => {
 const AddAdminDone = () => ({ type: ADD_ADMIN_DONE });
 const PromoteAdminDone = () => ({ type: PROMOTE_ADMIN_DONE });
 
-export { Admins, AddAdminDone, PromoteAdminDone, FetchAdmins, AddAdmin, DeleteAdmin, ChangeSuperAdmin };
+export { Admins, FetchAdmins, AddAdmin, DeleteAdmin, ChangeSuperAdmin, AddAdminDone, PromoteAdminDone };

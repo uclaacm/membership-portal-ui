@@ -8,7 +8,7 @@ import ControlPanelComponent from "components/ControlPanel";
 
 class ControlPanel extends React.Component {
   componentWillMount() {
-    const { isAdmin, redirectHome } = this.props;
+    const { isAdmin, isSuperAdmin, redirectHome } = this.props;
     if (!isAdmin) {
       return redirectHome();
     }
@@ -16,7 +16,10 @@ class ControlPanel extends React.Component {
     // note: previously left out when only events were needed to be fetched for control panel
     // this led to bug where admin had to navigate to events page first to load events in control panel modal
     this.props.fetchEvents();
-    this.props.fetchAdmins();
+
+    if (isSuperAdmin) {
+      this.props.fetchAdmins();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -61,7 +64,7 @@ const mapStateToProps = state => ({
   isAdmin: state.Auth.get("isAdmin"),
   isSuperAdmin: state.Auth.get("isSuperAdmin"),
   events: state.Events.get("events"),
-  admins: state.User.get("admins"),
+  admins: state.Admins.get("admins"),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -77,7 +80,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(Action.DeleteEvent(uuid));
   },
 
-  deleteAdmin: email => {
+  removeAdmin: email => {
     dispatch(Action.DeleteAdmin(email));
   },
 

@@ -23,7 +23,6 @@ class ControlPanel extends React.Component {
       showReassignAdminConfirmationModal: false,
       removeEmail: null,
       reassignEmail: null,
-      addEmail: null,
 
       showOneClickPasswordModal: false,
     };
@@ -106,12 +105,9 @@ class ControlPanel extends React.Component {
     this.closeReassignAdminConfirmationModal();
   };
 
-  triggerAddAdmin = () => {
+  triggerAddAdmin = (email) => {
     const { addAdmin } = this.props;
-    const { addEmail } = this.state;
-    addAdmin(addEmail);
-    // this.closeAdminsModal();
-    // refetch data after any update event
+    addAdmin(email);
   };
 
   triggerChangePassword = (oldPassword, newPassword) => {
@@ -231,6 +227,7 @@ class ControlPanel extends React.Component {
               opened={showReassignModal}
               onReassign={this.openReassignAdminConfirmationModal}
               onClose={this.closeReassignModal}
+              admins={admins}
             />
 
             <ConfirmationModal

@@ -4,7 +4,7 @@ import { routerReducer, routerMiddleware } from "react-router-redux";
 import thunk from "redux-thunk";
 
 import { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity } from "./user";
-import { Admins, AddAdmin, DeleteAdmin, FetchAdmins, ChangeSuperAdmin } from "./admins";
+import { Admins, FetchAdmins, AddAdmin, DeleteAdmin, ChangeSuperAdmin, AddAdminDone, PromoteAdminDone } from "./admins";
 import { Auth, LoginUser, LogoutUser, RefreshToken } from "./auth";
 import { OneClick, ChangeOneClickPassword } from "./oneclick";
 import {
@@ -50,8 +50,10 @@ const Action = {
   FetchActivity,
   AddAdmin,
   DeleteAdmin,
-  FetchAdmins,
   ChangeSuperAdmin,
+  AddAdminDone, 
+  PromoteAdminDone,
+  FetchAdmins,
   GetCurrentEvents,
   PostNewEvent,
   UpdateEvent,
