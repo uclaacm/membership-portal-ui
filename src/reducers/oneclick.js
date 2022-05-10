@@ -1,33 +1,29 @@
 import Config from "config";
-import Storage from "storage";
 import Immutable from "immutable";
-
-import { RefreshToken } from "./auth";
+import Storage from "storage";
 
 /***********************************************
  ** Constants                                 **
  ***********************************************/
 
-const REGISTER_SUCCESS = Symbol();
-const REGISTER_ERR = Symbol();
-const REGISTER_DONE = Symbol();
+const RESET_ONECLICK_PASSWORD_SUCCESS = Symbol();
+const RESET_ONECLICK_PASSWORD_ERROR = Symbol();
+const RESET_ONECLICK_PASSWORD_DONE = Symbol();
 
 const defaultState = Immutable.fromJS({
-  user: {},
-  registered: false,
-  registerSuccess: false,
   error: null,
+  updated: false,
+  updateSuccess: false,
 });
 
 /***********************************************
- ** Registration States                       **
+ ** OneClick States                           **
  ***********************************************/
 
 class State {
-  static Register(error, user) {
+  static ChangeOneClickPassword(error) {
     return {
-      type: error ? REGISTER_ERR : REGISTER_SUCCESS,
-      user: error ? undefined : user,
+      type: error ? RESET_ONECLICK_PASSWORD_ERROR : RESET_ONECLICK_PASSWORD_SUCCESS,
       error: error || undefined,
     };
   }
@@ -37,16 +33,16 @@ class State {
  ** Actions                                   **
  ***********************************************/
 
-const RegisterUser = info => async dispatch => {
+const ChangeOneClickPassword = (oldPassword, newPassword) => async dispatch => {
   try {
-    const response = await fetch(Config.API_URL + Config.routes.auth.register, {
-      method: "POST",
+    const response = await fetch(Config.API_URL + Config.routes.auth.oneclick, {
+      method: "PATCH",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
         Authorization: `Bearer ${Storage.get("token")}`,
       },
-      body: JSON.stringify({ info }),
+      body: JSON.stringify({ oldPassword: oldPassword, newPassword: newPassword }),
     });
 
     const data = await response.json();
@@ -54,37 +50,36 @@ const RegisterUser = info => async dispatch => {
     if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
-    dispatch(State.Register(null, data.user));
-    dispatch(RefreshToken(data.token));
+    dispatch(State.ChangeOneClickPassword());
   } catch (err) {
-    dispatch(State.Register(err.message));
+    dispatch(State.ChangeOneClickPassword(err));
   }
 };
 
 /***********************************************
- ** Registration Reducer                      **
+ ** OneClick Reducer                          **
  ***********************************************/
 
-const Registration = (state = defaultState, action) => {
+const OneClick = (state = defaultState, action) => {
   switch (action.type) {
-    case REGISTER_SUCCESS:
+    case RESET_ONECLICK_PASSWORD_SUCCESS:
       return state.withMutations(val => {
-        val.set("user", action.user);
         val.set("error", null);
-        val.set("registered", true);
-        val.set("registerSuccess", true);
+        val.set("updated", true);
+        val.set("updateSuccess", true);
       });
 
-    case REGISTER_ERR:
+    case RESET_ONECLICK_PASSWORD_ERROR:
       return state.withMutations(val => {
         val.set("error", action.error);
-        val.set("registered", true);
-        val.set("registerSuccess", false);
+        val.set("updated", true);
+        val.set("updateSuccess", false);
       });
 
-    case REGISTER_DONE:
+    case RESET_ONECLICK_PASSWORD_DONE:
       return state.withMutations(val => {
-        val.set("registered", false);
+        val.set("error", null);
+        val.set("updated", false);
       });
 
     default:
@@ -92,5 +87,6 @@ const Registration = (state = defaultState, action) => {
   }
 };
 
-const registerDone = () => ({ type: REGISTER_DONE });
-export { Registration, RegisterUser, registerDone };
+const ChangeOneClickPasswordDone = () => ({ type: RESET_ONECLICK_PASSWORD_DONE });
+
+export { OneClick, ChangeOneClickPassword, ChangeOneClickPasswordDone };
