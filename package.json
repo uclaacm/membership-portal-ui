@@ -78,6 +78,7 @@
     "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.7.0",
     "babel-polyfill": "^6.23.0",
     "chart.js": "^2.7.2",
     "dompurify": "^0.9.0",

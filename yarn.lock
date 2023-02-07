@@ -667,6 +667,11 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@react-oauth/google@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@react-oauth/google/-/google-0.7.0.tgz#cc7c5694a16044b7a0a115c0d31c38e396f87c3a"
+  integrity sha512-KLLYlLYYpXf1zmcrsJPAxImvoq2b0Rs0Pi/6GYfdwjmTh66Pf6jkZ4fpO10tuJuUPWvEeqloPEC/i4BySgbYVQ==
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
@@ -7060,10 +7065,13 @@ react-dom@^16.5.2:
     prop-types "^15.6.2"
     schedule "^0.5.0"
 
-react-facebook-login@^3.6.1:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/react-facebook-login/-/react-facebook-login-3.7.2.tgz#a67b55c3ba3e72328813e7e75886af352b62b0b5"
-  integrity sha512-ueGskYVi7gL9yCxhSzZVxcYA+Pa+KytrUwuSM7JtEqGTvyrMeyRsirC4nps2zvLr9C5TsSP3x5zqMehwUh2rfQ==
+react-google-login@^5.2.1:
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/react-google-login/-/react-google-login-5.2.2.tgz#a20b46440c6c1610175ef75baf427118ff0e9859"
+  integrity sha512-JUngfvaSMcOuV0lFff7+SzJ2qviuNMQdqlsDJkUM145xkGPVIfqWXq9Ui+2Dr6jdJWH5KYdynz9+4CzKjI5u6g==
+  dependencies:
+    "@types/react" "*"
+    prop-types "^15.6.0"
 
 react-input-mask@^0.8.0:
   version "0.8.2"
