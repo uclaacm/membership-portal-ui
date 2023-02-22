@@ -1,5 +1,6 @@
 export default {
   API_URL: process.env.WEBPACK ? "http://localhost:8080/app" : "/app",
+  // API_URL: "http://ec2-54-183-212-50.us-west-1.compute.amazonaws.com:8080/app",
   CLIENT_ROOT_URL: "",
   google: {
     apiKey: process.env.GOOGLE_API_KEY,
