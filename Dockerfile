@@ -1,9 +1,6 @@
 # Need a custom image here so that we can incorporate an npm build too
 # Alpine is super light
-FROM alpine:3.8
-
-# Download and install packages
-RUN apk add -U nginx python make g++ nodejs npm yarn
+FROM node:13.12.0-alpine
 
 # Create directories
 #   /working is the build directory
@@ -14,8 +11,8 @@ RUN mkdir -p /var/www/membership/working && \
 
 # Install the required packages to build the frontend
 WORKDIR /var/www/membership/working
-COPY package.json yarn.lock /var/www/membership/working/
-RUN yarn  --pure-lockfile
+COPY package.json /var/www/membership/working/
+RUN yarn
 
 # Copy the source files
 COPY pages/ /var/www/membership/working/pages/
@@ -29,7 +26,7 @@ RUN yarn build && \
     cp -rv lib/index.html ../static/index.html
 
 # Use separate build stage to serve files. This reduces the image size drastically
-FROM alpine:3.5
+FROM alpine:3.13
 
 # add nginx
 RUN apk add -U nginx
@@ -44,3 +41,4 @@ COPY --from=0 /var/www/membership/static /var/www/membership/static
 
 # Run the server
 CMD ["nginx", "-g", "daemon off;"]
+

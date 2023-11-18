@@ -8,13 +8,19 @@
     "test": "jest --config jest.config.json",
     "build": "NODE_ENV=production webpack -p --progress --color",
     "dev": "WEBPACK=true NODE_ENV=development webpack-dev-server --cache --progress --color --display detailed --mode development",
-    "lint": "eslint --fix --color 'src/**/*.js*' 'tests/**/*.js*' && prettier --write 'src/**/*.css' 'src/**/*.scss'"
+    "lint": "eslint --fix --color 'src/**/*.js*' 'tests/**/*.js*' && prettier --write 'src/**/*.js*' 'tests/**/*.js*' 'src/**/*.css' 'src/**/*.scss'"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uclaacm/membership-portal-ui.git"
   },
   "author": "nkansal96",
+  "contributors": [
+    {
+      "name": "Dylon Tjanaka",
+      "url": "https://dtjanaka.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/uclaacm/membership-portal-ui/issues"
@@ -75,6 +81,7 @@
     "babel-polyfill": "^6.23.0",
     "chart.js": "^2.7.2",
     "dompurify": "^0.9.0",
+    "history": "^4.7.2",
     "immutable": "^3.8.1",
     "moment": "^2.18.1",
     "prop-types": "^15.6.2",
@@ -83,7 +90,7 @@
     "react-chartjs-2": "^2.7.0",
     "react-datepicker": "^1.6.0",
     "react-dom": "^16.5.2",
-    "react-facebook-login": "^3.6.1",
+    "react-google-login": "^5.2.1",
     "react-input-mask": "^0.8.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
