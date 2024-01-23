@@ -1,6 +1,6 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import NavigationTile from "./navigationTile";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import NavigationTile from './navigationTile';
 
 export default class Navigation extends React.Component {
   render() {
@@ -22,7 +22,7 @@ export default class Navigation extends React.Component {
                 <NavigationTile icon="fa-file fa-2x" text="Resources" />
               </NavLink>
             </div>
-          )
+      )
         }
         {
           /* ADMIN NAVIGATION */ this.props.isAdmin && (
@@ -34,15 +34,15 @@ export default class Navigation extends React.Component {
                 <NavigationTile icon="fa-users fa-2x" text="Members" />
               </NavLink>
               <NavLink to="/resources" activeClassName="selected">
-                {" "}
+                {' '}
                 <NavigationTile icon="fa-building-o fa-2x" text="Organization" />
               </NavLink>
               <NavLink to="/controlpanel" activeClassName="selected">
-                {" "}
+                {' '}
                 <NavigationTile icon="fa-gamepad fa-2x" text="Control Panel" />
               </NavLink>
             </div>
-          )
+      )
         }
       </div>
     );

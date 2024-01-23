@@ -1,8 +1,8 @@
-import React from "react";
-import { connect } from "react-redux";
-import { NavLink } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 
-import NavigationItem from "./navigationItem";
+import NavigationItem from './navigationItem';
 
 export default class Topbar extends React.Component {
   render() {
@@ -21,11 +21,11 @@ export default class Topbar extends React.Component {
                 <NavigationItem icon="fa-list" text="Leaderboard" />
               </NavLink>
               <NavLink to="/resources" activeClassName="selected">
-                {" "}
+                {' '}
                 <NavigationItem icon="fa-file" text="Resources" />
               </NavLink>
             </div>
-          )
+      )
         }
 
         {
@@ -38,15 +38,15 @@ export default class Topbar extends React.Component {
                 <NavigationItem icon="fa-list" text="Members" />
               </NavLink>
               <NavLink to="/resources" activeClassName="selected">
-                {" "}
+                {' '}
                 <NavigationItem icon="fa-building-o" text="Organization" />
               </NavLink>
               <NavLink to="/controlpanel" activeClassName="selected">
-                {" "}
+                {' '}
                 <NavigationItem icon="fa-gamepad fa-2x" text="Control Panel" />
               </NavLink>
             </div>
-          )
+      )
         }
       </div>
     );
