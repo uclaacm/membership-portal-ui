@@ -1,10 +1,10 @@
-import React from "react";
-import { connect } from "react-redux";
-import { replace } from "react-router-redux";
-import PropTypes from "prop-types";
+import React from 'react';
+import { connect } from 'react-redux';
+import { replace } from 'react-router-redux';
+import PropTypes from 'prop-types';
 
-import { Action } from "reducers";
-import ControlPanelComponent from "components/ControlPanel";
+import { Action } from 'reducers';
+import ControlPanelComponent from 'components/ControlPanel';
 
 class ControlPanel extends React.Component {
   componentWillMount() {
@@ -72,39 +72,39 @@ class ControlPanel extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  userEmail: state.User.get("profile").email,
-  authenticated: state.Auth.get("authenticated"),
-  isAdmin: state.Auth.get("isAdmin"),
-  isSuperAdmin: state.Auth.get("isSuperAdmin"),
-  events: state.Events.get("events"),
-  admins: state.Admins.get("admins"),
-  oneClickUpdated: state.OneClick.get("updated"),
-  oneClickUpdateSuccess: state.OneClick.get("updateSuccess"),
-  oneClickError: state.OneClick.get("error"),
+  userEmail: state.User.get('profile').email,
+  authenticated: state.Auth.get('authenticated'),
+  isAdmin: state.Auth.get('isAdmin'),
+  isSuperAdmin: state.Auth.get('isSuperAdmin'),
+  events: state.Events.get('events'),
+  admins: state.Admins.get('admins'),
+  oneClickUpdated: state.OneClick.get('updated'),
+  oneClickUpdateSuccess: state.OneClick.get('updateSuccess'),
+  oneClickError: state.OneClick.get('error'),
 });
 
 const mapDispatchToProps = dispatch => ({
   redirectHome: () => {
-    dispatch(replace("/"));
+    dispatch(replace('/'));
   },
 
   logout: () => {
     dispatch(Action.LogoutUser());
   },
 
-  deleteEvent: uuid => {
+  deleteEvent: (uuid) => {
     dispatch(Action.DeleteEvent(uuid));
   },
 
-  removeAdmin: email => {
+  removeAdmin: (email) => {
     dispatch(Action.DeleteAdmin(email));
   },
 
-  reassignAdmin: email => {
+  reassignAdmin: (email) => {
     dispatch(Action.ChangeSuperAdmin(email));
   },
 
-  addAdmin: email => {
+  addAdmin: (email) => {
     dispatch(Action.AddAdmin(email));
   },
 
