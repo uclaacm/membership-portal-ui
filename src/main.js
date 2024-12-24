@@ -1,25 +1,23 @@
-import 'main.scss';
-import 'babel-polyfill';
-import 'whatwg-fetch';
+import "main.scss";
+import "babel-polyfill";
+import "whatwg-fetch";
 
-import React from 'react';
-import { Provider, createStore } from 'react-redux';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { ConnectedRouter } from 'react-router-redux';
-import { render } from 'react-dom';
+import React from "react";
+import { Provider, createStore } from "react-redux";
+import { Route, Switch, Redirect } from "react-router-dom";
+import { ConnectedRouter } from "react-router-redux";
+import { render } from "react-dom";
 
-import { store, history } from 'reducers';
+import { store, history } from "reducers";
 
-import Events from 'containers/events';
-import Login from 'containers/login';
-import Profile from 'containers/profile';
-import Leaderboard from 'containers/leaderboard';
-import ControlPanel from 'containers/controlPanel';
-import Resources from 'containers/resources';
-import Register from 'containers/register';
-import ResetPassword from 'containers/resetPassword';
-import requireAuth from 'containers/requireAuth';
-
+import Events from "containers/events";
+import Login from "containers/login";
+import Register from "containers/register";
+import Profile from "containers/profile";
+import Leaderboard from "containers/leaderboard";
+import ControlPanel from "containers/controlPanel";
+import Resources from "containers/resources";
+import requireAuth from "containers/requireAuth";
 
 class App extends React.Component {
   render() {
@@ -29,8 +27,7 @@ class App extends React.Component {
           <div>
             <Switch>
               <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
-              <Route path="/resetpassword" component={ResetPassword} />
+              <Route path="/register" component={requireAuth(Register)} />
               <Route path="/events" component={requireAuth(Events)} />
               <Route path="/profile" component={requireAuth(Profile)} />
               <Route path="/resources" component={requireAuth(Resources)} />
@@ -45,4 +42,4 @@ class App extends React.Component {
   }
 }
 
-render(<App />, document.getElementById('mount'));
+render(<App />, document.getElementById("mount"));

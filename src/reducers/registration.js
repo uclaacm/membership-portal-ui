@@ -1,10 +1,12 @@
-import Config from 'config';
-import Immutable from 'immutable';
-import { Action } from 'reducers';
+import Config from "config";
+import Storage from "storage";
+import Immutable from "immutable";
 
-/** ********************************************
- ** Constants                                **
- ******************************************** */
+import { RefreshToken } from "./auth";
+
+/***********************************************
+ ** Constants                                 **
+ ***********************************************/
 
 const REGISTER_SUCCESS = Symbol();
 const REGISTER_ERR = Symbol();
@@ -17,9 +19,9 @@ const defaultState = Immutable.fromJS({
   error: null,
 });
 
-/** ********************************************
- ** Registration States                      **
- ******************************************** */
+/***********************************************
+ ** Registration States                       **
+ ***********************************************/
 
 class State {
   static Register(error, user) {
@@ -31,58 +33,58 @@ class State {
   }
 }
 
-/** ********************************************
- ** Actions                                  **
- ******************************************** */
+/***********************************************
+ ** Actions                                   **
+ ***********************************************/
 
-const RegisterUser = user => async (dispatch) => {
+const RegisterUser = info => async dispatch => {
   try {
     const response = await fetch(Config.API_URL + Config.routes.auth.register, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Storage.get("token")}`,
       },
-      body: JSON.stringify({ user }),
+      body: JSON.stringify({ info }),
     });
 
-    const status = await response.status;
     const data = await response.json();
 
-    if (!data) throw new Error('Empty response from server');
+    if (!data) throw new Error("Empty response from server");
     if (data.error) throw new Error(data.error.message);
 
     dispatch(State.Register(null, data.user));
-    dispatch(Action.LoginUser(user.email, user.password));
+    dispatch(RefreshToken(data.token));
   } catch (err) {
     dispatch(State.Register(err.message));
   }
 };
 
-/** ********************************************
- ** Registration Reducer                     **
- ******************************************** */
+/***********************************************
+ ** Registration Reducer                      **
+ ***********************************************/
 
 const Registration = (state = defaultState, action) => {
   switch (action.type) {
     case REGISTER_SUCCESS:
-      return state.withMutations((val) => {
-        val.set('user', action.user);
-        val.set('error', null);
-        val.set('registered', true);
-        val.set('registerSuccess', true);
+      return state.withMutations(val => {
+        val.set("user", action.user);
+        val.set("error", null);
+        val.set("registered", true);
+        val.set("registerSuccess", true);
       });
 
     case REGISTER_ERR:
-      return state.withMutations((val) => {
-        val.set('error', action.error);
-        val.set('registered', true);
-        val.set('registerSuccess', false);
+      return state.withMutations(val => {
+        val.set("error", action.error);
+        val.set("registered", true);
+        val.set("registerSuccess", false);
       });
 
     case REGISTER_DONE:
-      return state.withMutations((val) => {
-        val.set('registered', false);
+      return state.withMutations(val => {
+        val.set("registered", false);
       });
 
     default:
@@ -91,6 +93,4 @@ const Registration = (state = defaultState, action) => {
 };
 
 const registerDone = () => ({ type: REGISTER_DONE });
-export {
-  Registration, RegisterUser, registerDone,
-};
+export { Registration, RegisterUser, registerDone };
