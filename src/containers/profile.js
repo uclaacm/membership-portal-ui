@@ -15,7 +15,9 @@ class Profile extends React.Component {
   }
 
   componentWillMount() {
-    if (this.props.isAdmin) {
+    // Only redirect if admin is in admin view
+    const showAdminView = this.props.isAdmin && this.props.adminView;
+    if (showAdminView) {
       return this.props.redirectHome();
     }
     if (this.props.authenticated) {
@@ -25,7 +27,9 @@ class Profile extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.isAdmin) {
+    // Only redirect if admin is in admin view
+    const showAdminView = nextProps.isAdmin && nextProps.adminView;
+    if (showAdminView) {
       return nextProps.redirectHome();
     }
     if (nextProps.updated) {
@@ -76,6 +80,7 @@ const mapStateToProps = state => {
     updateError: state.User.get("error"),
     authenticated: state.Auth.get("authenticated"),
     isAdmin: state.Auth.get("isAdmin"),
+    adminView: state.Auth.get("adminView"),
     activityError: state.User.get("activityError"),
   };
 };
