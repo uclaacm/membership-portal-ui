@@ -1,8 +1,8 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 
-import { Action } from "reducers";
-import LeaderboardComponent from "components/Leaderboard";
+import { Action } from 'reducers';
+import LeaderboardComponent from 'components/Leaderboard';
 
 // ms to wait before allow refetching of leaderboard
 const REFRESH_INTERVAL = 30000;
@@ -26,10 +26,10 @@ class Leaderboard extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  leaderboard: state.Leaderboard.get("leaderboard"),
-  fetchTime: state.Leaderboard.get("fetchTime"),
-  authenticated: state.Auth.get("authenticated"),
-  user: state.User.get("profile"),
+  leaderboard: state.Leaderboard.get('leaderboard'),
+  fetchTime: state.Leaderboard.get('fetchTime'),
+  authenticated: state.Auth.get('authenticated'),
+  user: state.User.get('profile'),
 });
 
 const mapDispatchToProps = dispatch => ({
