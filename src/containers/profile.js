@@ -50,6 +50,8 @@ class Profile extends React.Component {
         logout={this.props.logout}
         activity={this.props.activity}
         activityError={this.props.activityError}
+        adminView={this.props.adminView}
+        toggleAdminView={this.props.toggleAdminView}
       />
     );
   }
@@ -103,6 +105,9 @@ const mapDispatchToProps = dispatch => ({
   },
   fetchActivity: () => {
     dispatch(Action.FetchActivity());
+  },
+  toggleAdminView: () => {
+    dispatch(Action.ToggleAdminView());
   },
 });
 
