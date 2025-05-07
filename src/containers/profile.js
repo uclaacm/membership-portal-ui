@@ -52,6 +52,7 @@ class Profile extends React.Component {
         activityError={this.props.activityError}
         adminView={this.props.adminView}
         toggleAdminView={this.props.toggleAdminView}
+        isAdmin={this.props.isAdmin}
       />
     );
   }

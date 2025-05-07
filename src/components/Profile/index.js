@@ -21,6 +21,7 @@ export default class ProfileComponent extends React.Component {
           logout={this.props.logout}
           adminView={this.props.adminView}
           toggleAdminView={this.props.toggleAdminView}
+          isAdmin={this.props.isAdmin}
         />
       </div>
     );
