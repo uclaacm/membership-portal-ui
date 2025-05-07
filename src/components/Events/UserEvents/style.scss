@@ -249,12 +249,6 @@
   align-self: flex-start;
 }
 
-/* Responsive layout */
-@media (max-width: 1024px) {
-  .event-card {
-    width: calc(50% - 20px); /* 2 cards per row */
-  }
-}
 
 @media (max-width: 600px) {
   .event-grid {
