@@ -258,7 +258,7 @@
 }
 
 @media (max-width: 600px) {
-  .event-card {
-    width: 100%; /* 1 card per row */
+  .event-grid {
+    justify-content: center;
   }
 }
