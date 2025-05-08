@@ -11,6 +11,7 @@ import { replace } from 'react-router-redux';
 const AUTH_USER = Symbol();
 const UNAUTH_USER = Symbol();
 const AUTH_ERROR = Symbol();
+const TOGGLE_ADMIN_VIEW = Symbol();
 
 const initState = () => {
   const token = Storage.get('token');
@@ -21,6 +22,7 @@ const initState = () => {
     isAdmin: !!token && tokenIsAdmin(token),
     isSuperAdmin: !!token && tokenIsSuperAdmin(token),
     isRegistered: !!token && tokenIsRegistered(token),
+    adminView: true,
   });
 };
 
@@ -106,28 +108,34 @@ const RefreshToken = token => async (dispatch) => {
   dispatch(State.Auth(null, token));
 };
 
-/** *********************************************
+const ToggleAdminView = () => ({
+  type: TOGGLE_ADMIN_VIEW,
+});
+
+/***********************************************
  ** Auth Reducer                              **
  ********************************************** */
 
 const Auth = (state = initState(), action) => {
   switch (action.type) {
     case AUTH_USER:
-      return state.withMutations((val) => {
-        val.set('error', null);
-        val.set('timestamp', Date.now());
-        val.set('authenticated', true);
-        val.set('isRegistered', action.isRegistered);
-        val.set('isAdmin', action.isAdmin);
-        val.set('isSuperAdmin', action.isSuperAdmin);
+      return state.withMutations(val => {
+        val.set("error", null);
+        val.set("timestamp", Date.now());
+        val.set("authenticated", true);
+        val.set("isRegistered", action.isRegistered);
+        val.set("isAdmin", action.isAdmin);
+        val.set("isSuperAdmin", action.isSuperAdmin);
+        val.set("adminView", true);
       });
 
     case UNAUTH_USER:
-      return state.withMutations((val) => {
-        val.set('authenticated', false);
-        val.set('isRegistered', false);
-        val.set('isAdmin', false);
-        val.set('isSuperAdmin', false);
+      return state.withMutations(val => {
+        val.set("authenticated", false);
+        val.set("isRegistered", false);
+        val.set("isAdmin", false);
+        val.set("isSuperAdmin", false);
+        val.set("adminView", true);
       });
 
     case AUTH_ERROR:
@@ -136,11 +144,12 @@ const Auth = (state = initState(), action) => {
         val.set('timestamp', Date.now());
       });
 
+    case TOGGLE_ADMIN_VIEW:
+      return state.update("adminView", adminView => !adminView);
+
     default:
       return state;
   }
 };
 
-export {
-  Auth, LoginUser, LogoutUser, RefreshToken,
-};
+export { Auth, LoginUser, LogoutUser, RefreshToken, ToggleAdminView };

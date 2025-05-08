@@ -16,6 +16,7 @@ class SidebarContainer extends React.Component {
       <Sidebar
         isAdmin={this.props.isAdmin}
         isSuperAdmin={this.props.isSuperAdmin}
+        adminView={this.props.adminView}
         picture={this.props.picture}
         username={this.props.username}
         points={this.props.points}
@@ -34,8 +35,9 @@ const mapStateToProps = (state) => {
       picture: profile.picture,
       username: `${profile.firstName} ${profile.lastName}`,
       points: profile.points,
-      isAdmin: state.Auth.get('isAdmin'),
-      isSuperAdmin: state.Auth.get('isSuperAdmin'),
+      isAdmin: state.Auth.get("isAdmin"),
+      isSuperAdmin: state.Auth.get("isSuperAdmin"),
+      adminView: state.Auth.get("adminView"),
     };
   }
   return {

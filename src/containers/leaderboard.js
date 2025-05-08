@@ -21,15 +21,24 @@ class Leaderboard extends React.Component {
   }
 
   render() {
-    return <LeaderboardComponent leaderboard={this.props.leaderboard} user={this.props.user} />;
+    const showAdminView = this.props.isAdmin && this.props.adminView;
+    return (
+      <LeaderboardComponent 
+        leaderboard={this.props.leaderboard} 
+        user={this.props.user} 
+        isAdmin={showAdminView}
+      />
+    );
   }
 }
 
 const mapStateToProps = state => ({
-  leaderboard: state.Leaderboard.get('leaderboard'),
-  fetchTime: state.Leaderboard.get('fetchTime'),
-  authenticated: state.Auth.get('authenticated'),
-  user: state.User.get('profile'),
+  leaderboard: state.Leaderboard.get("leaderboard"),
+  fetchTime: state.Leaderboard.get("fetchTime"),
+  authenticated: state.Auth.get("authenticated"),
+  isAdmin: state.Auth.get("isAdmin"),
+  adminView: state.Auth.get("adminView"),
+  user: state.User.get("profile"),
 });
 
 const mapDispatchToProps = dispatch => ({
