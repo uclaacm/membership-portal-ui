@@ -1,15 +1,23 @@
-import React from "react";
+import React from 'react';
 
-import Button from "components/Button/index";
-import OverlayPopup from "components/OverlayPopup";
+import Button from 'components/Button/index';
+import OverlayPopup from 'components/OverlayPopup';
 
 import EarlierEventsIcon from "components/Events/earlierEventsIcon";
 import EventDay from "./eventDay";
+import EventFilterBar from "../EventFilterBar";
+
 
 export default class UserEvents extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showCheckIn: false, showEarlierEvents: false };
+    this.state = { 
+      showCheckIn: false, 
+      showEarlierEvents: false,
+      searchQuery: "",
+      committee: "All Committees",
+      timeRange: "All Time"
+    };
     this.showCheckIn = this.showCheckIn.bind(this);
     this.hideCheckIn = this.hideCheckIn.bind(this);
     this.submitCheckIn = this.submitCheckIn.bind(this);
@@ -19,6 +27,9 @@ export default class UserEvents extends React.Component {
     this.renderCheckInFailure = this.renderCheckInFailure.bind(this);
     this.resetCheckIn = this.resetCheckIn.bind(this);
     this.tryAgain = this.tryAgain.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleCommitteeChange = this.handleCommitteeChange.bind(this);
+    this.handleTimeRangeChange = this.handleTimeRangeChange.bind(this);
   }
 
   showCheckIn(e) {
@@ -54,6 +65,21 @@ export default class UserEvents extends React.Component {
   submitCheckIn(e) {
     e.preventDefault();
     this.props.checkIn(this.refs.attendanceCode.value);
+  }
+
+  handleSearchChange(searchQuery) {
+    this.setState({ searchQuery });
+    //connect to backend
+  }
+  
+  handleCommitteeChange(committee) {
+    this.setState({ committee });
+    //connect to backend
+  }
+  
+  handleTimeRangeChange(timeRange) {
+    this.setState({ timeRange });
+    //connect to backend
   }
 
   renderAttendanceForm() {
@@ -95,7 +121,11 @@ export default class UserEvents extends React.Component {
         <h2>
           Awesome! You got
           <br />
-          <span className="points">{this.props.checkInPoints} points</span>
+          <span className="points">
+            {this.props.checkInPoints}
+            {' '}
+            points
+          </span>
           <br />
           for checking in.
         </h2>
@@ -118,17 +148,21 @@ export default class UserEvents extends React.Component {
   }
 
   render() {
-    if (this.props.error)
+    if (this.props.error) {
       return (
         <div className="events-dashboard user-dashboard">
           <h1>{this.props.error}</h1>
         </div>
       );
+    }
+
+    // Sample data for committees and time ranges
+    const committees = ["AI", "Cyber", "Design", "Hack", "ICPC", "Studio", "TeachLA", "W"];
+    const timeRanges = ["Today", "This Week", "This Month", "This Quarter", "This Year"];
 
     const days = [];
     for (const event of this.props.events) {
-      if (days.length === 0 || event.startDate.date() !== days[days.length - 1].date.date())
-        days.push({ date: event.startDate, events: [event] });
+      if (days.length === 0 || event.startDate.date() !== days[days.length - 1].date.date()) days.push({ date: event.startDate, events: [event] });
       else days[days.length - 1].events.push(event);
     }
 
@@ -142,11 +176,26 @@ export default class UserEvents extends React.Component {
         {this.renderAttendanceForm()}
         {this.renderCheckInSuccess()}
         {this.renderCheckInFailure()}
+        
+        <div style={{ padding: "0 20px" }}>
+          <h1 style={{ marginBottom: "20px" }}>Events</h1>
+          
+          <div style={{ marginBottom: "24px" }}>
+            <EventFilterBar
+              committees={committees}
+              timeRanges={timeRanges}
+              onSearchChange={this.handleSearchChange}
+              onCommitteeChange={this.handleCommitteeChange}
+              onTimeRangeChange={this.handleTimeRangeChange}
+            />
+          </div>
+        </div>
+        
         {!this.state.showEarlierEvents && <EarlierEventsIcon onClick={this.showEarlierEvents} />}
-        {this.state.showEarlierEvents &&
-          pastDays.map((day, i) => <EventDay day={day} key={day.date.toString()} admin={false} />)}
+        {this.state.showEarlierEvents
+          && pastDays.map((day, i) => <EventDay day={day} key={day.date.toString()} admin={false} />)}
         <Button
-          className={`checkin-button${this.state.showCheckIn ? " hidden" : ""}`}
+          className={`checkin-button${this.state.showCheckIn ? ' hidden' : ''}`}
           style="blue collapsible"
           icon="fa-calendar-check-o"
           text="Check In"

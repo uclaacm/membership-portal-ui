@@ -1,5 +1,5 @@
-import React from "react";
-import Event from "./event";
+import React from 'react';
+import EventCard from './eventCard';
 
 export default class EventDay extends React.Component {
   render() {
@@ -9,7 +9,7 @@ export default class EventDay extends React.Component {
         {/*New div wrapper*/}
         <div className="event-grid">
           {this.props.day.events.map((event, i) => (
-            <Event event={event} key={event.uuid} />
+            <EventCard event={event} key={event.uuid} />
           ))}
         </div>
       </div>

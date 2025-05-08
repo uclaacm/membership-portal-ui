@@ -1,11 +1,11 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 
-import { Action } from "reducers";
-import Topbar from "containers/topbar";
-import Sidebar from "containers/sidebar";
-import UserEvents from "components/Events/UserEvents";
-import AdminEvents from "components/Events/AdminEvents";
+import { Action } from 'reducers';
+import Topbar from 'containers/topbar';
+import Sidebar from 'containers/sidebar';
+import UserEvents from 'components/Events/UserEvents';
+import AdminEvents from 'components/Events/AdminEvents';
 
 class Events extends React.Component {
   componentWillMount() {
@@ -24,11 +24,14 @@ class Events extends React.Component {
   }
 
   render() {
+    // Only show admin view if user is admin AND adminView is true
+    const showAdminView = this.props.isAdmin && this.props.adminView;
+    
     return (
       <div>
         <Topbar />
         <Sidebar />
-        {!this.props.isAdmin ? (
+        {!showAdminView ? (
           <UserEvents
             events={this.props.events}
             checkIn={this.props.checkIn}
@@ -66,6 +69,7 @@ const mapStateToProps = state => ({
   eventUpdateSuccess: state.Events.get("updateSuccess"),
   authenticated: state.Auth.get("authenticated"),
   isAdmin: state.Auth.get("isAdmin"),
+  adminView: state.Auth.get("adminView"),
   checkInSubmitted: state.CheckIn.get("submitted"),
   checkInPoints: state.CheckIn.get("numPoints"),
   checkInSuccess: state.CheckIn.get("success"),
@@ -77,7 +81,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(Action.GetCurrentEvents());
   },
 
-  checkIn: id => {
+  checkIn: (id) => {
     dispatch(Action.CheckInto(id));
   },
 
@@ -85,11 +89,11 @@ const mapDispatchToProps = dispatch => ({
     dispatch(Action.ResetCheckIn());
   },
 
-  addEvent: event => {
+  addEvent: (event) => {
     dispatch(Action.PostNewEvent(event));
   },
 
-  updateEvent: event => {
+  updateEvent: (event) => {
     dispatch(Action.UpdateEvent(event));
   },
 
