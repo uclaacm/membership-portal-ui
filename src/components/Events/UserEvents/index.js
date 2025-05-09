@@ -210,7 +210,7 @@ export default class UserEvents extends React.Component {
 
     const days = [];
     for (const event of filteredEvents) {
-      if (days.length === 0 || event.startDate.date() !== days[days.length - 1].date.date()) {
+      if (days.length === 0 || !event.startDate.isSame(days[days.length - 1].date, 'day')) {
         days.push({ date: event.startDate, events: [event] });
       } else {
         days[days.length - 1].events.push(event);
