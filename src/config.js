@@ -319,4 +319,14 @@ export default {
     'Undeclared Social Sciences',
     'World Arts and Cultures',
   ],
+  committees: [
+    'AI',
+    'Cyber',
+    'Design',
+    'Hack',
+    'ICPC',
+    'Studio',
+    'TeachLA',
+    'W'
+  ]
 };
