@@ -83,6 +83,8 @@ export default class AdminAddEvent extends React.Component {
   }
 
   render() {
+    const committeeColorMap = Object.fromEntries(Config.committeeColors);
+
     return (
       <div className={`add-event-overlay${this.props.showing ? ' showing' : ''}`} onClick={this.props.onClickCancel}>
         <div className="event-sidebar" onClick={e => e.stopPropagation()}>
@@ -117,8 +119,9 @@ export default class AdminAddEvent extends React.Component {
                   name="committee" 
                   onChange={this.handleChange}
                   className="committee-select"
+                  style={{ color: committeeColorMap[this.state.event.committee] }}
                 >
-                  <option value="">ACM</option>
+                  <option value="ACM">ACM</option>
                   {Config.committees.map((committee, index) => (
                     <option key={index} value={committee}>
                       {committee}
