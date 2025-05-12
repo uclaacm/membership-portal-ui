@@ -1,8 +1,8 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 
-import { Action } from "reducers";
-import Sidebar from "components/Sidebar";
+import { Action } from 'reducers';
+import Sidebar from 'components/Sidebar';
 
 class SidebarContainer extends React.Component {
   componentWillMount() {
@@ -16,6 +16,7 @@ class SidebarContainer extends React.Component {
       <Sidebar
         isAdmin={this.props.isAdmin}
         isSuperAdmin={this.props.isSuperAdmin}
+        adminView={this.props.adminView}
         picture={this.props.picture}
         username={this.props.username}
         points={this.props.points}
@@ -25,9 +26,9 @@ class SidebarContainer extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
-  if (state.User.get("fetchSuccess")) {
-    const profile = state.User.get("profile");
+const mapStateToProps = (state) => {
+  if (state.User.get('fetchSuccess')) {
+    const profile = state.User.get('profile');
     return {
       fetchSuccess: true,
       authenticated: true,
@@ -36,11 +37,12 @@ const mapStateToProps = state => {
       points: profile.points,
       isAdmin: state.Auth.get("isAdmin"),
       isSuperAdmin: state.Auth.get("isSuperAdmin"),
+      adminView: state.Auth.get("adminView"),
     };
   }
   return {
     fetchSuccess: false,
-    authenticated: state.Auth.get("authenticated"),
+    authenticated: state.Auth.get('authenticated'),
   };
 };
 
