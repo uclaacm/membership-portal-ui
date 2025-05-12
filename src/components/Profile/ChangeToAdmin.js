@@ -6,6 +6,7 @@ import './ChangeToAdmin.scss';
 const ChangeToAdmin = () => {
   const [showModal, setShowModal] = useState(false);
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
   const handlePromoteClick = () => {
@@ -13,27 +14,53 @@ const ChangeToAdmin = () => {
     setMessage('');
   };
 
-  const handleSubmit = () => {
-    if (password === 'your-secure-admin-password') {
-      setMessage('Account promoted to admin! Sign out and sign back in to see the changes.');
-    } else {
-      setMessage('❌ Incorrect password. Try again.');
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/app/api/v1/admin/promote', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(`✅ ${data.message}`);
+      } else {
+        setMessage(`❌ ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error in POST request:", error);
+      setMessage('❌ An unknown error occurred.');
+    } finally {
+      setPassword('');
     }
-    setPassword('');
   };
 
   return (
     <div>
-      <Button onClick={handlePromoteClick} 
-      className="control-panel-action-button" 
-      color="blue" 
-      text="Change to Admin"
+      <Button
+        onClick={handlePromoteClick}
+        className="control-panel-action-button"
+        color="blue"
+        text="Change to Admin"
       />
 
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Enter Admin Password</h2>
+            <h2>Enter Admin Credentials</h2>
+            <input
+              type="text"
+              placeholder="User Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             <input
               type="password"
               placeholder="Admin Password"
