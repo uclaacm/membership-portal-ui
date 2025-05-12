@@ -48,7 +48,7 @@ const ChangeToAdmin = () => {
         onClick={handlePromoteClick}
         className="control-panel-action-button"
         color="blue"
-        text="Change to Admin"
+        text="Add Admin Accounts"
       />
 
       {showModal && (
