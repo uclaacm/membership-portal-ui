@@ -5,7 +5,7 @@ import { Action } from 'reducers';
 import Topbar from 'components/Topbar';
 
 class TopbarContainer extends React.Component {
-  componentWillMount() {
+  componentDidMount() {
     if (this.props.authenticated) {
       this.props.fetchUser();
     }
@@ -13,7 +13,7 @@ class TopbarContainer extends React.Component {
 
   render() {
     const showAdminView = this.props.isAdmin && this.props.adminView;
-    return this.props.fetchSuccess ? <Topbar isAdmin={showAdminView} /> : null;
+    return <Topbar isAdmin={showAdminView} />;
   }
 }
 
