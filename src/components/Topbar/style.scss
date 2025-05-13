@@ -7,22 +7,18 @@
   top: 0px; //originally -80px
   left: 0;
   z-index: 9;
-  background: vars.$primaryblue;
-  color: vars.$white;
+  background: vars.$gray1;
+  color: vars.$gray2;
   transition: top 0.125s ease-in-out;
-
-  @media (max-width: 700px) {
-    top: 0px;
-  }
+  padding: 10px;
 
   .topbar-container {
-    text-align: center;
+    text-align: left;
     width: 100%;
   }
 
   a.selected .navigation-item {
     color: vars.$secondaryblue;
-    background-color: vars.$white;
   }
 
   .navigation-item {
@@ -31,15 +27,14 @@
     line-height: 30px;
     margin: 5px 4px;
     padding: 0px 10px;
-    font-size: 0.8em;
+    //font-size: 0.8em;
+    font-size: 20px;
     font-weight: 400;
-    border-radius: 20px;
-    color: white;
+    color: vars.$gray3;
     transition: 0.125s ease-in-out;
 
     &:hover {
       color: vars.$secondaryblue;
-      background-color: vars.$white;
       cursor: pointer;
     }
   }
