@@ -12,23 +12,22 @@
 }
 
 .banner {
-  height: 100%;
-  overflow: hidden;
   position: relative;
+  height: 100vh;    // make sure the banner fills the screen
+  overflow: hidden;
   width: 100%;
 
-  &.decorative {
-    height: 150px;
-  }
-
   .square-col-container {
-    display: flex;
-    position: relative;
-    flex-direction: row;
-    justify-content: center;
-    overflow: hidden;
     position: absolute;
-    width: 106%;
+    top: 50%;                  // middle of the banner
+    left: 0;                   // stick to left edge (or use right:0 if you prefer)
+    width: 106%;               // keep your overflow-trick if you like
+    transform: translateY(-50%); // pull it up by half its own height
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;   // still center columns horizontally
+    overflow: hidden;
   }
 
   .square-col {
@@ -59,6 +58,8 @@
   .square.white {
     background-color: transparent !important;
   }
+
+  
 
   &.hack .square {
     background-color: vars.$hack-purple;

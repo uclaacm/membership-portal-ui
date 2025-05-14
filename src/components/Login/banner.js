@@ -8,24 +8,24 @@ const mapUpToSum = (num, fn) => {
   return res;
 };
 
-// Generate columns of squares with specific class patterns
-const generateCols = (n, m, classPattern = [''], randomize = false) => {
+// Helper function to generate a mask around the title area
+const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false) => {
   return mapUpToSum(n, (i) => (
     <div className="square-col" key={i}>
       {mapUpToSum(m, (j) => {
         const classNames = ['square'];
-        const name = classPattern[j % classPattern.length];
-        if (name !== '') {
-          classNames.push(classPattern[j % classPattern.length]);
-        } else {
-          // note: this Math.random() is the source of [Warning: Prop `className` did not match. Server: x Client: y]
-          // https://stackoverflow.com/questions/69866771/nextjs-prop-style-did-not-match
-          if (randomize) {
-            const r = Math.random();
-            if (r < 0.08) classNames.push('white');
-            else if (r < 0.4) classNames.push('light');
-          }
+        
+        // Check if the square is within the masked area
+        const isMasked = Math.abs(centerX - i) <= maskRadius && Math.abs(centerY - j) <= maskRadius;
+        
+        if (isMasked) {
+          classNames.push('white');
+        } else if (randomize) {
+          const r = Math.random();
+          if (r < 0.08) classNames.push('white');
+          else if (r < 0.4) classNames.push('light');
         }
+
         return <div className={classNames.join(' ')} key={j} />;
       })}
     </div>
@@ -64,17 +64,21 @@ const Banner = (props) => {
     return () => {
       clearInterval(timer); // Cleanup on unmount
     };
-  }, [color, props.decorative]); // Re-run when color or decorative props change
+  }, [color, props.decorative]);
 
   const decorative = props.decorative || false;
   const sideCols = props.sideCols || (decorative ? 12 : 27);
   const height = props.height || (decorative ? 2 : 27);
   const width = props.width || 5;
+  
+  // Calculate the center for the mask
+  const centerX = Math.floor(sideCols / 2);
+  const centerY = Math.floor(height / 2);
 
   return (
     <div className={`banner ${decorative ? 'decorative' : ''}`}>
       <div className="square-col-container">
-        {generateCols(sideCols, height, undefined, randomize)}
+        {generateCols(sideCols, height, centerX, centerY, 2, randomize)}
       </div>
       {!decorative && (
         <div className="title">
