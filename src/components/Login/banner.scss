@@ -17,6 +17,11 @@
   overflow: hidden;
   width: 100%;
 
+  &.decorative {
+    height: 175px;
+    
+  }
+
   .square-col-container {
     position: absolute;
     top: 50%;                  // middle of the banner
@@ -36,6 +41,15 @@
     padding: 0 5px;
     transform: rotate(45deg);
     width: 50px;
+
+    @media (max-width: 500px) {
+      margin: -100px 10px;
+    }
+
+    @media (max-height: 800px) {
+      margin: -175px 10px;
+      
+    }
   }
 
   .square {
@@ -178,35 +192,35 @@
     }
   }
 
-//   &.hack .title h1 {
-//     color: vars.$hack-purple;
-//   }
+  &.hack .title h1 {
+    color: vars.$hack-purple;
+  }
 
-//   &.ai .title h1 {
-//     color: vars.$ai-arctic;
-//   }
+  &.ai .title h1 {
+    color: vars.$ai-arctic;
+  }
 
-//   &.w .title h1 {
-//     color: vars.$w-teal;
-//   }
+  &.w .title h1 {
+    color: vars.$w-teal;
+  }
 
-//   &.cyber .title h1 {
-//     color: vars.$cyber-amber;
-//   }
+  &.cyber .title h1 {
+    color: vars.$cyber-amber;
+  }
 
-//   &.studio .title h1 {
-//     color: vars.$studio-raspberry;
-//   }
+  &.studio .title h1 {
+    color: vars.$studio-raspberry;
+  }
 
-//   &.icpc .title h1 {
-//     color: vars.$icpc-tangerine;
-//   }
+  &.icpc .title h1 {
+    color: vars.$icpc-tangerine;
+  }
 
-//   &.design .title h1 {
-//     color: vars.$design-orange;
-//   }
+  &.design .title h1 {
+    color: vars.$design-orange;
+  }
 
-//   &.teachla .title h1 {
-//     color: vars.$teachla-green;
-//   }
+  &.teachla .title h1 {
+    color: vars.$teachla-green;
+  }
 }

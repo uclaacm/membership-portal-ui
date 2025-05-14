@@ -4,7 +4,7 @@ import Config from 'config';
 import Button from 'components/Button';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import Logo from './logo';
-
+import Banner from './banner';
 export default class LoginSidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -31,6 +31,9 @@ export default class LoginSidebar extends React.Component {
     return (
       <GoogleOAuthProvider clientId={Config.google.clientId}>
         <div className="login-sidebar">
+          <div className='banner-container'>
+            <Banner decorative={true} />
+          </div>
           <div className="login-container">
             <Logo pic={'/assets/images/acm_wordmark_chapter.svg'} />
             <h1 className="login-title">Member Login</h1>
@@ -48,7 +51,11 @@ export default class LoginSidebar extends React.Component {
               />
             </div>
 
-            <a className="back-btn" href='https://acm.cs.ucla.edu/'>Back to ACM website</a>
+            <a className="back-btn" href='https://acm.cs.ucla.edu/'>Back to ACM website
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+            <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/>
+            </svg>
+            </a>
 
             {err ? (
               <span>
