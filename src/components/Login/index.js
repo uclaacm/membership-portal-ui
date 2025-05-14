@@ -1,6 +1,7 @@
 import React from 'react';
 import Config from 'config';
 import LoginSidebar from './loginSidebar';
+import Banner from './banner';
 
 export default class LoginComponent extends React.Component {
   render() {
@@ -8,10 +9,7 @@ export default class LoginComponent extends React.Component {
       <div className="login">
         <LoginSidebar onsubmit={this.props.onsubmit} />
         <div className="login-tile">
-          <div
-            className="login-tile-inner"
-            style={{ backgroundImage: `url(${Config.organization.loginTileBackground})` }}
-          />
+          <Banner decorative={false} />
         </div>
       </div>
     );
