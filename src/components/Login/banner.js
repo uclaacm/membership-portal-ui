@@ -16,8 +16,20 @@ const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false)
         const classNames = ['square'];
         
         // Check if the square is within the masked area
-        const isMasked = Math.abs(centerX - i) <= maskRadius && Math.abs(centerY - j) <= maskRadius;
-        
+        const diamondMask = new Set([
+          '-3,-1','-3,0',
+          '-2,-1','-2,0','-2,1',
+          '-1,-1','-1,0','-1,1',            // 3 squares one column left
+          '0,-1','0,0','0,1',   // 5 squares in the center column
+          '1,-1','1,0','1,1',
+          '2,0','2,1',                // 3 squares one column right
+        ]);
+
+        // …inside your generateCols:
+        const dx = i - centerX;
+        const dy = j - centerY;
+        const isMasked = diamondMask.has(`${dx},${dy}`);
+
         if (isMasked) {
           classNames.push('white');
         } else if (randomize) {
@@ -55,16 +67,23 @@ const Banner = (props) => {
     }
 
     const el = document.querySelector('.banner');
-    timer = setInterval(() => {
-      el.classList.remove(committees[color]);
-      setColor((prevColor) => (prevColor + 1) % committees.length);
-      el.classList.add(committees[color]);
+    const id = setInterval(() => {
+      setColor((prev) => {
+        // remove the old class
+        el.classList.remove(committees[prev]);
+
+        // compute next, wrapping back to 0 when you hit the end
+        const next = (prev + 1) % committees.length;
+
+        // add the new class
+        el.classList.add(committees[next]);
+
+        return next;
+      });
     }, 4000);
 
-    return () => {
-      clearInterval(timer); // Cleanup on unmount
-    };
-  }, [color, props.decorative]);
+    return () => clearInterval(id);
+  }, [props.decorative]);
 
   const decorative = props.decorative || false;
   const sideCols = props.sideCols || (decorative ? 12 : 27);
