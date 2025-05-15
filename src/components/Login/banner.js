@@ -96,9 +96,17 @@ const Banner = (props) => {
   
   // Configure banner properties based on decorative flag
   const decorative = props.decorative || false;
-  const sideCols = props.sideCols || (decorative ? 12 : (window.innerHeight > window.innerWidth * 0.6 ? Math.floor(window.innerWidth * 0.03) : Math.floor(window.innerWidth * 0.0165)));
-  const height = props.height || (decorative ? 2 : (window.innerHeight> window.innerWidth * 0.6 ? Math.floor(hypotenuse / 42) : Math.floor(hypotenuse / 54)));
+  let sideCols = props.sideCols || (decorative ? 12 : (window.innerHeight > window.innerWidth * 0.6 ? Math.floor(window.innerWidth * 0.03) : Math.floor(window.innerWidth * 0.0165)));
+  let height = props.height || (decorative ? 2 : (window.innerHeight> window.innerWidth * 0.6 ? Math.floor(hypotenuse / 42) : Math.floor(hypotenuse / 54)));
   const width = props.width || 5;
+
+  // Make dimensions odd
+  if (height % 2 === 0) {
+    height += 1;
+  }
+  if (sideCols % 2 === 0) {
+    sideCols += 1;
+}
 
   // Calculate the center for the mask
   const centerX = Math.floor(sideCols / 2);
