@@ -91,13 +91,15 @@ const Banner = (props) => {
     // Clean up interval on unmount
     return () => clearInterval(id);
   }, [props.decorative]);
-
+  // Get dimensions of login-tile element if it exists
+  const hypotenuse = Math.sqrt(0.6 * window.innerWidth * 0.6 * window.innerWidth + window.innerHeight * window.innerHeight);
+  
   // Configure banner properties based on decorative flag
   const decorative = props.decorative || false;
-  const sideCols = props.sideCols || (decorative ? 12 : 27);
-  const height = props.height || (decorative ? 2 : 27);
+  const sideCols = props.sideCols || (decorative ? 12 : (window.innerHeight > window.innerWidth * 0.6 ? Math.floor(window.innerWidth * 0.03) : Math.floor(window.innerWidth * 0.0165)));
+  const height = props.height || (decorative ? 2 : (window.innerHeight> window.innerWidth * 0.6 ? Math.floor(hypotenuse / 42) : Math.floor(hypotenuse / 54)));
   const width = props.width || 5;
-  
+
   // Calculate the center for the mask
   const centerX = Math.floor(sideCols / 2);
   const centerY = Math.floor(height / 2);
