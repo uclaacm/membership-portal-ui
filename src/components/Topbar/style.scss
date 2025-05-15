@@ -2,23 +2,38 @@
 
 .topbar {
   position: fixed;
-  height: 40px;
+  height: 61px;
   width: 100%;
-  top: 0px; //originally -80px
+  top: 0px;
   left: 0;
   z-index: 9;
-  background: vars.$gray1;
   color: vars.$gray2;
+  background-color: white;
   transition: top 0.125s ease-in-out;
-  padding: 10px;
+  padding: 0px 24px;
+  border-bottom: 1px solid black;
 
   .topbar-container {
     text-align: left;
+    display: flex;
+    align-items: center;
     width: 100%;
   }
 
+  .topbar-logo {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 15px;
+
+    img {
+      height: 61px;
+      width: 61px;
+      vertical-align: middle;
+    }
+  }
+
   a.selected .navigation-item {
-    color: vars.$secondaryblue;
+    color: vars.$black;
   }
 
   .navigation-item {
@@ -27,10 +42,9 @@
     line-height: 30px;
     margin: 5px 4px;
     padding: 0px 10px;
-    //font-size: 0.8em;
-    font-size: 20px;
+    font-size: 1.3em;
     font-weight: 400;
-    color: vars.$gray3;
+    color: #A4A4A4;
     transition: 0.125s ease-in-out;
 
     &:hover {

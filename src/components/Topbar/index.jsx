@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import NavigationItem from './navigationItem';
+import Config from 'config';
 
 export default class Topbar extends React.Component {
   render() {
@@ -12,6 +13,12 @@ export default class Topbar extends React.Component {
         {
           /* USER NAVIGATION */ !isAdmin && (
             <div className="topbar-container">
+              <div className="topbar-logo">
+                <img src={Config.organization.logo} alt={Config.organization.name} />
+              </div>
+              <NavLink to="/home" activeClassName="selected">
+                <NavigationItem icon="fa-user" text="Home" />
+              </NavLink>
               <NavLink to="/events" activeClassName="selected">
                 <NavigationItem icon="fa-calendar" text="Events" />
               </NavLink>
@@ -32,6 +39,12 @@ export default class Topbar extends React.Component {
         {
           /* ADMIN NAVIGATION */ isAdmin && (
             <div className="topbar-container">
+              <div className="topbar-logo">
+                <img src={Config.organization.logo} alt={Config.organization.name} />
+              </div>
+              <NavLink to="/home" activeClassName="selected">
+                <NavigationItem icon="fa-user" text="Home" />
+              </NavLink>
               <NavLink to="/events" activeClassName="selected">
                 <NavigationItem icon="fa-calendar" text="Events" />
               </NavLink>
