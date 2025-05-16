@@ -11,7 +11,7 @@
   background-color: white;
   transition: top 0.125s ease-in-out;
   padding: 0px 24px;
-  border-bottom: 1px solid black;
+  box-shadow: 1px 1px 8px #888888;
 
   .topbar-container {
     text-align: left;
@@ -53,5 +53,25 @@
       color: vars.$secondaryblue;
       cursor: pointer;
     }
+  }
+}
+
+.topbar-profile {
+  margin-left: auto;
+  margin-right: 50px;
+  display: flex;
+  align-items: center;
+
+  img {
+    height: 38px;
+    width: 38px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: border 0.2s ease-in-out;
+    object-fit: cover;
+  }
+
+  &:hover img {
+    border-color: vars.$secondaryblue;
   }
 }

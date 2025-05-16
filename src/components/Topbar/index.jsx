@@ -7,6 +7,7 @@ import Config from 'config';
 export default class Topbar extends React.Component {
   render() {
     const { isAdmin } = this.props;
+    
 
     return (
       <div className="topbar">
@@ -22,15 +23,15 @@ export default class Topbar extends React.Component {
               <NavLink to="/events" activeClassName="selected">
                 <NavigationItem icon="fa-calendar" text="Events" />
               </NavLink>
-              <NavLink to="/profile" activeClassName="selected">
-                <NavigationItem icon="fa-user" text="Profile" />
-              </NavLink>
               <NavLink to="/leaderboard" activeClassName="selected">
                 <NavigationItem icon="fa-list" text="Leaderboard" />
               </NavLink>
               <NavLink to="/resources" activeClassName="selected">
                 {' '}
                 <NavigationItem icon="fa-file" text="Resources" />
+              </NavLink>
+              <NavLink to="/profile" className="topbar-profile" activeClassName="selected">
+                <img src="/assets/images/unknown.png" alt="Profile" />
               </NavLink>
             </div>
       )
