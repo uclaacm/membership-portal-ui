@@ -11,18 +11,18 @@ const NeuralBackground = () => {
     canvas.width = width;
     canvas.height = height;
 
-    const nodes = [];
-    const nodeCount = 60;
-    const maxLineLength = 200;
-    const speed = 0.5;
+    const lines = [];
+    const lineCount = 80;
+    const speed = 2;
 
-    // Initialize nodes
-    for (let i = 0; i < nodeCount; i++) {
-      nodes.push({
+    // Initialize lines
+    for (let i = 0; i < lineCount; i++) {
+      lines.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * speed,
-        vy: (Math.random() - 0.5) * speed,
+        length: Math.random() * 100 + 50,
+        speed: Math.random() * speed + 1,
+        glowBallChance: Math.random() < 0.3,  // 30% chance of glow ball
       });
     }
 
@@ -30,35 +30,30 @@ const NeuralBackground = () => {
       ctx.fillStyle = '#1a1f2b'; // Navy dark grey background
       ctx.fillRect(0, 0, width, height);
 
-      nodes.forEach((node, i) => {
-        node.x += node.vx;
-        node.y += node.vy;
+      lines.forEach(line => {
+        line.y += line.speed;
+        if (line.y - line.length > height) {
+          line.y = -line.length;
+          line.x = Math.random() * width;
+        }
 
-        // Bounce off edges
-        if (node.x < 0 || node.x > width) node.vx *= -1;
-        if (node.y < 0 || node.y > height) node.vy *= -1;
-
-        // Draw node
+        // Draw line
+        ctx.strokeStyle = 'rgba(0, 255, 255, 0.8)';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(node.x, node.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
+        ctx.moveTo(line.x, line.y - line.length);
+        ctx.lineTo(line.x, line.y);
+        ctx.stroke();
 
-        // Connect to nearby nodes
-        for (let j = i + 1; j < nodeCount; j++) {
-          const otherNode = nodes[j];
-          const dx = otherNode.x - node.x;
-          const dy = otherNode.y - node.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < maxLineLength) {
-            ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / maxLineLength})`;
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            ctx.moveTo(node.x, node.y);
-            ctx.lineTo(otherNode.x, otherNode.y);
-            ctx.stroke();
-          }
+        // Draw glowing ball at the end occasionally
+        if (line.glowBallChance && line.y > 0) {
+          ctx.beginPath();
+          ctx.arc(line.x, line.y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
+          ctx.shadowColor = 'rgba(0, 255, 255, 0.5)';
+          ctx.shadowBlur = 15;
+          ctx.fill();
+          ctx.shadowBlur = 0;
         }
       });
 
