@@ -2,6 +2,7 @@ import React from 'react';
 import Config from 'config';
 import LoginSidebar from './loginSidebar';
 import Banner from './banner';
+import NeuralBackground from './NeuralBackground';
 
 export default class LoginComponent extends React.Component {
   componentDidMount() {
@@ -13,6 +14,7 @@ export default class LoginComponent extends React.Component {
   render() {
     return (
       <div className="login">
+        <NeuralBackground />
         <LoginSidebar onsubmit={this.props.onsubmit} />
         <div className="login-tile">
           <Banner decorative={false} />
