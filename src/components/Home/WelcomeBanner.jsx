@@ -21,7 +21,7 @@ const WelcomeBanner = () => (
       </div>
       <div className="profile-name-placeholder">
           <p className="chapter">ACM chapter at UCLA</p>
-          <h2 className="name">Alex Zheng</h2>
+          <h1 className="name">Alex Zheng</h1>
       </div>
     </div>
   </div>
