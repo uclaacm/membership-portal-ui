@@ -32,7 +32,7 @@ export default class Topbar extends React.Component {
   render() {
     const { isAdmin } = this.props;
     const { menuOpen } = this.state;
-
+    console.log(this.props)
     const sharedLinks = (
       <>
         <NavLink to="/events" activeClassName="selected">
@@ -83,7 +83,7 @@ export default class Topbar extends React.Component {
           {/* Profile Icon (Desktop only) */}
           {!isAdmin && (
             <NavLink to="/profile" className="topbar-profile desktop-only" activeClassName="selected">
-              <img src="/assets/images/unknown.png" alt="Profile" />
+              <img src={this.props.picture ? this.props.picture : "/assets/images/unknown.png"} alt="Profile" />
             </NavLink> 
           )}
         </div>
