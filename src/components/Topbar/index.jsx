@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import NavigationItem from './navigationItem';
 import Config from 'config';
+import './style.scss';
 
 export default class Topbar extends React.Component {
   constructor(props) {
@@ -76,8 +77,8 @@ export default class Topbar extends React.Component {
           </div>
 
           {/* Hamburger Button (Mobile only) */}
-          <div className="hamburger" onClick={this.toggleMenu}>
-            <i className="fa fa-bars" />
+          <div className={`hamburger ${menuOpen ? 'open' : ''}`} onClick={this.toggleMenu}>
+            <i className={`fa ${menuOpen ? 'fa-times' : 'fa-bars'}`} />
           </div>
 
           {/* Profile Icon (Desktop only) */}

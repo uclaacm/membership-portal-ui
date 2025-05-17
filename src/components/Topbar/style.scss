@@ -10,7 +10,6 @@
   color: vars.$gray2;
   background-color: white;
   transition: top 0.125s ease-in-out;
-  padding: 0px 24px;
   box-shadow: 1px 1px 8px #888888;
 
   .topbar-container {
@@ -25,7 +24,7 @@
   .topbar-logo {
     display: inline-block;
     vertical-align: middle;
-    margin-right: 15px;
+    margin-left: 24px;
 
     img {
       height: 54px;
@@ -90,6 +89,18 @@
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 8;
+    animation: slideDown 0.3s ease-out forwards;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -99,7 +110,16 @@
   cursor: pointer;
   padding: 8px;
   margin-left: auto;
-  margin-right: 40px; 
+  margin-right: 40px;
+  transition: transform 0.3s ease;
+  
+  i {
+    transition: all 0.3s ease;
+  }
+  
+  &.open i {
+    transform: rotate(90deg);
+  }
 }
 
   .topbar-profile-mobile {
@@ -115,9 +135,13 @@
   @media (max-width: 768px) {
     .topbar-links {
       display: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
 
       &.open {
         display: flex;
+        max-height: 500px; // Adjust as needed based on content
       }
     }
 
