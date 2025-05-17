@@ -54,7 +54,7 @@ export default class Topbar extends React.Component {
       <div className="topbar">
         <div className="topbar-container">
           <div className="topbar-logo">
-            <img src={Config.organization.logo} alt={Config.organization.name} />
+            <img src="/assets/images/new_acm_wordmark_chapter.png" alt={Config.organization.name} />
           </div>
 
           <div className={`topbar-links ${menuOpen ? 'open' : ''}`}>

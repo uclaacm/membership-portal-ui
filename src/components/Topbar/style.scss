@@ -28,8 +28,8 @@
     margin-right: 15px;
 
     img {
-      height: 50px;
-      width: 50px;
+      height: 54px;
+      width: 139px;
       vertical-align: middle;
     }
   }
@@ -113,6 +113,9 @@
 
   // Responsive styling
   @media (max-width: 768px) {
+    .topbar {
+      padding: 0px 0px;
+    }
     .topbar-links {
       display: none;
 
