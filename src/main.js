@@ -10,6 +10,7 @@ import { render } from 'react-dom';
 
 import { store, history } from 'reducers';
 
+import Home from 'containers/home';
 import Events from 'containers/events';
 import Login from 'containers/login';
 import Register from 'containers/register';
@@ -28,6 +29,7 @@ class App extends React.Component {
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/register" component={requireAuth(Register)} />
+              <Route path="/home" component={requireAuth(Home)} />
               <Route path="/events" component={requireAuth(Events)} />
               <Route path="/profile" component={requireAuth(Profile)} />
               <Route path="/resources" component={requireAuth(Resources)} />

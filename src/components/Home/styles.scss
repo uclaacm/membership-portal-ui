@@ -1,0 +1,226 @@
+/* Only inside the Home Dashboard do we do border-box */
+.home-dashboard,
+.home-dashboard * ,
+.home-dashboard *::before,
+.home-dashboard *::after {
+  box-sizing: border-box;
+}
+
+/* Apply Poppins to all text on the page */
+.home-dashboard,
+.home-dashboard * {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Remove top margins from headings */
+.home-dashboard h2,
+.home-dashboard h3 {
+  margin-top: 0;
+}
+
+/* Main Container */
+.home-dashboard {
+  display: grid;
+  grid-template-columns: 1fr 2.7fr;           /* 1:4 sidebar-to-main ratio */
+  gap: 2rem;
+  padding: 2rem;
+  margin: 61px auto 0;                     /* offset beneath fixed Topbar */
+  height: calc(100vh - 61px);              /* fill remaining vertical space */
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+
+/* Sidebar */
+.sidebar-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;                            /* fill vertical space */
+}
+
+/* Common box style for sidebar sections */
+.sidebar-box {
+  background-color: #fbfbfb;
+  border: 1px solid #ccc;                  /* thin grey border */
+  border-radius: 18pt;                     /* 18pt rounded corners */
+  box-shadow: -2px 3px rgba(0,0,0,0.1);     /* offset shadow */
+  padding: 1.5rem;
+}
+
+/* Fixed-height Event Check-In */
+.sidebar-custom .event-checkin {
+  flex: 0 0 120px;                         /* fixed 120px height */
+}
+
+/* Fixed-height Progress */
+.sidebar-custom .progress {
+  flex: 0 0 160px;                         /* fixed 160px height */
+}
+
+/* Expanding Leaderboard */
+.sidebar-custom .leaderboard {
+  flex: 1 1 auto;                          /* take remaining space */
+  overflow-y: auto;                        /* scroll if content overflows */
+}
+
+/* Event Check-In Button */
+.event-checkin button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+/* Progress Bar */
+.progress-bar {
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 12px;
+  margin-bottom: 0.5rem;
+}
+.progress-fill {
+  background-color: #888;
+  height: 100%;
+  width: 40%;
+}
+
+/* Leaderboard List */
+.leaderboard ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.leaderboard li {
+  background-color: #007bff;
+  color: #fbfbfb;
+  padding: 0.5rem 1rem;
+  border-radius: 18px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Main Section */
+.main-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  height: 100%;                            /* fill vertical space */
+}
+
+/* Expanding Welcome Banner */
+.main-section .welcome-banner {
+  flex: 1 1 auto;                          /* take remaining space */
+  overflow-y: auto;                        /* scroll if needed */
+}
+
+/* Fixed-height Featured Events */
+.main-section .featured-events {
+  flex: 0 0 300px;                         /* fixed 300px height */
+  overflow-y: auto;                        /* scroll if needed */
+}
+
+/* Welcome Banner Styling */
+.welcome-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: #1e2a38;
+  color: #fff;
+  padding: 2rem;
+  border: 1px solid #ccc;
+  border-radius: 18pt;
+  box-shadow: -2px 3px rgba(0,0,0,0.1);
+}
+
+.profile-picture {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  background-color: #fff;
+  border-radius: 50%;
+}
+.branding {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.badge {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Featured Events Container */
+.featured-events {
+  background-color: #fff;
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 18pt;
+  box-shadow: -2px 3px rgba(0,0,0,0.1);
+}
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+/* Event Cards */
+.event-card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+.event-card:hover {
+  transform: translateY(-4px);
+}
+.cover {
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  background-color: #007bff;
+}
+.event-details {
+  padding: 1rem;
+}
+.event-details h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+.event-details p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-family: 'Arial', sans-serif;
+
+}
+
+/* Mobile: stack everything */
+@media (max-width: 768px) {
+  .home-dashboard {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    margin-top: 61px;
+    height: auto;                          /* allow natural height on mobile */
+  }
+  .sidebar-custom {
+    width: 100%;
+    height: auto;
+  }
+  .events-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -16,7 +16,7 @@ export default class Topbar extends React.Component {
               <div className="topbar-logo">
                 <img src={Config.organization.logo} alt={Config.organization.name} />
               </div>
-              <NavLink to="/events" activeClassName="selected">
+              <NavLink to="/home" activeClassName="selected">
                 <NavigationItem icon="fa-user" text="Home" />
               </NavLink>
               <NavLink to="/events" activeClassName="selected">
@@ -42,7 +42,7 @@ export default class Topbar extends React.Component {
               <div className="topbar-logo">
                 <img src={Config.organization.logo} alt={Config.organization.name} />
               </div>
-              <NavLink to="/events" activeClassName="selected">
+              <NavLink to="/home" activeClassName="selected">
                 <NavigationItem icon="fa-user" text="Home" />
               </NavLink>
               <NavLink to="/events" activeClassName="selected">
