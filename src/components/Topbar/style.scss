@@ -18,7 +18,8 @@
     display: flex;
     align-items: center;
     width: 100%;
-    height: 100%; 
+    height: 100%;
+    position: relative; 
   }
 
   .topbar-logo {
@@ -32,11 +33,6 @@
       vertical-align: middle;
     }
   }
-
-  a.selected .navigation-item {
-    color: vars.$black;
-  }
-
 
   .navigation-item {
     display: inline-block;
@@ -54,24 +50,97 @@
       cursor: pointer;
     }
   }
-}
 
-.topbar-profile {
-  margin-left: auto;
-  margin-right: 50px;
-  display: flex;
+  a.selected .navigation-item {
+    color: vars.$black;
+  }
+
+  .topbar-profile {
+    margin-left: auto;
+    margin-right: 50px;
+    display: flex;
+    align-items: center;
+
+    img {
+      height: 38px;
+      width: 38px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      transition: border 0.2s ease-in-out;
+      object-fit: cover;
+    }
+
+    &:hover img {
+      border-color: vars.$secondaryblue;
+    }
+  }
+  
+
+  .topbar-links {
+  display: flex; 
+  flex-grow: 1;
   align-items: center;
 
-  img {
-    height: 38px;
-    width: 38px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    transition: border 0.2s ease-in-out;
-    object-fit: cover;
-  }
-
-  &:hover img {
-    border-color: vars.$secondaryblue;
+  &.open {
+    flex-direction: column;
+    position: absolute;
+    top: 61px;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 8;
   }
 }
+
+  .hamburger {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: auto;
+  margin-right: 40px; 
+}
+
+  .topbar-profile-mobile {
+    display: none;
+    color: #A4A4A4;
+
+    &:hover {
+      color: vars.$secondaryblue;
+    }
+  } 
+
+  // Responsive styling
+  @media (max-width: 768px) {
+    .topbar-links {
+      display: none;
+
+      &.open {
+        display: flex;
+      }
+    }
+
+    .hamburger {
+      display: block;
+    }
+
+    .topbar-profile {
+      display: none;
+    }
+
+    .topbar-profile-mobile {
+      display: flex;
+      align-items: center;
+      color: #A4A4A4;
+      font-size: 1em;
+      font-weight: 400;
+      text-align: center;
+
+      &:hover {
+        color: vars.$secondaryblue;
+        cursor: pointer;
+      }
+    }
+  }
+} 
