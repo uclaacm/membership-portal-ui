@@ -19,6 +19,7 @@ const WelcomeBanner = ({
     ? 'Admin'
     : username;
   
+  //high res image
   const highRes = displayPicture.replace(/=s96-c$/, '=s400-c');
 
 
