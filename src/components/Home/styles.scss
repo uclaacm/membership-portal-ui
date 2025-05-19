@@ -142,12 +142,13 @@
 }
 
 .profile-picture {
-  flex-shrink: 0;
-  width: 150px;
-  height: 150px;
-  background-color: #fff;
+  width: 250px;          /* increased size */
+  height: 250px;
+  background-color: #ffffff33; /* translucent placeholder */
+  border: 2px solid #fff;
   border-radius: 50%;
 }
+
 .branding {
   display: flex;
   align-items: center;
