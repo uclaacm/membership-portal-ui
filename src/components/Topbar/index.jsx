@@ -36,7 +36,7 @@ export default class Topbar extends React.Component {
     console.log(this.props)
     const sharedLinks = (
       <>
-        <NavLink to="/events" activeClassName="selected">
+        <NavLink to="/home" activeClassName="selected">
           <NavigationItem icon="fa-user" text="Home" />
         </NavLink>
         <NavLink to="/events" activeClassName="selected">
