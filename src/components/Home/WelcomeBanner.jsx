@@ -22,7 +22,11 @@ const WelcomeBanner = ({
       : username;
 
   // high res image
-  const highRes = displayPicture.replace(/=s96-c$/, '=s400-c');
+// Option 2: check before calling
+  let highRes = Config.organization.logo;
+  if (typeof displayPicture === 'string') {
+    highRes = displayPicture.replace(/=s96-c$/, '=s400-c');
+  }
 
 
   return (
