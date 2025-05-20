@@ -32,7 +32,6 @@ const Home = ({ events,
             />
             <button type="submit">✔</button>
           </form>
-          <br />
           { checkInError && (
             <span className="CaptionSecondary error">❌ {checkInError}</span>
           )}
