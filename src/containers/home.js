@@ -29,7 +29,8 @@ class Home extends React.Component {
       isSuperAdmin,
       adminView,
       picture,
-      username
+      username,
+      points
     } = this.props;
 
     return (
@@ -46,6 +47,7 @@ class Home extends React.Component {
           checkInPoints={this.props.checkInPoints}
           checkInSuccess={this.props.checkInSuccess}
           checkInError={this.props.checkInError}
+          points={points}
         />
       </div>
     );
@@ -72,6 +74,7 @@ const mapStateToProps = state => {
     checkInPoints: state.CheckIn.get("numPoints"),
     checkInSuccess: state.CheckIn.get("success"),
     checkInError: state.CheckIn.get("error"),
+    points: profile.points,
   };
 };
 

@@ -1,3 +1,5 @@
+@use "styles/vars";
+
 /* Only inside the Home Dashboard do we do border-box */
 .home-dashboard,
 .home-dashboard * ,
@@ -38,6 +40,10 @@
   flex-direction: column;
   gap: 1.5rem;
   height: 100%;                            /* fill vertical space */
+
+  h3{
+    margin-bottom: 0.5rem;
+  }
 }
 
 /* Common box style for sidebar sections */
@@ -52,7 +58,7 @@
 
 /* Fixed-height Event Check-In */
 .sidebar-custom .event-checkin {
-  flex: 0 0 120px;                         /* fixed 120px height */
+  flex: 0 0;
   position: relative;
 
   form {
@@ -79,7 +85,34 @@
 
 /* Fixed-height Progress */
 .sidebar-custom .progress {
-  flex: 0 0 160px;                         /* fixed 160px height */
+  flex: 0 0;
+
+  .points-bar {
+    width: 100%;
+    height: 8px;
+    margin: 4px 0px;
+    position: relative;
+    border-radius: 4px;
+    background: vars.$tertiary-color;
+  }
+
+  .level-font {
+    font-size: 20px;
+  }
+
+  .points-earned {
+    background: vars.$white;
+    border-radius: 4px;
+    position: absolute;
+    display: inline-block;
+    height: 100%;
+    left: 0;
+  }
+
+  .num-points {
+    display: block;
+    float: right;
+  }
 }
 
 /* Expanding Leaderboard */
@@ -185,6 +218,7 @@
   border-radius: 18pt;
   box-shadow: -2px 3px rgba(0,0,0,0.1);
 }
+
 .events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px,1fr));

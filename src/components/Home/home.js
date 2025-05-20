@@ -1,5 +1,7 @@
 import React from 'react';
 import WelcomeBanner from 'components/Home/WelcomeBanner';
+import Points from './points';
+
 import './styles.scss';
 
 const Home = ({ events,
@@ -12,6 +14,7 @@ const Home = ({ events,
   checkInPoints,
   checkInSuccess,
   checkInError,
+  points,
 }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,11 +53,7 @@ const Home = ({ events,
 
       <div className="sidebar-box progress">
         <h3>Your Progress</h3>
-        <div className="progress-bar">
-          <div className="progress-fill" style={{ width: '40%' }}></div>
-        </div>
-        <p>Level 1: [LEVEL] <span>0/100</span></p>
-        <small>Earn [XX] more points to level up!</small>
+        <Points points={points} />
       </div>
 
       <div className="sidebar-box leaderboard">
