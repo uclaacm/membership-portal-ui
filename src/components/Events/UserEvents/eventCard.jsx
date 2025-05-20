@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from 'react-redux';
 import { Action } from '../../../reducers';
 import styles from './styles.scss';
+import moment from "moment";
 
 /* 
       attendancePoints: "",
@@ -72,7 +73,6 @@ class EventCard extends React.Component {
     render() {
         const { event } = this.props;
         const { isRsvped, loading } = this.state;
-
         return (
             <>
                 <div className="event-container">
@@ -86,6 +86,7 @@ class EventCard extends React.Component {
                         <p className="text">{event.startDate?.format("MMMM D, YYYY")}, {event.startDate?.format("h:mm a")}&mdash;{event.endDate?.format("h:mm a")}</p>
                         <p className="text">{event.location}</p>
                         <p className="text">{event.committee}</p>
+                    
                         <div 
                             className={`pill-shape rsvp ${isRsvped ? 'rsvped' : ''} ${loading ? 'loading' : ''}`}
                             onClick={this.handleRSVP}
