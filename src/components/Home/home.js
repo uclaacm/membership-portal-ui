@@ -2,21 +2,44 @@ import React from 'react';
 import WelcomeBanner from 'components/Home/WelcomeBanner';
 import './styles.scss';
 
-const Home = ({
-  events,
+const Home = ({ events,
   isAdmin,
   isSuperAdmin,
   adminView,
   picture,
   username,
-}) => (
-  <div className="home-dashboard">
-    <aside className="sidebar-custom">
-      <div className="sidebar-box event-checkin">
-        <h3>Event Check-In</h3>
-        <input type="text" placeholder="Enter check-in code" />
-        <button>✔</button>
-      </div>
+  checkIn,
+  checkInPoints,
+  checkInSuccess,
+  checkInError,
+}) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    checkIn(e.target.attendanceCode.value);
+  };
+
+  return (
+    <div className="home-dashboard">
+      {/* Sidebar */}
+      <aside className="sidebar-custom">
+        <div className="sidebar-box event-checkin">
+          <h3>Event Check-In</h3>
+          <form onSubmit={handleSubmit}>
+            <input 
+              type="text" 
+              name="attendanceCode"
+              placeholder="Enter Check-In Code" 
+            />
+            <button type="submit">✔</button>
+          </form>
+          <br />
+          { checkInError && (
+            <span className="CaptionSecondary error">❌ {checkInError}</span>
+          )}
+          { checkInSuccess && (
+            <span className="CaptionSecondary success">✅ {checkInPoints} points awarded!</span>
+          )}
+        </div>
 
       <div className="sidebar-box progress">
         <h3>Your Progress</h3>
@@ -56,6 +79,7 @@ const Home = ({
       </div>
     </main>
   </div>
-);
+)
+}
 
 export default Home;

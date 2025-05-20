@@ -42,6 +42,10 @@ class Home extends React.Component {
           adminView={adminView}
           picture={picture}
           username={username}
+          checkIn={this.props.checkIn}
+          checkInPoints={this.props.checkInPoints}
+          checkInSuccess={this.props.checkInSuccess}
+          checkInError={this.props.checkInError}
         />
       </div>
     );
