@@ -83,6 +83,18 @@
     left: 2.5rem;
     color: black;
   }
+
+  /* Event Check-In Button */
+  button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    font-size: 2rem;
+    cursor: pointer;
+  }
 }
 
 /* Fixed-height Progress */
@@ -138,18 +150,6 @@
 .sidebar-custom .leaderboard {
   flex: 1 1 auto;                          /* take remaining space */
   overflow-y: auto;                        /* scroll if content overflows */
-}
-
-/* Event Check-In Button */
-.event-checkin button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.2rem;
-  cursor: pointer;
 }
 
 /* Progress Bar */
