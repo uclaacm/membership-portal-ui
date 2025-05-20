@@ -1,7 +1,7 @@
 import React from 'react';
 import WelcomeBanner from 'components/Home/WelcomeBanner';
 import './styles.scss';
-import FeaturedEvents from '../../../../../../../components/Home/featuredEvents';
+import FeaturedEvents from './featuredEvents';
 import EventCard from '../Events/UserEvents/eventCard';
 
 const Home = () => {
