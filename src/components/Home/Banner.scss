@@ -62,6 +62,8 @@
 }
 
 .chapter {
+  text-align: center;
+  font-size: 1.2rem;
   opacity: 0.8;
 }
 
@@ -101,5 +103,40 @@
 
   .name {
     font-size: 1.5rem;
+  }
+}
+
+// Mobile View
+@media (max-width: 768px) {
+  .welcome-text {
+    h1 {
+      font-size: 1.2rem;
+    }
+
+    .footer {
+      .subheading {
+        font-size: .7rem;
+      }
+
+      .branding-badge {
+        width: 150px;
+        height: auto;
+      }
+    }
+  }
+
+
+
+  .profile-picture {
+  width: 125px;
+  height: 125px;
+  }
+
+  .chapter {
+  font-size: .7rem;
+  }
+
+  .name {
+    font-size: 1.2rem;
   }
 }

@@ -6,23 +6,28 @@ const NeuralBackground = ({ className = '' }) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.parentNode.clientWidth;
-    const height = canvas.parentNode.clientHeight;
+    const parent = canvas.parentNode;
+    const width = parent.clientWidth;
+    const height = parent.clientHeight;
     canvas.width = width;
     canvas.height = height;
+    const ctx = canvas.getContext('2d');
 
-    const lines = [];
-    const lineCount = 80;
-    const speed = 0.4;
+    // detect small screens
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    // use fewer lines & slower speed on mobile
+    const lineCount = isMobile ? 40 : 80;
+    const baseSpeed = isMobile ? 0.2 : 0.4;
     const fadeOutDuration = 150;
 
+    const lines = [];
     for (let i = 0; i < lineCount; i++) {
       lines.push({
         x: Math.random() * width,
         y: -Math.random() * height,
         length: Math.random() * height * 1.5,
-        speed: Math.random() * speed + 0.2,
+        speed: Math.random() * baseSpeed + (baseSpeed / 2),
         fading: false,
         fadeProgress: 0,
         glowBallActive: false,
@@ -47,7 +52,7 @@ const NeuralBackground = ({ className = '' }) => {
             line.x = Math.random() * width;
             line.fading = false;
             line.fadeProgress = 0;
-            line.speed = Math.random() * speed + 0.2;
+            line.speed = Math.random() * baseSpeed + (baseSpeed / 2);
             line.glowBallActive = false;
           }
         } else {
@@ -83,7 +88,13 @@ const NeuralBackground = ({ className = '' }) => {
     return () => cancelAnimationFrame(rafId);
   }, []);
 
-  return <canvas ref={canvasRef} className={className} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={className}
+      style={{ position: 'absolute', top: 0, left: 0 }}
+    />
+  );
 };
 
 export default NeuralBackground;
