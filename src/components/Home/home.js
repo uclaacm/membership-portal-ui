@@ -6,7 +6,8 @@ import './styles.scss';
 import FeaturedEvents from './featuredEvents';
 import EventCard from '../Events/UserEvents/eventCard';
 
-const Home = ({ events,
+const Home = ({
+  events,
   isAdmin,
   isSuperAdmin,
   adminView,
@@ -51,33 +52,48 @@ const Home = ({ events,
           <button>✔</button>
         </div>
 
-      <div className="sidebar-box progress">
-        <h3>Your Progress</h3>
-        <Points points={points} />
-      </div>
+        <div className="sidebar-box progress">
+          <h3>Your Progress</h3>
+          <Points points={points} />
+        </div>
 
-      <div className="sidebar-box leaderboard">
-        <h3>Leaderboard</h3>
-        <ul>
-          <li>Alex Zheng <span>Pts</span></li>
-          <li>Smalex <span>Pts</span></li>
-          <li>Alex is the best <span>Pts</span></li>
-          <li>Too much time on this <span>Pts</span></li>
-          <li>RAHHHHHHHH <span>Pts</span></li>
-        </ul>
-      </div>
-    </aside>
+        <div className="sidebar-box leaderboard">
+          <h3>Leaderboard</h3>
+          <ul>
+            <li>
+              Alex Zheng
+              <span>Pts</span>
+            </li>
+            <li>
+              Smalex
+              <span>Pts</span>
+            </li>
+            <li>
+              Alex is the best
+              <span>Pts</span>
+            </li>
+            <li>
+              Too much time on this
+              <span>Pts</span>
+            </li>
+            <li>
+              RAHHHHHHHH
+              <span>Pts</span>
+            </li>
+          </ul>
+        </div>
+      </aside>
 
-        {/* Main Section */}
-        <main className="main-section">
-          <WelcomeBanner />
+      {/* Main Section */}
+      <main className="main-section">
+        <WelcomeBanner />
 
-          <div>
-            <FeaturedEvents title="Featured Events" events={eventArray} />
-          </div>
+        <div>
+          <FeaturedEvents title="Featured Events" events={eventArray} />
+        </div>
 
-        </main>
-      </div>
+      </main>
+    </div>
   );
 };
 

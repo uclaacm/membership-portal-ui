@@ -18,10 +18,10 @@ const WelcomeBanner = ({
   const displayName = isSuperAdmin && showAdminView
     ? 'Super Admin'
     : showAdminView
-    ? 'Admin'
-    : username;
-  
-  //high res image
+      ? 'Admin'
+      : username;
+
+  // high res image
   const highRes = displayPicture.replace(/=s96-c$/, '=s400-c');
 
 
