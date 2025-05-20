@@ -1,3 +1,6 @@
+// DEPRECATED: This file is deprecated and will be removed in the future. The new landing page sidebar is now located in 
+// src/components/home/home.js.
+
 import React from 'react';
 import { connect } from 'react-redux';
 
