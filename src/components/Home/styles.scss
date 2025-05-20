@@ -208,13 +208,13 @@
 
 /* Expanding Welcome Banner */
 .main-section .welcome-banner {
-  flex: 0 0 auto; /* take remaining space */
+  flex: 1 1 auto; /* take remaining space */
   overflow-y: auto; /* scroll if needed */
 }
 
 /* Fixed-height Featured Events */
 .main-section .featured-events {
-  flex: 1 1 300px;
+  flex: 0 0 400px;
   min-width: 0;
 }
 
@@ -247,10 +247,10 @@
 
 /* Featured Events */
 .featured-events {
-  box-sizing: border-box;
-  border: 1px solid black;
-  border-radius: 5px;
-  max-height: 380px;
+  border: 1px solid #ccc;
+  border-radius: 18px;
+  padding: 1rem;
+  max-height: 400px;
   overflow-y: auto;
 }
 
@@ -258,8 +258,7 @@
   font-size: 1.5em;
   font-weight: 700;
   width: 100%;
-  margin: 1.5rem 1.5rem 1rem 1.5rem;
-  //margin-bottom: 1rem;
+  margin-bottom: .5rem;
 }
 .events-container {
   display: grid;

@@ -114,10 +114,7 @@ const Home = ({
       {/* Main Section */}
       <main className="main-section">
         <WelcomeBanner />
-
-        <div>
-          <FeaturedEvents title="Featured Events" events={eventArray} />
-        </div>
+        <FeaturedEvents title="Featured Events" events={eventArray} />
 
       </main>
     </div>
