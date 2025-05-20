@@ -35,7 +35,7 @@ class App extends React.Component {
               <Route path="/resources" component={requireAuth(Resources)} />
               <Route path="/leaderboard" component={requireAuth(Leaderboard)} />
               <Route path="/controlpanel" component={requireAuth(ControlPanel)} />
-              <Redirect to="/events" />
+              <Redirect to="/home" />
             </Switch>
           </div>
         </ConnectedRouter>
