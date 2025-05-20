@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { Action } from 'reducers';
 import Topbar from 'containers/topbar';
-//import Sidebar from 'containers/sidebar';
+// import Sidebar from 'containers/sidebar';
 
 import HomeComponent from 'components/Home/home';
 
@@ -28,30 +28,26 @@ class Home extends React.Component {
       <div>
         <Topbar />
         {/* <Sidebar /> */}
-        {(
-          <HomeComponent
-
-          />
-        )}
+        <HomeComponent />
       </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  events: state.Events.get("events"),
-  error: state.Events.get("error"),
-  eventCreated: state.Events.get("posted"),
-  eventCreateSuccess: state.Events.get("postSuccess"),
-  eventUpdated: state.Events.get("updated"),
-  eventUpdateSuccess: state.Events.get("updateSuccess"),
-  authenticated: state.Auth.get("authenticated"),
-  isAdmin: state.Auth.get("isAdmin"),
-  adminView: state.Auth.get("adminView"),
-  checkInSubmitted: state.CheckIn.get("submitted"),
-  checkInPoints: state.CheckIn.get("numPoints"),
-  checkInSuccess: state.CheckIn.get("success"),
-  checkInError: state.CheckIn.get("error"),
+  events: state.Events.get('events'),
+  error: state.Events.get('error'),
+  eventCreated: state.Events.get('posted'),
+  eventCreateSuccess: state.Events.get('postSuccess'),
+  eventUpdated: state.Events.get('updated'),
+  eventUpdateSuccess: state.Events.get('updateSuccess'),
+  authenticated: state.Auth.get('authenticated'),
+  isAdmin: state.Auth.get('isAdmin'),
+  adminView: state.Auth.get('adminView'),
+  checkInSubmitted: state.CheckIn.get('submitted'),
+  checkInPoints: state.CheckIn.get('numPoints'),
+  checkInSuccess: state.CheckIn.get('success'),
+  checkInError: state.CheckIn.get('error'),
 });
 
 const mapDispatchToProps = dispatch => ({

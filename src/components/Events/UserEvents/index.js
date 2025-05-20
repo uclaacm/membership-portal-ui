@@ -12,8 +12,8 @@ import Config from "../../../config"
 export default class UserEvents extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      showCheckIn: false, 
+    this.state = {
+      showCheckIn: false,
       showEarlierEvents: false,
       searchQuery: "",
       committee: "All Committees",
@@ -71,11 +71,11 @@ export default class UserEvents extends React.Component {
   handleSearchChange(searchQuery) {
     this.setState({ searchQuery });
   }
-  
+
   handleCommitteeChange(committee) {
     this.setState({ committee });
   }
-  
+
   handleTimeRangeChange(timeRange) {
     this.setState({ timeRange });
   }
@@ -83,22 +83,22 @@ export default class UserEvents extends React.Component {
   filterEvents(events) {
     const { searchQuery, committee, timeRange } = this.state;
     console.log(timeRange)
-    
+
     return events.filter(event => {
       // Filter by search query (title)
-      const matchesSearch = searchQuery === "" || 
+      const matchesSearch = searchQuery === "" ||
         event.title.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       // Filter by committee
-      const matchesCommittee = committee === "All Committees" || 
+      const matchesCommittee = committee === "All Committees" ||
         event.committee === committee;
-      
+
       // Filter by time range
       let matchesTimeRange = true;
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
-      switch(timeRange) {
+
+      switch (timeRange) {
         case "Past Events":
           matchesTimeRange = event.startDate.isBefore(today, 'day');
           break;
@@ -130,7 +130,7 @@ export default class UserEvents extends React.Component {
         default:
           matchesTimeRange = true;
       }
-      
+
       return matchesSearch && matchesCommittee && matchesTimeRange;
     });
   }
@@ -239,42 +239,46 @@ export default class UserEvents extends React.Component {
       // Then by day (ascending)
       return a.date.date() - b.date.date();
     });
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
 
 
     return (
-      <div className="events-dashboard user-dashboard">
-        {this.renderAttendanceForm()}
-        {this.renderCheckInSuccess()}
-        {this.renderCheckInFailure()}
-        
-        <div style={{ padding: "0 20px" }}>
-          <h1 style={{ marginBottom: "20px" }}>Events</h1>
-          <div style={{ marginBottom: "24px" }}>
-            <EventFilterBar
-              committees={committees}
-              timeRanges={timeRanges}
-              onSearchChange={this.handleSearchChange}
-              onCommitteeChange={this.handleCommitteeChange}
-              onTimeRangeChange={this.handleTimeRangeChange}
-            />
+      <>
+        <div className="events-dashboard user-dashboard">
+          {this.renderAttendanceForm()}
+          {this.renderCheckInSuccess()}
+          {this.renderCheckInFailure()}
+
+          <div style={{ padding: "0 20px" }}>
+            <h1 style={{ marginBottom: "20px" }}>Events</h1>
+            <div style={{ marginBottom: "24px" }}>
+              <EventFilterBar
+                committees={committees}
+                timeRanges={timeRanges}
+                onSearchChange={this.handleSearchChange}
+                onCommitteeChange={this.handleCommitteeChange}
+                onTimeRangeChange={this.handleTimeRangeChange}
+              />
+            </div>
+
+
           </div>
+
+          <Button
+            className={`checkin-button${this.state.showCheckIn ? ' hidden' : ''}`}
+            style="blue collapsible"
+            icon="fa-calendar-check-o"
+            text="Check In"
+            onClick={this.showCheckIn}
+          />
+          {days.map((day, i) => (
+            <EventDay day={day} key={day.date.toString()} admin={false} />
+          ))}
         </div>
-        
-        <Button
-          className={`checkin-button${this.state.showCheckIn ? ' hidden' : ''}`}
-          style="blue collapsible"
-          icon="fa-calendar-check-o"
-          text="Check In"
-          onClick={this.showCheckIn}
-        />
-        {days.map((day, i) => (
-          <EventDay day={day} key={day.date.toString()} admin={false} />
-        ))}
-      </div>
+      </>
     );
   }
 }

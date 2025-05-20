@@ -20,8 +20,8 @@ const WelcomeBanner = () => (
         {/* later: <img src={user.photoURL} alt={user.name} /> */}
       </div>
       <div className="profile-name-placeholder">
-          <p className="chapter">ACM chapter at UCLA</p>
-          <h1 className="name">Alex Zheng</h1>
+        <p className="chapter">ACM chapter at UCLA</p>
+        <h1 className="name">Alex Zheng</h1>
       </div>
     </div>
   </div>

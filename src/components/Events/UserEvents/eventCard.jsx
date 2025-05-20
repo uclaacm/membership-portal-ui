@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import styles from './styles.scss';
+import React from "react";
+import './style.scss';
 
 /* 
       attendancePoints: "",

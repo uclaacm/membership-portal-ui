@@ -117,14 +117,14 @@
 
 /* Expanding Welcome Banner */
 .main-section .welcome-banner {
-  flex: 1 1 auto; /* take remaining space */
+  flex: 0 0 auto; /* take remaining space */
   overflow-y: auto; /* scroll if needed */
 }
 
 /* Fixed-height Featured Events */
 .main-section .featured-events {
-  flex: 0 0 300px; /* fixed 300px height */
-  overflow-y: auto; /* scroll if needed */
+  flex: 1 1 300px;
+  min-width: 0;
 }
 
 /* Welcome Banner Styling */
@@ -160,50 +160,27 @@
   font-size: 0.9rem;
 }
 
-/* Featured Events Container */
+/* Featured Events */
 .featured-events {
-  background-color: #fff;
-  padding: 1.5rem;
-  border: 1px solid #ccc;
-  border-radius: 18pt;
-  box-shadow: -2px 3px rgba(0, 0, 0, 0.1);
-}
-.events-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+  box-sizing: border-box;
+  border: 1px solid black;
+  border-radius: 5px;
+  max-height: 380px;
+  overflow-y: auto;
 }
 
-/* Event Cards */
-.event-card {
-  background-color: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+.title-container {
+  font-size: 1.5em;
+  font-weight: 700;
+  width: 100%;
+  margin: 1.5rem 1.5rem 1rem 1.5rem;
+  //margin-bottom: 1rem;
 }
-.event-card:hover {
-  transform: translateY(-4px);
-}
-.cover {
-  height: 150px;
-  background-size: cover;
-  background-position: center;
-  background-color: #007bff;
-}
-.event-details {
-  padding: 1rem;
-}
-.event-details h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #333;
-}
-.event-details p {
-  margin: 0.5rem 0;
-  color: #555;
-  font-family: "Arial", sans-serif;
+.events-container {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  margin: 0 1.5rem 1.5rem 1.5rem;
 }
 
 /* Mobile: stack everything */
