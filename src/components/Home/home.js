@@ -32,11 +32,19 @@ const Home = ({ events,
             />
             <button type="submit">✔</button>
           </form>
-          { checkInError && (
-            <span className="CaptionSecondary error">❌ {checkInError}</span>
+          {checkInError && (
+            <>
+              <br />
+              <span className="CaptionSecondary error">❌ {checkInError}</span>
+            </>
           )}
-          { checkInSuccess && (
-            <span className="CaptionSecondary success">✅ {checkInPoints} points awarded!</span>
+          {checkInSuccess && (
+            <>
+              <br />
+              <span className="CaptionSecondary success">
+                ✅ {checkInPoints} points awarded!
+              </span>
+            </>
           )}
         </div>
 
