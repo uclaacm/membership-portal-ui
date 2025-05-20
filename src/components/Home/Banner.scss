@@ -54,8 +54,8 @@
 }
 
 .profile-picture {
-  width: 250px;          /* increased size */
-  height: 250px;
+  width: 200px;          /* increased size */
+  height: 200px;
   background-color: #ffffff33; /* translucent placeholder */
   border: 2px solid #fff;
   border-radius: 50%;
@@ -70,7 +70,7 @@
 .name {
   margin: 0;
   text-align: center;
-  font-size: 2.2rem;
+  font-size: 3.4rem;
   font-weight: 600;
 }
 
@@ -94,11 +94,11 @@
   width: 100%;
 }
 
-// smaller screens
-@media (max-height: 899px) {
+// tablet screens
+@media (max-height: 768px) {
   .profile-picture {
-  width: 200px;
-  height: 200px;
+  width: 175px;
+  height: 175px;
   }
 
   .name {
