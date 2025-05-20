@@ -39,7 +39,7 @@ const NeuralBackground = ({ className = '' }) => {
       ctx.fillStyle = '#1a1f2b';
       ctx.fillRect(0, 0, width, height);
 
-      lines.forEach(line => {
+      lines.forEach((line) => {
         if (!line.fading && Math.random() < (line.y / height) * 0.01) {
           line.fading = true;
           line.glowBallActive = true;

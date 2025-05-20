@@ -1,4 +1,3 @@
-@use "./UserEvents/style" as userEventsStyle;
 @use "./AdminEvents/style" as adminEventsStyle;
 @use "./EventFilterBar/style" as eventFilterBarStyle;
 @use "styles/vars";
@@ -20,7 +19,7 @@
 .events-heading {
   width: 172px;
   height: 50px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 700;
   font-size: 50px;
   line-height: 50px;
@@ -64,7 +63,7 @@
 
   .checkin-button {
     position: fixed;
-    top: 80px; 
+    top: 80px;
     right: 20px;
     z-index: 10;
   }

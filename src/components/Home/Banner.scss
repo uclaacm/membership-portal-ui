@@ -1,7 +1,7 @@
 .welcome-banner {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;      /* align items at the top line */
+  align-items: flex-start; /* align items at the top line */
   background-color: #1e2a38;
   position: relative;
   overflow: hidden;
@@ -10,13 +10,13 @@
   padding: 2rem;
   border: 1px solid #ccc;
   border-radius: 18pt;
-  box-shadow: -2px 3px rgba(0,0,0,0.1);
+  box-shadow: -2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .welcome-text {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;  /* spread heading and footer apart */
+  justify-content: space-between; /* spread heading and footer apart */
   height: 100%;
 
   h1 {
@@ -74,7 +74,6 @@
   font-weight: 600;
 }
 
-
 .neural-bg {
   position: absolute;
   top: 0;
@@ -115,7 +114,7 @@
 
     .footer {
       .subheading {
-        font-size: .7rem;
+        font-size: 0.7rem;
       }
 
       .branding-badge {
@@ -125,15 +124,13 @@
     }
   }
 
-
-
   .profile-picture {
-  width: 125px;
-  height: 125px;
+    width: 125px;
+    height: 125px;
   }
 
   .chapter {
-  font-size: .7rem;
+    font-size: 0.7rem;
   }
 
   .name {

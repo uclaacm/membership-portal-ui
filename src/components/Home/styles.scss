@@ -1,10 +1,9 @@
 @use "styles/vars";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
 /* Only inside the Home Dashboard do we do border-box */
 .home-dashboard,
-.home-dashboard * ,
+.home-dashboard *,
 .home-dashboard *::before,
 .home-dashboard *::after {
   box-sizing: border-box;
@@ -13,7 +12,7 @@
 /* Apply Poppins to all text on the page */
 .home-dashboard,
 .home-dashboard * {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 /* Remove top margins from headings */
@@ -25,25 +24,24 @@
 /* Main Container */
 .home-dashboard {
   display: grid;
-  grid-template-columns: 1fr 2.7fr;           /* 1:4 sidebar-to-main ratio */
+  grid-template-columns: 1fr 2.7fr; /* 1:4 sidebar-to-main ratio */
   gap: 2rem;
   padding: 2rem;
-  margin: 61px auto 0;                     /* offset beneath fixed Topbar */
-  height: calc(100vh - 61px);              /* fill remaining vertical space */
+  margin: 61px auto 0; /* offset beneath fixed Topbar */
+  height: calc(100vh - 61px); /* fill remaining vertical space */
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
 }
-
 
 /* Sidebar */
 .sidebar-custom {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  height: 100%;                            /* fill vertical space */
+  height: 100%; /* fill vertical space */
 
-  h3{
+  h3 {
     margin-bottom: 0.5rem;
   }
 }
@@ -51,9 +49,9 @@
 /* Common box style for sidebar sections */
 .sidebar-box {
   background-color: #fbfbfb;
-  border: 1px solid #ccc;                  /* thin grey border */
-  border-radius: 18pt;                     /* 18pt rounded corners */
-  box-shadow: -2px 3px rgba(0,0,0,0.1);     /* offset shadow */
+  border: 1px solid #ccc; /* thin grey border */
+  border-radius: 18pt; /* 18pt rounded corners */
+  box-shadow: -2px 3px rgba(0, 0, 0, 0.1); /* offset shadow */
   padding: 1.5rem;
   font-size: 1.2rem;
 }
@@ -110,7 +108,7 @@
       transform: rotate(45deg);
       top: 50%;
       left: 50%;
-      margin: -14px 0 0 -6px;  /* half of height and width to center */
+      margin: -14px 0 0 -6px; /* half of height and width to center */
     }
   }
 }
@@ -147,7 +145,7 @@
     display: block;
     float: right;
   }
-  
+
   .Body-2Black {
     font-size: 16px;
     color: #000;
@@ -161,13 +159,13 @@
 
 .sidebar-custom .progress .points-component,
 .sidebar-custom .progress .points-component * {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 /* Expanding Leaderboard */
 .sidebar-custom .leaderboard {
-  flex: 1 1 auto;                          /* take remaining space */
-  overflow-y: auto;                        /* scroll if content overflows */
+  flex: 1 1 auto; /* take remaining space */
+  overflow-y: auto; /* scroll if content overflows */
 }
 
 /* Progress Bar */
@@ -205,19 +203,19 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  height: 100%;                            /* fill vertical space */
+  height: 100%; /* fill vertical space */
 }
 
 /* Expanding Welcome Banner */
 .main-section .welcome-banner {
-  flex: 1 1 auto;                          /* take remaining space */
-  overflow-y: auto;                        /* scroll if needed */
+  flex: 1 1 auto; /* take remaining space */
+  overflow-y: auto; /* scroll if needed */
 }
 
 /* Fixed-height Featured Events */
 .main-section .featured-events {
-  flex: 0 0 300px;                         /* fixed 300px height */
-  overflow-y: auto;                        /* scroll if needed */
+  flex: 0 0 400px;
+  min-width: 0;
 }
 
 /* Welcome Banner Styling */
@@ -230,7 +228,7 @@
   padding: 2rem;
   border: 1px solid #ccc;
   border-radius: 18pt;
-  box-shadow: -2px 3px rgba(0,0,0,0.1);
+  box-shadow: -2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .branding {
@@ -247,52 +245,26 @@
   font-size: 0.9rem;
 }
 
-/* Featured Events Container */
+/* Featured Events */
 .featured-events {
-  background-color: #fff;
-  padding: 1.5rem;
   border: 1px solid #ccc;
-  border-radius: 18pt;
-  box-shadow: -2px 3px rgba(0,0,0,0.1);
-}
-
-.events-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-/* Event Cards */
-.event-card {
-  background-color: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
-}
-.event-card:hover {
-  transform: translateY(-4px);
-}
-.cover {
-  height: 150px;
-  background-size: cover;
-  background-position: center;
-  background-color: #007bff;
-}
-.event-details {
+  border-radius: 18px;
   padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
 }
-.event-details h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #333;
-}
-.event-details p {
-  margin: 0.5rem 0;
-  color: #555;
-  font-family: 'Arial', sans-serif;
 
+.title-container {
+  font-size: 1.5em;
+  font-weight: 700;
+  width: 100%;
+  margin-bottom: .5rem;
+}
+.events-container {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  margin: 0 1.5rem 1.5rem 1.5rem;
 }
 
 /* Mobile: stack everything */
@@ -301,7 +273,7 @@
     grid-template-columns: 1fr;
     padding: 1rem;
     margin-top: 61px;
-    height: auto;                          /* allow natural height on mobile */
+    height: auto; /* allow natural height on mobile */
   }
   .sidebar-custom {
     width: 100%;
