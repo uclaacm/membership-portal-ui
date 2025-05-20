@@ -48,8 +48,35 @@ const Home = ({
       <aside className="sidebar-custom">
         <div className="sidebar-box event-checkin">
           <h3>Event Check-In</h3>
-          <input type="text" placeholder="Enter check-in code" />
-          <button>✔</button>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="attendanceCode"
+              placeholder="Enter Check-In Code"
+            />
+            <button type="submit" className="check-btn" aria-label="Check in" />
+          </form>
+          {checkInError && (
+            <>
+              <br />
+              <span className="CaptionSecondary error">
+                ❌
+                {checkInError}
+              </span>
+            </>
+          )}
+          {checkInSuccess && (
+            <>
+              <br />
+              <span className="CaptionSecondary success">
+                ✅
+                {' '}
+                {checkInPoints}
+                {' '}
+                points awarded!
+              </span>
+            </>
+          )}
         </div>
 
         <div className="sidebar-box progress">
