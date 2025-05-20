@@ -47,11 +47,34 @@
   border-radius: 18pt;                     /* 18pt rounded corners */
   box-shadow: -2px 3px rgba(0,0,0,0.1);     /* offset shadow */
   padding: 1.5rem;
+  font-size: 1.2rem;
 }
 
 /* Fixed-height Event Check-In */
 .sidebar-custom .event-checkin {
   flex: 0 0 120px;                         /* fixed 120px height */
+  position: relative;
+
+  form {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  input {
+    width: 80%;
+    height: 2.5rem;
+    border: 1px solid #ccc;
+    border-radius: 12pt;
+    padding: 1.5rem;
+  }
+
+  .CaptionSecondary {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 2.5rem;
+    color: black;
+  }
 }
 
 /* Fixed-height Progress */
@@ -75,7 +98,6 @@
   height: 40px;
   font-size: 1.2rem;
   cursor: pointer;
-  margin-left: 0.5rem;
 }
 
 /* Progress Bar */
