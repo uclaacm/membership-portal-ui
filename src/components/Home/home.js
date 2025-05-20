@@ -33,7 +33,7 @@ const Home = ({ events,
               name="attendanceCode"
               placeholder="Enter Check-In Code" 
             />
-            <button type="submit">✔</button>
+            <button type="submit" className="check-btn" aria-label="Check in"></button>
           </form>
           {checkInError && (
             <>
