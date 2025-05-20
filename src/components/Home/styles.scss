@@ -212,12 +212,6 @@
   overflow-y: auto; /* scroll if needed */
 }
 
-/* Fixed-height Featured Events */
-.main-section .featured-events {
-  flex: 0 0 400px;
-  min-width: 0;
-}
-
 /* Welcome Banner Styling */
 .welcome-banner {
   display: flex;
@@ -246,10 +240,13 @@
 }
 
 /* Featured Events */
-.featured-events {
+/* Fixed-height Featured Events */
+.main-section .featured-events {
+  flex: 0 0 auto;
+  min-width: 0;
   border: 1px solid #ccc;
   border-radius: 18px;
-  padding: 1rem;
+  padding: 1.5rem;
   max-height: 400px;
   overflow-y: auto;
 }
@@ -264,7 +261,6 @@
   display: grid;
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-  margin: 0 1.5rem 1.5rem 1.5rem;
 }
 
 /* Mobile: stack everything */

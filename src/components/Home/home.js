@@ -113,7 +113,13 @@ const Home = ({
 
       {/* Main Section */}
       <main className="main-section">
-        <WelcomeBanner />
+        <WelcomeBanner 
+        isAdmin={isAdmin}
+        isSuperAdmin={isSuperAdmin}
+        adminView={adminView}
+        picture={picture}
+        username={username}
+        />
         <FeaturedEvents title="Featured Events" events={eventArray} />
 
       </main>
