@@ -1,13 +1,15 @@
 import React from 'react';
 import WelcomeBanner from 'components/Home/WelcomeBanner';
+import PropTypes from 'prop-types';
 import Points from './points';
 
 import './styles.scss';
 import FeaturedEvents from './featuredEvents';
 import EventCard from '../Events/UserEvents/eventCard';
 
+const NUMBER_LEADERBOARD_USERS = 10;
+
 const Home = ({
-  events,
   isAdmin,
   isSuperAdmin,
   adminView,
@@ -18,6 +20,7 @@ const Home = ({
   checkInSuccess,
   checkInError,
   points,
+  leaderboard,
 }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -60,7 +63,7 @@ const Home = ({
             <>
               <br />
               <span className="CaptionSecondary error">
-                ❌
+                <span role="img" aria-label="cross mark">❌</span>
                 {checkInError}
               </span>
             </>
@@ -69,7 +72,7 @@ const Home = ({
             <>
               <br />
               <span className="CaptionSecondary success">
-                ✅
+                <span role="img" aria-label="check mark">✅</span>
                 {' '}
                 {checkInPoints}
                 {' '}
@@ -86,45 +89,60 @@ const Home = ({
 
         <div className="sidebar-box leaderboard">
           <h3>Leaderboard</h3>
-          <ul>
-            <li>
-              Alex Zheng
-              <span>Pts</span>
-            </li>
-            <li>
-              Smalex
-              <span>Pts</span>
-            </li>
-            <li>
-              Alex is the best
-              <span>Pts</span>
-            </li>
-            <li>
-              Too much time on this
-              <span>Pts</span>
-            </li>
-            <li>
-              RAHHHHHHHH
-              <span>Pts</span>
-            </li>
+          <ul className="leaderboard-list-container">
+            {leaderboard.slice(0, NUMBER_LEADERBOARD_USERS).map((user, index) => (
+              <li key={user.id}>
+                {index + 1}
+                {' '}
+                {user.firstName}
+                {' '}
+                {user.lastName}
+                <span>
+                  {user.points}
+                  {' '}
+                  pts
+                </span>
+              </li>
+            ))}
           </ul>
         </div>
       </aside>
 
       {/* Main Section */}
       <main className="main-section">
-        <WelcomeBanner 
-        isAdmin={isAdmin}
-        isSuperAdmin={isSuperAdmin}
-        adminView={adminView}
-        picture={picture}
-        username={username}
+        <WelcomeBanner
+          isAdmin={isAdmin}
+          isSuperAdmin={isSuperAdmin}
+          adminView={adminView}
+          picture={picture}
+          username={username}
         />
         <FeaturedEvents title="Featured Events" events={eventArray} />
 
       </main>
     </div>
   );
+};
+
+Home.propTypes = {
+  isAdmin: PropTypes.bool.isRequired,
+  isSuperAdmin: PropTypes.bool.isRequired,
+  adminView: PropTypes.bool.isRequired,
+  picture: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
+  checkIn: PropTypes.func.isRequired,
+  checkInPoints: PropTypes.number.isRequired,
+  checkInSuccess: PropTypes.bool.isRequired,
+  checkInError: PropTypes.string.isRequired,
+  points: PropTypes.number.isRequired,
+  leaderboard: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      firstName: PropTypes.string.isRequired,
+      lastName: PropTypes.string.isRequired,
+      points: PropTypes.number.isRequired,
+    }).isRequired,
+  ).isRequired,
 };
 
 export default Home;
