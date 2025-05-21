@@ -93,7 +93,7 @@ const Home = ({
             {leaderboard.slice(0, NUMBER_LEADERBOARD_USERS).map((user, index) => (
               <li key={user.id}>
                 {index + 1}
-                {' '}
+                {' - '}
                 {user.firstName}
                 {' '}
                 {user.lastName}
