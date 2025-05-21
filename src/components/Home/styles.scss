@@ -164,8 +164,11 @@
 
 /* Expanding Leaderboard */
 .sidebar-custom .leaderboard {
+  display: flex;
+  flex-direction: column;
   flex: 1 1 auto; /* take remaining space */
-  overflow-y: auto; /* scroll if content overflows */
+  height: 400px;
+  padding-bottom: 0;
 }
 
 /* Progress Bar */
@@ -196,6 +199,10 @@
   margin-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
+}
+.leaderboard-list-container {
+  flex: 1 1 0;
+  overflow-y: scroll;
 }
 
 /* Main Section */
@@ -255,7 +262,7 @@
   font-size: 1.5em;
   font-weight: 700;
   width: 100%;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 .events-container {
   display: grid;

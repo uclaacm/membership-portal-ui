@@ -4,55 +4,112 @@ import { connect } from 'react-redux';
 import { Action } from 'reducers';
 import Topbar from 'containers/topbar';
 import HomeComponent from 'components/Home/home';
+import PropTypes from 'prop-types';
+
+const REFRESH_INTERVAL = 30000;
 
 class Home extends React.Component {
   componentWillMount() {
-    if (this.props.authenticated) {
-      this.props.fetchEvents();
-      this.props.fetchUser();
+    const {
+      authenticated,
+      fetchEvents,
+      fetchUser,
+      fetchTime,
+      fetchLeaderboard,
+    } = this.props;
+
+    if (!authenticated) return;
+
+    fetchEvents();
+    fetchUser();
+    if (Date.now() - fetchTime > REFRESH_INTERVAL) {
+      fetchLeaderboard();
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.eventUpdated || nextProps.eventCreated) {
+    const { updateDone, createDone, fetchLeaderboard } = this.props;
+    const {
+      eventUpdated, eventCreated, authenticated, fetchTime,
+    } = nextProps;
+
+    if (eventUpdated || eventCreated) {
       setTimeout(() => {
-        this.props.updateDone();
-        this.props.createDone();
+        updateDone();
+        createDone();
       }, 250);
+    }
+
+    if (authenticated && Date.now() - fetchTime > REFRESH_INTERVAL) {
+      fetchLeaderboard();
     }
   }
 
   render() {
     const {
-      events,
+      checkIn,
+      checkInPoints,
+      checkInSuccess,
+      checkInError,
       isAdmin,
       isSuperAdmin,
       adminView,
       picture,
       username,
       points,
+      leaderboard,
     } = this.props;
 
     return (
       <div>
         <Topbar />
         <HomeComponent
-          events={events}
           isAdmin={isAdmin}
           isSuperAdmin={isSuperAdmin}
           adminView={adminView}
           picture={picture}
           username={username}
-          checkIn={this.props.checkIn}
-          checkInPoints={this.props.checkInPoints}
-          checkInSuccess={this.props.checkInSuccess}
-          checkInError={this.props.checkInError}
+          checkIn={checkIn}
+          checkInPoints={checkInPoints}
+          checkInSuccess={checkInSuccess}
+          checkInError={checkInError}
           points={points}
+          leaderboard={leaderboard}
         />
       </div>
     );
   }
 }
+
+Home.propTypes = {
+  eventCreated: PropTypes.bool.isRequired,
+  eventUpdated: PropTypes.bool.isRequired,
+  authenticated: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
+  isSuperAdmin: PropTypes.bool.isRequired,
+  adminView: PropTypes.bool.isRequired,
+  picture: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
+  checkInPoints: PropTypes.number.isRequired,
+  checkInSuccess: PropTypes.bool.isRequired,
+  checkInError: PropTypes.string.isRequired,
+  points: PropTypes.number.isRequired,
+  leaderboard: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      firstName: PropTypes.string.isRequired,
+      lastName: PropTypes.string.isRequired,
+      points: PropTypes.number.isRequired,
+    }).isRequired,
+  ).isRequired,
+  fetchTime: PropTypes.number.isRequired,
+  fetchEvents: PropTypes.func.isRequired,
+  fetchUser: PropTypes.func.isRequired,
+  checkIn: PropTypes.func.isRequired,
+  updateDone: PropTypes.func.isRequired,
+  createDone: PropTypes.func.isRequired,
+  fetchLeaderboard: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state) => {
   const userFetchSuccess = state.User.get('fetchSuccess');
@@ -75,6 +132,8 @@ const mapStateToProps = (state) => {
     checkInSuccess: state.CheckIn.get('success'),
     checkInError: state.CheckIn.get('error'),
     points: profile.points,
+    leaderboard: state.Leaderboard.get('leaderboard'),
+    fetchTime: state.Leaderboard.get('fetchTime'),
   };
 };
 
@@ -87,6 +146,7 @@ const mapDispatchToProps = dispatch => ({
   updateEvent: event => dispatch(Action.UpdateEvent(event)),
   updateDone: () => dispatch(Action.UpdateEventDone()),
   createDone: () => dispatch(Action.CreateEventDone()),
+  fetchLeaderboard: () => dispatch(Action.FetchLeaderboard()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
