@@ -270,12 +270,14 @@
   gap: auto;
   justify-content: space-between;
   grid-template-columns: repeat(4, 245px) !important;
+  margin: 0 1.5rem 1.5rem 1.5rem;
 }
 
 /* ≥769px and ≤1200px: 3 tiles, hide the 4th */
 @media (max-width: 1600px) and (min-width: 769px) {
   .events-container {
     grid-template-columns: repeat(3, 245px) !important;
+    margin: 0 .5rem .5rem .5rem;
   }
   .events-container > .event-container:nth-child(n+4) {
     display: none !important;
