@@ -1,12 +1,24 @@
-import { createStore, combineReducers, applyMiddleware, compose } from "redux";
-import { createBrowserHistory } from "history";
-import { routerReducer, routerMiddleware } from "react-router-redux";
-import thunk from "redux-thunk";
+import {
+  createStore, combineReducers, applyMiddleware, compose,
+} from 'redux';
+import { createBrowserHistory } from 'history';
+import { routerReducer, routerMiddleware } from 'react-router-redux';
+import thunk from 'redux-thunk';
 
-import { User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity } from "./user";
-import { Admins, FetchAdmins, AddAdmin, DeleteAdmin, ChangeSuperAdmin } from "./admins";
-import { Auth, LoginUser, LogoutUser, RefreshToken } from "./auth";
-import { OneClick, ChangeOneClickPassword, ChangeOneClickPasswordDone } from "./oneclick";
+import {
+  User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity,
+} from './user';
+import {
+  Admins, FetchAdmins, AddAdmin, DeleteAdmin, ChangeSuperAdmin,
+} from './admins';
+import {
+  Auth, LoginUser, LogoutUser, RefreshToken, ToggleAdminView,
+} from './auth';
+import { OneClick, ChangeOneClickPassword, ChangeOneClickPasswordDone } from './oneclick';
+import {
+  RSVP, CreateRSVP, CancelRSVP, FetchUserRSVPs,
+} from './rsvp';
+
 import {
   Events,
   GetCurrentEvents,
@@ -15,10 +27,10 @@ import {
   DeleteEvent,
   UpdateEventDone,
   CreateEventDone,
-} from "./events";
-import { Leaderboard, FetchLeaderboard, InvalidateLeaderboard } from "./leaderboard";
-import { CheckIn, CheckInto, ResetCheckIn } from "./checkin";
-import { Registration, RegisterUser, registerDone } from "./registration";
+} from './events';
+import { Leaderboard, FetchLeaderboard, InvalidateLeaderboard } from './leaderboard';
+import { CheckIn, CheckInto, ResetCheckIn } from './checkin';
+import { Registration, RegisterUser, registerDone } from './registration';
 
 const history = createBrowserHistory();
 const routing = routerMiddleware(history);
@@ -31,18 +43,20 @@ const store = createStore(
     Events,
     User,
     Admins,
+    RSVP,
     Leaderboard,
     CheckIn,
     Registration,
     router: routerReducer,
   }),
-  composeEnhancers(applyMiddleware(routing, thunk))
+  composeEnhancers(applyMiddleware(routing, thunk)),
 );
 
 const Action = {
   LoginUser,
   LogoutUser,
   RefreshToken,
+  ToggleAdminView,
   ChangeOneClickPassword,
   ChangeOneClickPasswordDone,
   FetchUser,
@@ -65,6 +79,9 @@ const Action = {
   registerDone,
   CheckInto,
   ResetCheckIn,
+  CreateRSVP,
+  CancelRSVP,
+  FetchUserRSVPs,
 };
 
 export { store, history, Action };

@@ -7,6 +7,8 @@ import ReassignModal from "components/Modal/reassignModal";
 import OneClickPasswordModal from "components/Modal/oneClickPasswordModal";
 import ConfirmationModal from "components/Modal/confirmationModal";
 import PropTypes from "prop-types";
+import ChangeToAdmin from '../Profile/ChangeToAdmin';
+
 
 class ControlPanel extends React.Component {
   constructor() {
@@ -123,7 +125,7 @@ class ControlPanel extends React.Component {
   }
 
   render() {
-    const { logout, events, admins, isSuperAdmin, userEmail } = this.props;
+    const { logout, events, admins, isSuperAdmin, userEmail, adminView, toggleAdminView } = this.props;
     const {
       showEventsModal,
       showEventsConfirmationModal,
@@ -161,6 +163,16 @@ class ControlPanel extends React.Component {
             text="Manage One-Click API"
             onClick={this.openOneClickPasswordModal}
           />
+          <br />
+
+          <Button
+            className="control-panel-action-button"
+            color="blue"
+            text={adminView ? "Switch to Member View" : "Switch to Admin View"}
+            onClick={toggleAdminView}
+          />
+
+          <ChangeToAdmin />
           <br />
 
           {isSuperAdmin ? (
@@ -287,6 +299,8 @@ ControlPanel.propTypes = {
   oneClickUpdated: PropTypes.bool.isRequired,
   oneClickUpdateSuccess: PropTypes.bool.isRequired,
   oneClickError: PropTypes.string.isRequired,
+  adminView: PropTypes.bool.isRequired,
+  toggleAdminView: PropTypes.func.isRequired,
 };
 
 export default ControlPanel;

@@ -1,9 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import { replace } from "react-router-redux";
+import React from 'react';
+import { connect } from 'react-redux';
+import { replace } from 'react-router-redux';
 
-import { Action } from "reducers";
-import ProfileComponent from "components/Profile";
+import { Action } from 'reducers';
+import ProfileComponent from 'components/Profile';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -15,7 +15,9 @@ class Profile extends React.Component {
   }
 
   componentWillMount() {
-    if (this.props.isAdmin) {
+    // Only redirect if admin is in admin view
+    const showAdminView = this.props.isAdmin && this.props.adminView;
+    if (showAdminView) {
       return this.props.redirectHome();
     }
     if (this.props.authenticated) {
@@ -25,7 +27,9 @@ class Profile extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.isAdmin) {
+    // Only redirect if admin is in admin view
+    const showAdminView = nextProps.isAdmin && nextProps.adminView;
+    if (showAdminView) {
       return nextProps.redirectHome();
     }
     if (nextProps.updated) {
@@ -46,21 +50,24 @@ class Profile extends React.Component {
         logout={this.props.logout}
         activity={this.props.activity}
         activityError={this.props.activityError}
+        adminView={this.props.adminView}
+        toggleAdminView={this.props.toggleAdminView}
+        isAdmin={this.props.isAdmin}
       />
     );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const profile = {
-    name: "",
-    major: "",
+    name: '',
+    major: '',
     year: 0,
     points: 0,
   };
 
-  if (state.User.get("fetchSuccess")) {
-    const User = state.User.get("profile");
+  if (state.User.get('fetchSuccess')) {
+    const User = state.User.get('profile');
     profile.name = `${User.firstName} ${User.lastName}`;
     profile.major = User.major;
     profile.year = User.year;
@@ -76,6 +83,7 @@ const mapStateToProps = state => {
     updateError: state.User.get("error"),
     authenticated: state.Auth.get("authenticated"),
     isAdmin: state.Auth.get("isAdmin"),
+    adminView: state.Auth.get("adminView"),
     activityError: state.User.get("activityError"),
   };
 };
@@ -84,11 +92,11 @@ const mapDispatchToProps = dispatch => ({
   fetchUser: () => {
     dispatch(Action.FetchUser());
   },
-  updateUser: newprofile => {
+  updateUser: (newprofile) => {
     dispatch(Action.UpdateUser(newprofile));
   },
   redirectHome: () => {
-    dispatch(replace("/"));
+    dispatch(replace('/'));
   },
   updateDone: () => {
     dispatch(Action.UserUpdateDone());
@@ -98,6 +106,9 @@ const mapDispatchToProps = dispatch => ({
   },
   fetchActivity: () => {
     dispatch(Action.FetchActivity());
+  },
+  toggleAdminView: () => {
+    dispatch(Action.ToggleAdminView());
   },
 });
 
