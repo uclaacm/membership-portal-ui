@@ -272,17 +272,64 @@
 
 /* Mobile: stack everything */
 @media (max-width: 768px) {
+  /* Turn the dashboard into a vertical flex container with no gaps */
   .home-dashboard {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;                   /* remove space between items */
     padding: 1rem;
     margin-top: 61px;
-    height: auto; /* allow natural height on mobile */
+    height: auto;             /* grow with content */
+    overflow-y: auto;         /* allow scrolling */
   }
-  .sidebar-custom {
+
+  /* Flatten the sidebar & main wrappers so their children sit at the same level */
+  .sidebar-custom,
+  .main-section {
+    display: contents;
+  }
+
+  /* Hide the leaderboard entirely */
+  .leaderboard {
+    display: none !important;
+  }
+
+  /* Explicitly order the four parts in your desired sequence */
+  .welcome-banner   { order: 1; }
+  .progress         { order: 2; }
+  .event-checkin    { order: 3; }
+  .featured-events  { order: 4; }
+
+  /* 5️ Make each section full-width and strip any extra margin */
+  .welcome-banner,
+  .progress,
+  .event-checkin,
+  .featured-events {
     width: 100%;
-    height: auto;
   }
-  .events-grid {
-    grid-template-columns: 1fr;
+
+  /* Make the events list scroll horizontally */
+  .main-section .featured-events {
+    overflow: visible !important;    /* no scroll here */
+    max-height: none !important;     
+    padding-bottom: 0;               /* remove any extra bottom padding */
+  }
+
+  /* 2) Move the horizontal‐scroll behavior down to the cards container */
+  .main-section .featured-events .events-container {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 1rem !important;
+    overflow-x: auto;                /* scroll horizontally */
+    overflow-y: hidden;              
+    padding-bottom: 1rem;            /* breathing room under cards */
+  }
+
+  /* 3) Fix each card’s sizing */
+  .main-section .featured-events .events-container .event-card {
+    flex: 0 0 auto !important;
+    min-width: 245px;
   }
 }
+
+
