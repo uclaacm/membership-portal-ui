@@ -10,7 +10,9 @@ export default class ActivitiesMonth extends React.Component {
           {' '}
           <span>{this.props.month.date.format('YYYY')}</span>
         </h2>
-        { this.props.month.days.map((day, i) => <ActivitiesDay key={day.date.toString()} day={day} />) }
+        {this.props.month.days.map((day, i) => (
+          <ActivitiesDay key={day.date.toString()} day={day} />
+        ))}
       </div>
     );
   }

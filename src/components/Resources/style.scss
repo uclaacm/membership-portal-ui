@@ -1,4 +1,4 @@
-@import "styles/vars";
+@use "styles/vars";
 
 .hidden {
   display: none;
@@ -7,7 +7,8 @@
 .resources-wrapper {
   overflow: visible;
   padding-bottom: 60px;
-  margin-left: $sidebar-width;
+  margin-top: vars.$topbar-height;
+  margin-left: 0px;
   transition: margin-left 0.125s ease-in-out;
   box-sizing: border-box;
 

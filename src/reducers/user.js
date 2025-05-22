@@ -5,9 +5,9 @@ import moment from 'moment';
 
 import { LogoutUser } from './auth';
 
-/** ********************************************
- ** Constants                                **
- ******************************************** */
+/** *********************************************
+ ** Constants                                 **
+ ********************************************** */
 
 const FETCH_USER = Symbol();
 const FETCH_USER_ERR = Symbol();
@@ -22,16 +22,16 @@ const FETCH_ACTIVITY_ERR = Symbol();
 const defaultState = Immutable.fromJS({
   profile: {},
   activity: [],
-  updated: false,
-  updateSuccess: false,
-  fetchSuccess: false,
+  userUpdated: false,
+  userUpdateSuccess: false,
+  userFetchSuccess: false,
   error: null,
   activityError: null,
 });
 
-/** ********************************************
- ** User States                              **
- ******************************************** */
+/** *********************************************
+ ** User States                               **
+ ********************************************** */
 
 class State {
   static FetchUser(error, user) {
@@ -58,9 +58,9 @@ class State {
   }
 }
 
-/** ********************************************
- ** Actions                                  **
- ******************************************** */
+/** *********************************************
+ ** Actions                                   **
+ ********************************************** */
 
 const FetchUser = () => async (dispatch) => {
   try {
@@ -143,9 +143,9 @@ const FetchActivity = () => async (dispatch) => {
   }
 };
 
-/** ********************************************
- ** User Reducer                             **
- ******************************************** */
+/** *********************************************
+ ** User Reducer                              **
+ ********************************************** */
 
 const User = (state = defaultState, action) => {
   switch (action.type) {
@@ -200,6 +200,7 @@ const User = (state = defaultState, action) => {
 };
 
 const UserUpdateDone = () => ({ type: UPDATE_COMPLETED });
+
 export {
   User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity,
 };

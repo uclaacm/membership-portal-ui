@@ -4,6 +4,7 @@ import moment from 'moment';
 import InputElement from 'react-input-mask';
 import DatePicker from 'react-datepicker';
 import Button from 'components/Button/index';
+import Config from '../../../config'
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -41,8 +42,8 @@ export default class AdminAddEvent extends React.Component {
   }
 
   handleChange(e) {
-    const name = e.target.name;
-    const value = e.target.value;
+    const { name } = e.target;
+    const { value } = e.target;
     this.setState((prev) => {
       const newState = Object.assign({}, prev);
       newState.event[name] = value;
@@ -61,7 +62,7 @@ export default class AdminAddEvent extends React.Component {
     const mm = (parseInt(e.target.value[3]) || 0) * 10 + (parseInt(e.target.value[4]) || 0);
     this.setState((prev) => {
       const newState = Object.assign({}, prev);
-      newState[`${name}TimeError`] = (isNaN(hh) || hh > 23 || isNaN(mm) || mm > 60);
+      newState[`${name}TimeError`] = isNaN(hh) || hh > 23 || isNaN(mm) || mm > 60;
       if (!newState[`${name}TimeError`]) {
         if (newState.event[`${name}Date`]) newState.event[`${name}Date`].set({ hour: hh, minute: mm });
         else {
@@ -82,11 +83,16 @@ export default class AdminAddEvent extends React.Component {
   }
 
   render() {
+    const committeeColorMap = Object.fromEntries(Config.committeeColors);
+
     return (
       <div className={`add-event-overlay${this.props.showing ? ' showing' : ''}`} onClick={this.props.onClickCancel}>
         <div className="event-sidebar" onClick={e => e.stopPropagation()}>
           <div className="cover-img">
-            <img src={this.state.event.cover} />
+            <img
+              src={this.state.event.cover}
+              id="event-cover-img"
+            />
           </div>
           <div className="editor">
             <div className="input-row">
@@ -108,17 +114,40 @@ export default class AdminAddEvent extends React.Component {
             <div className="input-row">
               <div className="input-field">
                 <p>Committee</p>
-                <input type="text" value={this.state.event.committee} name="committee" onChange={this.handleChange} />
+                <select 
+                  value={this.state.event.committee} 
+                  name="committee" 
+                  onChange={this.handleChange}
+                  className="committee-select"
+                  style={{ color: committeeColorMap[this.state.event.committee] }}
+                >
+                  <option value="ACM">ACM</option>
+                  {Config.committees.map((committee, index) => (
+                    <option key={index} value={committee}>
+                      {committee}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="input-row">
               <div className="input-field half-width">
                 <p>Attendance Code</p>
-                <input type="text" value={this.state.event.attendanceCode} name="attendanceCode" onChange={this.handleChange} />
+                <input
+                  type="text"
+                  value={this.state.event.attendanceCode}
+                  name="attendanceCode"
+                  onChange={this.handleChange}
+                />
               </div>
               <div className="input-field half-width">
                 <p>Attendance Points</p>
-                <input type="text" value={this.state.event.attendancePoints} name="attendancePoints" onChange={this.handleChange} />
+                <input
+                  type="text"
+                  value={this.state.event.attendancePoints}
+                  name="attendancePoints"
+                  onChange={this.handleChange}
+                />
               </div>
             </div>
             <div className="divider" />
@@ -171,7 +200,12 @@ export default class AdminAddEvent extends React.Component {
             <div className="input-row">
               <div className="input-field">
                 <p>Event Description</p>
-                <textarea value={this.state.event.description} name="description" onChange={this.handleChange} onKeyUp={this.resizeTextArea} />
+                <textarea
+                  value={this.state.event.description}
+                  name="description"
+                  onChange={this.handleChange}
+                  onKeyUp={this.resizeTextArea}
+                />
               </div>
             </div>
             <div className="button-area">

@@ -8,11 +8,11 @@ export default class LeaderboardComponent extends React.Component {
     return (
       <div className="leaderboard">
         <Topbar />
-        <Sidebar />
-        <Leaderboard
-          leaderboard={this.props.leaderboard}
-          user={this.props.user}
+        <Leaderboard 
+          leaderboard={this.props.leaderboard} 
+          user={this.props.user} 
           error={this.props.error}
+          isAdmin={this.props.isAdmin}
         />
       </div>
     );

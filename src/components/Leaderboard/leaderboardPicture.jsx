@@ -23,7 +23,7 @@ class LeaderboardPicture extends React.Component {
 }
 
 LeaderboardPicture.propTypes = {
-  picture: PropTypes.string.isRequired,
+  picture: PropTypes.string,
   firstName: PropTypes.string.isRequired,
   lastName: PropTypes.string.isRequired,
   major: PropTypes.string.isRequired,

@@ -1,21 +1,24 @@
 import moment from 'moment';
 import Config from 'config';
-import Storage from 'storage';
 import Immutable from 'immutable';
+import Storage from 'storage';
 
 import { LogoutUser } from './auth';
 
-/** ********************************************
- ** Constants                                **
- ******************************************** */
+/** *********************************************
+ ** Constants                                 **
+ ********************************************** */
 
-const FETCH_EVENTS = Symbol();
+const FETCH_EVENTS_SUCCESS = Symbol();
 const FETCH_EVENTS_ERROR = Symbol();
-const DELETE_EVENT_ERROR = Symbol();
+
 const DELETE_EVENT_SUCCESS = Symbol();
+const DELETE_EVENT_ERROR = Symbol();
+
 const POST_EVENT_SUCCESS = Symbol();
 const POST_EVENT_ERROR = Symbol();
 const POST_EVENT_DONE = Symbol();
+
 const UPDATE_EVENT_SUCCESS = Symbol();
 const UPDATE_EVENT_ERROR = Symbol();
 const UPDATE_EVENT_DONE = Symbol();
@@ -31,14 +34,14 @@ const defaultState = Immutable.fromJS({
   deleteSuccess: false,
 });
 
-/** ********************************************
+/** *********************************************
  ** Event States                              **
- ******************************************** */
+ ********************************************** */
 
 class State {
   static FetchEvents(error, events) {
     return {
-      type: error ? FETCH_EVENTS_ERROR : FETCH_EVENTS,
+      type: error ? FETCH_EVENTS_ERROR : FETCH_EVENTS_SUCCESS,
       events: error ? undefined : events,
       error: error || undefined,
     };
@@ -68,7 +71,7 @@ class State {
 
 /** ********************************************
  ** Actions                                  **
- ******************************************** */
+ ********************************************* */
 
 const GetCurrentEvents = () => async (dispatch) => {
   try {
@@ -151,7 +154,7 @@ const PostNewEvent = event => async (dispatch) => {
 
 const UpdateEvent = event => async (dispatch) => {
   try {
-    const response = await fetch((`${Config.API_URL + Config.routes.events.event}/${event.uuid}`), {
+    const response = await fetch(`${Config.API_URL + Config.routes.events.event}/${event.uuid}`, {
       method: 'PATCH',
       headers: {
         Accept: 'application/json',
@@ -179,7 +182,7 @@ const UpdateEvent = event => async (dispatch) => {
 
 const DeleteEvent = uuid => async (dispatch) => {
   try {
-    const response = await fetch((`${Config.API_URL + Config.routes.events.event}/${uuid}`), {
+    const response = await fetch(`${Config.API_URL + Config.routes.events.event}/${uuid}`, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
@@ -203,14 +206,15 @@ const DeleteEvent = uuid => async (dispatch) => {
   }
 };
 
-/** ********************************************
- ** Events Reducer                           **
- ******************************************** */
+/** *********************************************
+ ** Events Reducer                            **
+ ********************************************** */
 
 const Events = (state = defaultState, action) => {
   switch (action.type) {
-    case FETCH_EVENTS:
+    case FETCH_EVENTS_SUCCESS:
       return state.withMutations((val) => {
+        val.set('error', null);
         val.set('events', action.events);
       });
 
@@ -277,7 +281,7 @@ const Events = (state = defaultState, action) => {
 
 const CreateEventDone = () => ({ type: POST_EVENT_DONE });
 const UpdateEventDone = () => ({ type: UPDATE_EVENT_DONE });
+
 export {
-  Events, GetCurrentEvents, PostNewEvent, UpdateEvent,
-  DeleteEvent, CreateEventDone, UpdateEventDone,
+  Events, GetCurrentEvents, PostNewEvent, UpdateEvent, DeleteEvent, CreateEventDone, UpdateEventDone,
 };

@@ -5,7 +5,7 @@ import ActivitiesMonth from './activitiesMonth';
 
 export default class Activities extends React.Component {
   render() {
-    const activities = this.props.activities;
+    const { activities } = this.props;
     const months = [];
     let totalPoints = 0;
     let currStatus = Utils.getLevel(totalPoints);
@@ -44,7 +44,12 @@ export default class Activities extends React.Component {
 
     return (
       <div className="activity-wrapper">
-        { months.slice().reverse().map((month, i) => <ActivitiesMonth key={month.date.toString()} month={month} />) }
+        {months
+          .slice()
+          .reverse()
+          .map((month, i) => (
+            <ActivitiesMonth key={month.date.toString()} month={month} />
+          ))}
       </div>
     );
   }

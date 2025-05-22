@@ -1,3 +1,5 @@
+@use "styles/vars";
+
 p {
   margin: 0;
 }
@@ -7,12 +9,70 @@ input {
   padding: 0;
 }
 
+// New form styles to match login page
+.register-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+
+  .form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: vars.$gray3;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid vars.$gray2;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: vars.$white;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: vars.$acm-cobalt;
+    }
+  }
+
+  .form-button {
+    margin-top: 1rem;
+    width: 100%;
+    
+    .btn {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+  }
+}
+
+// Success page styles
+.success-sidebar {
+  .continue-button {
+    margin: 1.5rem 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+// Keep existing styles for old components
 .register-component {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: $primaryblue;
+  background: vars.$primaryblue;
 
   a.login-link {
     position: absolute;
@@ -45,7 +105,7 @@ input {
 .card {
   width: 552px;
   height: 320px;
-  background: $white;
+  background: vars.$white;
   text-align: center;
 
   a {
@@ -63,7 +123,7 @@ input {
   p.question {
     font-size: 36px;
     font-weight: bold;
-    color: $black;
+    color: vars.$black;
     margin-top: 60px;
     margin-bottom: 30px;
     padding: 0px 10px;
@@ -108,7 +168,7 @@ input {
   .name {
     font-size: 24px;
     font-weight: bold;
-    color: $--secondaryblack;
+    color: vars.$secondaryblack;
     margin-bottom: 39px;
   }
 
@@ -131,7 +191,7 @@ input {
 
   input {
     border-radius: 5px;
-    border: solid 1px $gray2;
+    border: solid 1px vars.$gray2;
     height: 20px;
     margin-bottom: 5px;
     padding: 9px;
@@ -139,7 +199,7 @@ input {
     outline: none;
 
     &:focus {
-      border: solid 1px $secondaryblue;
+      border: solid 1px vars.$secondaryblue;
     }
   }
 
@@ -151,25 +211,25 @@ input {
     outline: none;
     background: none;
     border-radius: 5px;
-    border: solid 1px $gray2;
+    border: solid 1px vars.$gray2;
     margin-bottom: 5px;
     padding: 9px;
     font-size: 17px;
     outline: none;
 
     &:focus {
-      border: solid 1px $secondaryblue;
+      border: solid 1px vars.$secondaryblue;
     }
   }
 
   &.confirm-details {
     input,
     select {
-      border: solid 1px $light-green;
+      border: solid 1px vars.$light-green;
     }
 
     .text {
-      color: $light-green;
+      color: vars.$light-green;
 
       span.info {
         display: none;
@@ -178,7 +238,7 @@ input {
   }
 
   input:focus ~ p {
-    color: $secondaryblue;
+    color: vars.$secondaryblue;
   }
 
   .header {
@@ -188,7 +248,7 @@ input {
     font-size: 20px;
     font-weight: bold;
     text-align: center;
-    color: $--secondaryblack;
+    color: vars.$secondaryblack;
   }
 
   .input-large {
@@ -196,7 +256,7 @@ input {
   }
   .input-invalid {
     width: 383px;
-    border: 1px solid $light-red;
+    border: 1px solid vars.$light-red;
   }
 
   .input-major {
@@ -212,18 +272,18 @@ input {
     font-size: 11px;
     font-family: "Lato", sans-serif;
     font-weight: bold;
-    color: $--secondaryblack;
+    color: vars.$secondaryblack;
     text-align: left;
     margin-bottom: 5px;
     span.info {
       font-size: 0.9em;
       font-weight: normal;
-      color: $gray2;
+      color: vars.$gray2;
     }
     &.invalid {
-      color: $light-red;
+      color: vars.$light-red;
       span.info {
-        color: $light-red;
+        color: vars.$light-red;
       }
     }
   }
@@ -250,14 +310,6 @@ input {
     }
     .align.align-input-major {
       display: block;
-    }
-  }
-}
-
-.fb-login-card {
-  .fb-login-button {
-    i {
-      padding-right: 10px;
     }
   }
 }

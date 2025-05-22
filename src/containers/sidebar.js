@@ -1,3 +1,6 @@
+// DEPRECATED: This file is deprecated and will be removed in the future. The new landing page sidebar is now located in
+// src/components/home/home.js.
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -12,16 +15,17 @@ class SidebarContainer extends React.Component {
   }
 
   render() {
-    return this.props.fetchSuccess
-						 ? (
-  <Sidebar
-    isAdmin={this.props.isAdmin}
-    picture={this.props.picture}
-    username={this.props.username}
-    points={this.props.points}
-    logout={this.props.logout}
-  />
-      ) : null;
+    return this.props.fetchSuccess ? (
+      <Sidebar
+        isAdmin={this.props.isAdmin}
+        isSuperAdmin={this.props.isSuperAdmin}
+        adminView={this.props.adminView}
+        picture={this.props.picture}
+        username={this.props.username}
+        points={this.props.points}
+        logout={this.props.logout}
+      />
+    ) : null;
   }
 }
 
@@ -35,6 +39,8 @@ const mapStateToProps = (state) => {
       username: `${profile.firstName} ${profile.lastName}`,
       points: profile.points,
       isAdmin: state.Auth.get('isAdmin'),
+      isSuperAdmin: state.Auth.get('isSuperAdmin'),
+      adminView: state.Auth.get('adminView'),
     };
   }
   return {

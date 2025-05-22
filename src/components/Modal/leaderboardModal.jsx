@@ -5,7 +5,7 @@ import Button from '../Button';
 export default class LeaderboardModal extends React.Component {
   constructor() {
     super();
-    this.yearMap = ['Freshman', 'Sophomore', 'Junior', 'Senior'];
+    this.yearMap = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Post-Senior'];
   }
 
   render() {
@@ -19,30 +19,26 @@ export default class LeaderboardModal extends React.Component {
         <div className="leaderboard-modal-container">
           <div className="padding">
             <h1>User Info</h1>
-            <br />
-            <br />
             <div className="content-container">
               <div className="image-container">
                 <img src={picture || '/assets/images/unknown.png'} />
               </div>
               <div className="text-container">
-                <h3>
-Name:
+                <h2>
                   {firstName}
                   {' '}
                   {lastName}
-                </h3>
+                </h2>
                 <h3>
-Major:
+                  Major:
                   {major}
                 </h3>
                 <h3>
-Year:
+                  Year:
                   {gradeLevel}
                 </h3>
               </div>
             </div>
-            <br />
             <br />
             <br />
             <div className="button-container">

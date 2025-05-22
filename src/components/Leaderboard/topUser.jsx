@@ -13,7 +13,7 @@ export default class TopUser extends React.Component {
     const userPlace = this.topPlaces[place - 1];
     return (
       <div className={`top-user${place === 1 ? ' top-user-first' : ''}`}>
-        <div className="rank">{ userPlace }</div>
+        <div className="rank">{userPlace}</div>
         <br />
         <img
           src={user.picture || '/assets/images/unknown.png'}
@@ -34,7 +34,7 @@ export default class TopUser extends React.Component {
         <div className="points">
           {user.points}
           {' '}
-points
+          points
         </div>
       </div>
     );

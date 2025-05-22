@@ -24,20 +24,20 @@ export default class AttendeesModal extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {
-                    attendees.map(member => (
-                      <tr>
-                        <td><img src={member.picture} alt="Attendee" /></td>
-                        <td>
-                          {member.firstName}
-                          {' '}
-                          {member.lastName}
-                        </td>
-                        <td>{member.year}</td>
-                        <td>{member.major}</td>
-                      </tr>
-                    ))
-                  }
+                  {attendees.map(member => (
+                    <tr>
+                      <td>
+                        <img src={member.picture} alt="Attendee" />
+                      </td>
+                      <td>
+                        {member.firstName}
+                        {' '}
+                        {member.lastName}
+                      </td>
+                      <td>{member.year}</td>
+                      <td>{member.major}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

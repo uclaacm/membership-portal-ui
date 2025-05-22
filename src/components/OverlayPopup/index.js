@@ -22,11 +22,25 @@ export default class OverlayPopup extends React.Component {
     return (
       <div className="overlay" onClick={this.handleCancel}>
         <div className={`overlay-popup ${this.props.className}`} onClick={e => e.stopPropagation()}>
-          {this.props.title && <h2>{this.props.title}</h2> }
+          {this.props.title && <h2>{this.props.title}</h2>}
           {this.props.children}
           <div className="popup-buttons">
-            {this.props.submitText && <Button className="popup-button popup-submit-button" style="green" text={this.props.submitText} onClick={this.handleSubmit} /> }
-            {this.props.cancelText && <Button className="popup-button popup-cancel-button" style="red" text={this.props.cancelText} onClick={this.handleCancel} /> }
+            {this.props.submitText && (
+              <Button
+                className="popup-button popup-submit-button"
+                style="green"
+                text={this.props.submitText}
+                onClick={this.handleSubmit}
+              />
+            )}
+            {this.props.cancelText && (
+              <Button
+                className="popup-button popup-cancel-button"
+                style="red"
+                text={this.props.cancelText}
+                onClick={this.handleCancel}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -24,18 +24,16 @@ export default class EventsModal extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {
-                    events.map(event => (
-                      <tr key={event.uuid}>
-                        <td>
-                          {event.title}
-                        </td>
-                        <td>{event.committee}</td>
-                        <td>{event.startDate.format('dddd, MMMM D YYYY')}</td>
-                        <td className="center"><Button color="red" text="Delete" onClick={() => onDelete(event.uuid)} /></td>
-                      </tr>
-                    ))
-                  }
+                  {events.map(event => (
+                    <tr key={event.uuid}>
+                      <td>{event.title}</td>
+                      <td>{event.committee}</td>
+                      <td>{event.startDate.format('dddd, MMMM D YYYY')}</td>
+                      <td className="center">
+                        <Button color="red" text="Delete" onClick={() => onDelete(event.uuid)} />
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
