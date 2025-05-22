@@ -4,7 +4,7 @@ import { Action } from '../../../reducers';
 import './style.scss';
 import moment from "moment";
 
-/*
+/* 
       attendancePoints: "",
       committee: "",
       cover: "",

@@ -33,7 +33,7 @@ export default class Topbar extends React.Component {
   render() {
     const { isAdmin } = this.props;
     const { menuOpen } = this.state;
-
+    
     const sharedLinks = (
       <>
         <NavLink to="/home" activeClassName="selected">
