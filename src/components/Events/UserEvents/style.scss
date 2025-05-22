@@ -55,6 +55,33 @@
   color: white;
   bottom: 0px;
   right: 0px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  width: auto;
+  text-wrap: nowrap;
+
+  &:hover {
+    background-color: rgb(0, 41, 117);
+  }
+
+  &.rsvped {
+    background-color: #28a745;
+    padding: 0px 10px;
+
+    &:hover {
+      background-color: #dc3545;
+    }
+  }
+
+  &.loading {
+    background-color: #6c757d;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: #6c757d;
+    }
+  }
 }
 
 .cover {
