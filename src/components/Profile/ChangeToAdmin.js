@@ -16,7 +16,7 @@ const ChangeToAdmin = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:8080/app/api/v1/admin/promote', {
+      const response = await fetch('/app/api/v1/admin/promote', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
