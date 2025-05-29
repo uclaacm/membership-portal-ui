@@ -1,3 +1,20 @@
+ .main-section .featured-events .events-container .event-container {
+    * {
+      font-family: "Lato", sans-serif !important;
+    }
+    
+    .text-container {
+      margin-top: 0px;
+    }
+
+    @media (min-width: 768px) {
+      height: 90%;
+      aspect-ratio: 29/32;
+      width: auto;
+
+    }
+  }
+
 .event-container {
   position: relative;
   width: 290px;

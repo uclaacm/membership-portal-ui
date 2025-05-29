@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Action } from '../../../reducers';
 import Config from '../../../config'
 import './style.scss';
+import '../../Home/styles.scss';
 import moment from "moment";
 
 /* 
