@@ -212,6 +212,10 @@
   gap: 5px;
   margin-top: 14px;
   padding: 14px 14px;
+
+  @media (max-width: 700px) {
+    align-items: center;
+}
 }
 
 .event-title {
