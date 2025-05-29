@@ -51,10 +51,7 @@ const Banner = (props) => {
   useEffect(() => {
     // Initialize randomize state
     setRandomize(true);
-
-    // Define committee colors to cycle through
-    const committees = ['acm'];
-    committees.push(
+    const base = [
       'studio',
       'icpc',
       'design',
@@ -64,7 +61,16 @@ const Banner = (props) => {
       'ai',
       'hack',
       'cloud',
-    );
+    ];
+
+    //Shuffle Base Array
+    for (let i = base.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [base[i], base[j]] = [base[j], base[i]];
+    }
+
+    // Define committee colors to cycle through
+    const committees = ['acm', ...base];
 
     // Get all banner elements
     const elements = document.querySelectorAll('.banner');
