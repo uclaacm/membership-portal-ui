@@ -115,7 +115,7 @@ class EventCard extends React.Component {
                                         rel="noopener noreferrer"
                                         className="calendar-link"
                                     >
-                                        {event.startDate?.format("MMMM D, YYYY")}, {event.startDate?.format("h:mm a")}&mdash;{event.endDate?.format("h:mm a")} 🗓️
+                                        🗓️ {event.startDate?.format("MMMM D, YYYY")}, {event.startDate?.format("h:mm a")}&mdash;{event.endDate?.format("h:mm a")} 
                                     </a>
                                 </p>
                                 <p className="text">
@@ -125,7 +125,7 @@ class EventCard extends React.Component {
                                         target="_blank" 
                                         rel="noopener noreferrer"
                                     >
-                                        {event.location} 📍
+                                        📍 {event.location} 
                                     </a>
                                 </p>
                                 <p className="text" style={{color: committeeColorMap[event.committee]}}>{event.committee}</p>
