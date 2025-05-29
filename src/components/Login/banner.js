@@ -9,7 +9,7 @@ const mapUpToSum = (num, fn) => {
 };
 
 // Helper function to generate a mask around the title area
-const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false) => {
+const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false, committee) => {
   return mapUpToSum(n, (i) => (
     <div className="square-col" key={i}>
       {mapUpToSum(m, (j) => {
@@ -33,8 +33,20 @@ const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false)
           classNames.push('white');
         } else if (randomize) {
           const r = Math.random();
-          if (r < 0.08) classNames.push('white');
-          else if (r < 0.4) classNames.push('light');
+          // 4% chance: render logo image
+          if (r < 0.04) {
+            return (
+              <div className={classNames.join(' ')} key={j}>
+                <img
+                  src={`/assets/images/committees/${committee}.png`}
+                  alt={committee}
+                  style={{ width: '100%', height: '100%', borderRadius: '14px' }}
+                />
+              </div>
+            );
+          } 
+          else if (r < 0.12) classNames.push('white'); //%12 - %4 chance to get empty
+          else if (r < 0.44) classNames.push('light'); //%44 - %12 chance to get light
         }
 
         return <div className={classNames.join(' ')} key={j} />;
@@ -46,31 +58,23 @@ const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false)
 const Banner = (props) => {
   const [randomize, setRandomize] = useState(false);
   const [color, setColor] = useState(0);
-  let timer;
 
-  useEffect(() => {
-    // Initialize randomize state
-    setRandomize(true);
+  const committees = React.useMemo(() => {
     const base = [
-      'studio',
-      'icpc',
-      'design',
-      'cyber',
-      'teachla',
-      'w',
-      'ai',
-      'hack',
-      'cloud',
+      'studio', 'icpc', 'design', 'cyber', 'teachla',
+      'w', 'ai', 'hack', 'cloud'
     ];
-
-    //Shuffle Base Array
+    // Shuffle base:
     for (let i = base.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [base[i], base[j]] = [base[j], base[i]];
     }
+    return ['acm', ...base];
+  }, []);
 
-    // Define committee colors to cycle through
-    const committees = ['acm', ...base];
+  useEffect(() => {
+    // Initialize randomize state
+    setRandomize(true);
 
     // Get all banner elements
     const elements = document.querySelectorAll('.banner');
@@ -97,7 +101,7 @@ const Banner = (props) => {
 
     // Clean up interval on unmount
     return () => clearInterval(id);
-  }, [props.decorative]);
+  }, [props.decorative, committees]);
   // Get dimensions of login-tile element if it exists
   const hypotenuse = Math.sqrt(0.6 * window.innerWidth * 0.6 * window.innerWidth + window.innerHeight * window.innerHeight);
   
@@ -118,12 +122,13 @@ const Banner = (props) => {
   // Calculate the center for the mask
   const centerX = Math.floor(sideCols / 2);
   const centerY = Math.floor(height / 2);
+  const currentCommittee = committees[color];
 
   return (
     <div className={`banner ${decorative ? 'decorative' : ''}`}>
       <div className="square-col-container">
-        {!decorative && generateCols(sideCols, height, centerX, centerY, 2, randomize)}
-        {decorative && generateCols(8, 4, undefined, undefined, 2, randomize)}
+        {!decorative && generateCols(sideCols, height, centerX, centerY, 2, randomize, currentCommittee)}
+        {decorative && generateCols(8, 4, undefined, undefined, 2, randomize, currentCommittee)}
       </div>
       {!decorative && (
         <div className="title">
