@@ -9,7 +9,7 @@ const mapUpToSum = (num, fn) => {
 };
 
 // Helper function to generate a mask around the title area
-const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false) => {
+const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false, currentCommittee) => {
   return mapUpToSum(n, (i) => (
     <div className="square-col" key={i}>
       {mapUpToSum(m, (j) => {
@@ -33,8 +33,20 @@ const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false)
           classNames.push('white');
         } else if (randomize) {
           const r = Math.random();
-          if (r < 0.08) classNames.push('white');
-          else if (r < 0.4) classNames.push('light');
+          // 4% chance: render logo image
+          if (r < 0.04){
+            return (
+              <div className={classNames.join(' ')} key={j}>
+                <img
+                  src={`/assets/images/committees/${currentCommittee}.png`}
+                  alt={currentCommittee}
+                  style={{ width: '100%', height: '100%', borderRadius: '14px' }}
+                />
+              </div>
+            );
+          }  
+          else if (r < 0.12) classNames.push('white'); //%12 - %4 chance to get white
+          else if (r < 0.4) classNames.push('light');  //%40 - %12 chance to get light
         }
 
         return <div className={classNames.join(' ')} key={j} />;
@@ -116,8 +128,8 @@ const Banner = (props) => {
   return (
     <div className={`banner ${decorative ? 'decorative' : ''}`}>
       <div className="square-col-container">
-        {!decorative && generateCols(sideCols, height, centerX, centerY, 2, randomize)}
-        {decorative && generateCols(8, 4, undefined, undefined, 2, randomize)}
+        {!decorative && generateCols(sideCols, height, centerX, centerY, 2, randomize, props.committee || 'acm')}
+        {decorative && generateCols(8, 4, undefined, undefined, 2, randomize, props.committee || 'acm')}
       </div>
       {!decorative && (
         <div className="title">
