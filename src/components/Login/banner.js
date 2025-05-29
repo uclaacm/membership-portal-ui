@@ -58,6 +58,7 @@ const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false,
 const Banner = (props) => {
   const [randomize, setRandomize] = useState(false);
   const [color, setColor] = useState(0);
+  const [currentCommittee, setCurrentCommittee] = useState('acm');
 
   const committees = React.useMemo(() => {
     const base = [
@@ -82,16 +83,14 @@ const Banner = (props) => {
     // Set up color cycling interval
     const id = setInterval(() => {
       setColor((prev) => {
-        // Remove the previous class from all banners
-        elements.forEach(el => {
-          el.classList.remove(committees[prev]);
-        });
-
         // Calculate next color index
         const next = (prev + 1) % committees.length;
+        setCurrentCommittee(committees[next]);
 
+        // Remove the previous class from all banners
         // Add the new class to all banners
         elements.forEach(el => {
+          el.classList.remove(committees[prev]);
           el.classList.add(committees[next]);
         });
 
@@ -122,10 +121,9 @@ const Banner = (props) => {
   // Calculate the center for the mask
   const centerX = Math.floor(sideCols / 2);
   const centerY = Math.floor(height / 2);
-  const currentCommittee = committees[color];
 
   return (
-    <div className={`banner ${decorative ? 'decorative' : ''}`}>
+    <div className={`banner ${decorative ? 'decorative' : ''} ${currentCommittee}`}>
       <div className="square-col-container">
         {!decorative && generateCols(sideCols, height, centerX, centerY, 2, randomize, currentCommittee)}
         {decorative && generateCols(8, 4, undefined, undefined, 2, randomize, currentCommittee)}
