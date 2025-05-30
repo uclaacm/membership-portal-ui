@@ -35,29 +35,13 @@ const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false,
           const r = Math.random();
           // 3% chance: render logo image
           if (r < 0.03) {
+            classNames.push('logo-bg');
             return (
               <div
                 className={classNames.join(' ')}
                 key={j}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                }}
-              >
-                <img
-                  src={`/assets/images/committees/${committee}.png`}
-                  alt={committee}
-                  className="logo fade"
-                  style={{
-                    width: '125%',
-                    height: '125%',
-                    transform: 'rotate(-45deg)',
-                    objectFit: 'cover',
-                  }}
-                />
-              </div>
+                style={{ '--logo-url': `url(/assets/images/committees/${committee}.png)` }}
+              />
             );
           } 
           else if (r < 0.11) classNames.push('white'); //%11- %3 chance to get empty
