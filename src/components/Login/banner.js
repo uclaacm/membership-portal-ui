@@ -33,20 +33,35 @@ const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false,
           classNames.push('white');
         } else if (randomize) {
           const r = Math.random();
-          // 4% chance: render logo image
-          if (r < 0.04) {
+          // 3% chance: render logo image
+          if (r < 0.03) {
             return (
-              <div className={classNames.join(' ')} key={j}>
+              <div
+                className={classNames.join(' ')}
+                key={j}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                }}
+              >
                 <img
                   src={`/assets/images/committees/${committee}.png`}
                   alt={committee}
-                  style={{ width: '100%', height: '100%', borderRadius: '14px' }}
+                  className="logo fade"
+                  style={{
+                    width: '125%',
+                    height: '125%',
+                    transform: 'rotate(-45deg)',
+                    objectFit: 'cover',
+                  }}
                 />
               </div>
             );
           } 
-          else if (r < 0.12) classNames.push('white'); //%12 - %4 chance to get empty
-          else if (r < 0.44) classNames.push('light'); //%44 - %12 chance to get light
+          else if (r < 0.11) classNames.push('white'); //%11- %3 chance to get empty
+          else if (r < 0.43) classNames.push('light'); //%43 - %11 chance to get light
         }
 
         return <div className={classNames.join(' ')} key={j} />;
