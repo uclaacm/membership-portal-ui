@@ -20,7 +20,7 @@ export default class SuccessCard extends React.Component {
           </p>
           
           <div className="sign-in">
-            <NavLink to="/events">
+            <NavLink to="/home">
               <Button className="continue-button" style="green" icon="fa fa-check" text="Continue to Dashboard" />
             </NavLink>
           </div>
