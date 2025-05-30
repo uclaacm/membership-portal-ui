@@ -40,7 +40,7 @@ const generateCols = (n, m, centerX, centerY, maskRadius = 2, randomize = false,
               <div
                 className={classNames.join(' ')}
                 key={j}
-                style={{ '--logo-url': `url(/assets/images/committees/${committee}.png)` }}
+                style={{ '--logo-url': `url(/assets/images/committees/interior/${committee}.png)` }}
               />
             );
           } 
