@@ -297,6 +297,11 @@
 
 /* Mobile: stack everything */
 @media (max-width: 768px) {
+  .events-container {
+    flex-wrap: wrap;
+    overflow-x: unset;
+    overflow-y: auto;
+  }
   /* Turn the dashboard into a vertical flex container with no gaps */
   .home-dashboard {
     display: flex;
