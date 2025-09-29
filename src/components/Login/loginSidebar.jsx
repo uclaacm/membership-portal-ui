@@ -38,9 +38,11 @@ export default class LoginSidebar extends React.Component {
             <Logo pic={'/assets/images/acm_wordmark_chapter.svg'} />
             <h1 className="login-title">Member Login</h1>
             <p className="login-description">
-             Access exclusive resources, event registrations, and connect with the largest Computer Science community at UCLA.
+              Access exclusive resources, event registrations, and connect with the largest Computer Science community at UCLA.
             </p>
-
+            <p className="login-description" style={{marginBottom: '5px'}}>
+              Please use your UCLA email to sign in.
+            </p>
             <div className="sign-in">
               <GoogleLogin
                 onSuccess={this.handleLogin}
