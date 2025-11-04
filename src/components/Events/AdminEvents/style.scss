@@ -61,6 +61,10 @@
 
         .input-row {
           margin-bottom: 5px;
+          display: flex;
+          flex-direction: row;
+          justify-items: start;
+          align-items: center;
         }
 
         .divider {
@@ -89,12 +93,31 @@
             }
           }
 
-          input {
+          input:not([type="file"]) {
             border-radius: 5px;
             border: solid 1px vars.$gray2;
             height: 16px;
             margin-bottom: 5px;
             padding: 7px;
+            font-size: 14px;
+            outline: none;
+            width: calc(100% - 14px);
+
+            &:focus {
+              border: solid 1px vars.$secondaryblue;
+            }
+
+            &.error {
+              border: solid 1px red;
+            }
+          }
+
+          input[type="file"] {
+            // border-radius: 5px;
+            // border: solid 1px vars.$gray2;
+            height: 16px;
+            margin-bottom: 5px;
+            padding-bottom: 7px;
             font-size: 14px;
             outline: none;
             width: calc(100% - 14px);
