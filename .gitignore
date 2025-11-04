@@ -45,3 +45,5 @@ desktop.ini
 lib/
 public/
 .cache-loader
+
+.vscode

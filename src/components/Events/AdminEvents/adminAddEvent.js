@@ -1,10 +1,11 @@
 import React from 'react';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 
 import InputElement from 'react-input-mask';
 import DatePicker from 'react-datepicker';
 import Button from 'components/Button/index';
-import Config from '../../../config'
+import Config from '../../../config';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -18,6 +19,7 @@ export default class AdminAddEvent extends React.Component {
     this.handleChangeTime = this.handleChangeTime.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSync = this.handleSync.bind(this);
   }
 
   resizeTextArea(e) {
@@ -82,6 +84,10 @@ export default class AdminAddEvent extends React.Component {
     });
   }
 
+  handleSync() {
+    if (this.props.onClickSync) this.props.onClickSync();
+  }
+
   render() {
     const committeeColorMap = Object.fromEntries(Config.committeeColors);
 
@@ -95,6 +101,18 @@ export default class AdminAddEvent extends React.Component {
             />
           </div>
           <div className="editor">
+            <div className="button-area">
+              <Button onClick={this.handleSync} style="blue" text="Sync" icon="" />
+              <span> from </span>
+              <a
+                href="https://docs.google.com/spreadsheets/d/1WbSZCLwxe8azjh_Ng82g2AvYP9pLkUGIRFLkKYnNEpg"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Sheets
+              </a>
+            </div>
+            <div className="text-divider">OR</div>
             <div className="input-row">
               <div className="input-field half-width">
                 <p>Image URL</p>
@@ -114,9 +132,9 @@ export default class AdminAddEvent extends React.Component {
             <div className="input-row">
               <div className="input-field">
                 <p>Committee</p>
-                <select 
-                  value={this.state.event.committee} 
-                  name="committee" 
+                <select
+                  value={this.state.event.committee}
+                  name="committee"
                   onChange={this.handleChange}
                   className="committee-select"
                   style={{ color: committeeColorMap[this.state.event.committee] }}
@@ -218,3 +236,20 @@ export default class AdminAddEvent extends React.Component {
     );
   }
 }
+
+AdminAddEvent.propTypes = {
+  event: PropTypes.object,
+  onClickAdd: PropTypes.func,
+  onClickCancel: PropTypes.func,
+  onClickSync: PropTypes.func,
+  isEdit: PropTypes.bool,
+  showing: PropTypes.bool,
+};
+
+AdminAddEvent.defaultProps = {
+  onClickAdd: null,
+  onClickCancel: null,
+  onClickSync: null,
+  isEdit: false,
+  showing: false,
+};

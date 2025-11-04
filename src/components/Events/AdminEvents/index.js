@@ -35,6 +35,7 @@ export default class AdminEvents extends React.Component {
     this.addEvent = this.addEvent.bind(this);
     this.cancelAddEventParent = this.cancelAddEventParent.bind(this);
     this.handleEditClick = this.handleEditClick.bind(this);
+    this.syncEvents = this.syncEvents.bind(this);
   }
 
   // Shows the add event sidebar
@@ -98,6 +99,10 @@ export default class AdminEvents extends React.Component {
     }
   }
 
+  syncEvents() {
+    console.log('sync');
+  }
+
   render() {
     const { events } = this.props;
     const months = [];
@@ -136,6 +141,7 @@ export default class AdminEvents extends React.Component {
           event={this.state.eventPlaceholder}
           onClickAdd={this.addEvent}
           onClickCancel={this.cancelAddEventParent}
+          onClickSync={this.syncEvents}
           isEdit={this.state.isEditEvent}
           showing={this.state.showAddEvent}
         />
