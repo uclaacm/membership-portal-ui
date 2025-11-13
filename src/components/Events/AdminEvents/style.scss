@@ -113,8 +113,18 @@
           }
 
           input[type="file"] {
-            // border-radius: 5px;
-            // border: solid 1px vars.$gray2;
+            position: absolute;
+            margin: -1px;
+            padding: 0;
+            width: 1px;
+            height: 1px;
+            border: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+          }
+
+          /*
+          input[type="file"] {
             height: 16px;
             margin-bottom: 5px;
             padding-bottom: 7px;
@@ -130,6 +140,7 @@
               border: solid 1px red;
             }
           }
+          */
 
           select {
             -webkit-appearance: none;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import moment from 'moment';
 
 import InputElement from 'react-input-mask';
@@ -13,6 +13,7 @@ export default class AdminAddEvent extends React.Component {
   constructor(props) {
     super(props);
     this.state = { event: this.props.event, startTimeError: false, endTimeError: false, coverImageFile: null };
+    this.coverUploadRef = createRef();
     this.resizeTextArea = this.resizeTextArea.bind(this);
     this.handleChangeCover = this.handleChangeCover.bind(this);
     this.handleChangeStartDate = this.handleChangeStartDate.bind(this);
@@ -105,26 +106,34 @@ export default class AdminAddEvent extends React.Component {
     e.persist();
 
     const file = e.target.files?.[0];
-    if (!file) return;
 
-    if (file.size > 3 * 1024 * 1024) {
-      alert('File size exceeds 3 MB');
-      e.target.value = '';
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-
+    if (!file) {
       this.setState((prev) => {
         const newState = Object.assign({}, prev);
-        newState.event.cover = reader.result;       // don't freak out, this is temporary/local-only until handleSubmit
-        newState.coverImageFile = file;
+        newState.event.cover = e.target.value;
+        newState.coverImageFile = null;
         return newState;
       });
+    } else {
+      if (file.size > 3 * 1024 * 1024) {
+        alert('File size exceeds 3 MB');
+        e.target.value = '';
+        return;
+      }
 
-    };
-    reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+
+        this.setState((prev) => {
+          const newState = Object.assign({}, prev);
+          newState.event.cover = reader.result;       // don't freak out, this is temporary/local-only until handleSubmit
+          newState.coverImageFile = file;
+          return newState;
+        });
+
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -151,8 +160,12 @@ export default class AdminAddEvent extends React.Component {
           <div className="editor">
             <div className="input-row">
               <div className="input-field half-width">
-                <p>Image Upload</p>
-                <input type="file" value={''} name="cover" accept="image/*" onChange={this.handleChangeCover} onClick={(event)=> { event.target.value = null }} />
+                <p>Image URL or Upload</p>
+                <input type="text" value={this.state.event.cover} name="cover" onChange={this.handleChangeCover} />
+              </div>
+              <div className="input-field one-fourth-width file-upload">
+                <input type="file" value={''} name="cover" ref={this.coverUploadRef} id="coverInput" accept="image/*" onChange={this.handleChangeCover} onClick={(event) => { event.target.value = null }} />
+                <Button onClick={(event) => { event.target.value = null; this.coverUploadRef.current?.click(); }} style="blue" text="📁" icon="" />
               </div>
               <div className="input-field half-width">
                 <p>Event URL</p>

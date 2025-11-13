@@ -190,9 +190,9 @@ class ControlPanel extends React.Component {
           <br />
 
           <Button
-            className="deleteimages-action-button"
+            className="manageimages-action-button"
             color="red"
-            text="Delete Images"
+            text="Manage Images"
             onClick={this.openImagesModal}
           />
           <br />
