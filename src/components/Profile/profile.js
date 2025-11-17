@@ -6,7 +6,6 @@ import Config from 'config';
 
 import Activities from './activities';
 import YearSelector from './yearSelector';
-import ChangeToAdmin from './ChangeToAdmin';
 import ProfileCard from './ProfileCard';
 
 export default class Profile extends React.Component {
