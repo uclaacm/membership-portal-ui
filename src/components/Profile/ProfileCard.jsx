@@ -89,6 +89,7 @@ export default class ProfileCard extends React.Component {
               {yearLabel}
               {' '}
               •
+              {' '}
               {profile.major}
             </p>
           </div>

@@ -211,6 +211,7 @@
       border-radius: 6px;
       font-size: 1em;
       font-family: inherit;
+      box-sizing: border-box;
 
       &:focus {
         outline: none;
