@@ -107,9 +107,49 @@ class AdminEventCard extends React.Component {
         </div>
 
         {showRsvpData && rsvpData && (
-          <div className="rsvp-json-display">
-            <h4>RSVP Data:</h4>
-            <pre>{JSON.stringify({ error: null, rsvps: rsvpData }, null, 2)}</pre>
+          <div className="rsvp-display">
+            <h4 className="rsvp-header">
+              RSVPs (
+              {rsvpData.length}
+              {' '}
+              total)
+            </h4>
+            {rsvpData.length === 0 ? (
+              <p className="no-rsvps">No RSVPs yet for this event.</p>
+            ) : (
+              <div className="rsvp-list">
+                {rsvpData.map(rsvp => (
+                  <div key={rsvp.uuid} className="rsvp-card">
+                    <img
+                      src={rsvp.user.picture}
+                      alt={`${rsvp.user.firstName} ${rsvp.user.lastName}`}
+                      className="rsvp-avatar"
+                    />
+                    <div className="rsvp-info">
+                      <div className="rsvp-name">
+                        {rsvp.user.firstName}
+                        {' '}
+                        {rsvp.user.lastName}
+                      </div>
+                      <div className="rsvp-email">{rsvp.user.email}</div>
+                      <div className="rsvp-details">
+                        Year
+                        {' '}
+                        {rsvp.user.year}
+                        {' '}
+                        •
+                        {' '}
+                        {rsvp.user.major}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <details className="json-toggle">
+              <summary>View Raw JSON</summary>
+              <pre>{JSON.stringify({ error: null, rsvps: rsvpData }, null, 2)}</pre>
+            </details>
           </div>
         )}
       </div>
