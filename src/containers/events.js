@@ -11,6 +11,7 @@ class Events extends React.Component {
   componentWillMount() {
     if (this.props.authenticated) {
       this.props.fetchEvents();
+      this.props.fetchImages();
       this.props.fetchUserRSVPs();
     }
   }
@@ -65,6 +66,9 @@ class Events extends React.Component {
             syncEvents={this.props.syncEvents}
             fetchEventRSVPs={this.props.fetchEventRSVPs}
             rsvpError={this.props.rsvpError}
+            createImage={this.props.createImage}
+            imageCreateSuccess={this.props.imageCreateSuccess}
+            imageCreateUuid={this.props.imageCreateUuid}
           />
         )}
       </div>
@@ -91,11 +95,18 @@ const mapStateToProps = state => ({
   checkInError: state.CheckIn.get('error'),
   userRsvps: state.RSVP.get('userRsvps'),
   rsvpError: state.RSVP.get('error'),
+  imageCreated: state.Images.get('created'),
+  imageCreateSuccess: state.Images.get('createSuccess'),
+  imageCreateUuid: state.Images.get('createUuid'),
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchEvents: () => {
     dispatch(Action.GetCurrentEvents());
+  },
+
+  fetchImages: () => {
+    dispatch(Action.GetAllImages());
   },
 
   checkIn: (id) => {
@@ -144,6 +155,10 @@ const mapDispatchToProps = dispatch => ({
 
   fetchEventRSVPs: (eventUuid) => {
     dispatch(Action.FetchEventRSVPs(eventUuid));
+  },
+
+  createImage: (formData) => {
+    dispatch(Action.CreateImage(formData));
   },
 });
 

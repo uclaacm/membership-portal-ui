@@ -33,6 +33,7 @@ import {
 import { Leaderboard, FetchLeaderboard, InvalidateLeaderboard } from './leaderboard';
 import { CheckIn, CheckInto, ResetCheckIn } from './checkin';
 import { Registration, RegisterUser, registerDone } from './registration';
+import { Images, GetAllImages, CreateImage, DeleteImage } from './image';
 
 const history = createBrowserHistory();
 const routing = routerMiddleware(history);
@@ -49,6 +50,7 @@ const store = createStore(
     Leaderboard,
     CheckIn,
     Registration,
+    Images,
     router: routerReducer,
   }),
   composeEnhancers(applyMiddleware(routing, thunk)),
@@ -87,6 +89,9 @@ const Action = {
   CancelRSVP,
   FetchUserRSVPs,
   FetchEventRSVPs,
+  GetAllImages,
+  CreateImage,
+  DeleteImage,
 };
 
 export { store, history, Action };
