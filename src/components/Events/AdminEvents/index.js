@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Button from 'components/Button';
 import BannerMessage from 'components/BannerMessage';
@@ -91,7 +92,11 @@ export default class AdminEvents extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if ((nextProps.updated && nextProps.updateSuccess) || (nextProps.created && nextProps.createSuccess)) {
+    const isUpdateComplete = nextProps.updated && nextProps.updateSuccess;
+    const isCreateComplete = nextProps.created && nextProps.createSuccess;
+    const isSyncComplete = nextProps.synced && nextProps.syncSuccess;
+
+    if (isUpdateComplete || isCreateComplete || isSyncComplete) {
       this.setState(prev => ({
         showAddEvent: false,
         isEditEvent: false,
@@ -100,7 +105,9 @@ export default class AdminEvents extends React.Component {
   }
 
   syncEvents() {
-    console.log('sync');
+    if (this.props.syncEvents) {
+      this.props.syncEvents();
+    }
   }
 
   render() {
@@ -128,13 +135,15 @@ export default class AdminEvents extends React.Component {
       ? 'Event updated successfully'
       : this.props.createSuccess
         ? 'Event created successfully'
-        : this.props.error;
+        : this.props.syncSuccess
+          ? this.props.syncMessage || 'Events synced successfully from Google Sheets'
+          : this.props.error;
 
     return (
       <div className="events-dashboard admin-dashboard">
         <BannerMessage
-          showing={this.props.updated || this.props.created}
-          success={this.props.updateSuccess || this.props.createSuccess}
+          showing={this.props.updated || this.props.created || this.props.synced}
+          success={this.props.updateSuccess || this.props.createSuccess || this.props.syncSuccess}
           message={bannerMessage}
         />
         <AdminAddEvent
@@ -175,3 +184,18 @@ export default class AdminEvents extends React.Component {
     );
   }
 }
+
+AdminEvents.propTypes = {
+  events: PropTypes.arrayOf(PropTypes.object).isRequired,
+  error: PropTypes.string,
+  created: PropTypes.bool,
+  createSuccess: PropTypes.bool,
+  updated: PropTypes.bool,
+  updateSuccess: PropTypes.bool,
+  synced: PropTypes.bool,
+  syncSuccess: PropTypes.bool,
+  syncMessage: PropTypes.string,
+  addEvent: PropTypes.func.isRequired,
+  updateEvent: PropTypes.func.isRequired,
+  syncEvents: PropTypes.func.isRequired,
+};

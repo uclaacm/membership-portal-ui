@@ -85,7 +85,9 @@ export default class AdminAddEvent extends React.Component {
   }
 
   handleSync() {
-    if (this.props.onClickSync) this.props.onClickSync();
+    if (this.props.onClickSync) {
+      this.props.onClickSync();
+    }
   }
 
   render() {
@@ -105,7 +107,7 @@ export default class AdminAddEvent extends React.Component {
               <Button onClick={this.handleSync} style="blue" text="Sync" icon="" />
               <span> from </span>
               <a
-                href="https://docs.google.com/spreadsheets/d/1WbSZCLwxe8azjh_Ng82g2AvYP9pLkUGIRFLkKYnNEpg"
+                href="https://docs.google.com/spreadsheets/d/19Fjjv-QLbCtjwbuw3rq0dcBvbP9R-rgawvAy4O_aR8A"
                 target="_blank"
                 rel="noopener noreferrer"
               >
