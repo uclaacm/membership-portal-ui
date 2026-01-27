@@ -37,6 +37,15 @@ class AdminEventCard extends React.Component {
     if (handleEditClick) handleEditClick(event);
   }
 
+  copyEmailsToClipboard() {
+    const { rsvpData } = this.state;
+    if (!rsvpData || rsvpData.length === 0) return;
+
+    const emails = rsvpData.map(rsvp => rsvp.user.email).join(', ');
+    // eslint-disable-next-line no-undef
+    navigator.clipboard.writeText(emails);
+  }
+
   async handleViewRsvps(e) {
     const { fetchEventRSVPs, event } = this.props;
     const { showRsvpData } = this.state;
@@ -65,6 +74,7 @@ class AdminEventCard extends React.Component {
     }
   }
 
+  /* can add a button here to copy all emails from the rsvp */
   render() {
     const { event } = this.props;
     const {
@@ -108,12 +118,17 @@ class AdminEventCard extends React.Component {
 
         {showRsvpData && rsvpData && (
           <div className="rsvp-display">
-            <h4 className="rsvp-header">
-              RSVPs (
-              {rsvpData.length}
-              {' '}
-              total)
-            </h4>
+            <div className="rsvp-header-section">
+              <h4 className="rsvp-header">
+                RSVPs (
+                {rsvpData.length}
+                {' '}
+                total)
+              </h4>
+              <button type="button" className="copy-email-button" onClick={() => this.copyEmailsToClipboard()}>
+                Copy All Emails
+              </button>
+            </div>
             {rsvpData.length === 0 ? (
               <p className="no-rsvps">No RSVPs yet for this event.</p>
             ) : (
