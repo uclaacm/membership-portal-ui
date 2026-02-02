@@ -1,13 +1,13 @@
-import React from "react";
-import Button from "components/Button";
-import BannerMessage from "components/BannerMessage";
-import EventsModal from "components/Modal/eventsModal";
-import ImagesModal from "components/Modal/imagesModal";
-import AdminsModal from "components/Modal/adminsModal";
-import ReassignModal from "components/Modal/reassignModal";
-import OneClickPasswordModal from "components/Modal/oneClickPasswordModal";
-import ConfirmationModal from "components/Modal/confirmationModal";
-import PropTypes from "prop-types";
+import React from 'react';
+import Button from 'components/Button';
+import BannerMessage from 'components/BannerMessage';
+import EventsModal from 'components/Modal/eventsModal';
+import ImagesModal from 'components/Modal/imagesModal';
+import AdminsModal from 'components/Modal/adminsModal';
+import ReassignModal from 'components/Modal/reassignModal';
+import OneClickPasswordModal from 'components/Modal/oneClickPasswordModal';
+import ConfirmationModal from 'components/Modal/confirmationModal';
+import PropTypes from 'prop-types';
 import ChangeToAdmin from '../Profile/ChangeToAdmin';
 
 
@@ -37,76 +37,82 @@ class ControlPanel extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.oneClickUpdated && nextProps.oneClickUpdateSuccess) {
+      this.closeOneClickPasswordModal();
+    }
+  }
+
   openEventsModal = () => {
-    this.setState(prev => ({ showEventsModal: true }));
+    this.setState({ showEventsModal: true });
   };
 
   closeEventsModal = () => {
-    this.setState(prev => ({ showEventsModal: false }));
+    this.setState({ showEventsModal: false });
   };
 
-  openEventsConfirmationModal = uuid => {
-    this.setState(prev => ({ showEventsConfirmationModal: true, deleteUUID: uuid }));
+  openEventsConfirmationModal = (uuid) => {
+    this.setState({ showEventsConfirmationModal: true, deleteUUID: uuid });
   };
 
   closeEventsConfirmationModal = () => {
-    this.setState(prev => ({ showEventsConfirmationModal: false }));
+    this.setState({ showEventsConfirmationModal: false });
   };
 
   openImagesModal = () => {
-    this.setState(prev => ({ showImagesModal: true }));
+    this.setState({ showImagesModal: true });
   };
 
   closeImagesModal = () => {
-    this.setState(prev => ({ showImagesModal: false }));
+    this.setState({ showImagesModal: false });
   };
 
-  openImagesConfirmationModal = uuid => {
-    this.setState(prev => ({ showImagesConfirmationModal: true, deleteImageUUID: uuid }));
+  openImagesConfirmationModal = (uuid) => {
+    this.setState({ showImagesConfirmationModal: true, deleteImageUUID: uuid });
   };
 
   closeImagesConfirmationModal = () => {
-    this.setState(prev => ({ showImagesConfirmationModal: false }));
+    this.setState({ showImagesConfirmationModal: false });
   };
 
   openAdminsModal = () => {
-    this.setState(prev => ({ showAdminsModal: true }));
+    this.setState({ showAdminsModal: true });
   };
 
   closeAdminsModal = () => {
-    this.setState(prev => ({ showAdminsModal: false }));
+    this.setState({ showAdminsModal: false });
   };
 
   openReassignModal = () => {
-    this.setState(prev => ({ showReassignModal: true }));
+    this.setState({ showReassignModal: true });
   };
 
   closeReassignModal = () => {
-    this.setState(prev => ({ showReassignModal: false }));
+    this.setState({ showReassignModal: false });
   };
 
-  openRemoveAdminConfirmationModal = email => {
-    this.setState(prev => ({ showRemoveAdminConfirmationModal: true, removeEmail: email }));
+  openRemoveAdminConfirmationModal = (email) => {
+    this.setState({ showRemoveAdminConfirmationModal: true, removeEmail: email });
   };
 
   closeRemoveAdminConfirmationModal = () => {
-    this.setState(prev => ({ showRemoveAdminConfirmationModal: false }));
+    this.setState({ showRemoveAdminConfirmationModal: false });
   };
 
-  openReassignAdminConfirmationModal = email => {
-    this.setState(prev => ({ showReassignAdminConfirmationModal: true, reassignEmail: email }));
+  openReassignAdminConfirmationModal = (email) => {
+    this.setState({ showReassignAdminConfirmationModal: true, reassignEmail: email });
   };
 
   closeReassignAdminConfirmationModal = () => {
-    this.setState(prev => ({ showReassignAdminConfirmationModal: false }));
+    this.setState({ showReassignAdminConfirmationModal: false });
   };
 
   openOneClickPasswordModal = () => {
-    this.setState(prev => ({ showOneClickPasswordModal: true }));
+    this.setState({ showOneClickPasswordModal: true });
   };
 
   closeOneClickPasswordModal = () => {
-    this.setState(prev => ({ showOneClickPasswordModal: false }));
+    this.setState({ showOneClickPasswordModal: false });
   };
 
   triggerDeleteEvent = () => {
@@ -137,7 +143,7 @@ class ControlPanel extends React.Component {
     this.closeReassignAdminConfirmationModal();
   };
 
-  triggerAddAdmin = email => {
+  triggerAddAdmin = (email) => {
     const { addAdmin } = this.props;
     addAdmin(email);
   };
@@ -147,14 +153,10 @@ class ControlPanel extends React.Component {
     changeOneClickPassword(oldPassword, newPassword);
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.oneClickUpdated && nextProps.oneClickUpdateSuccess) {
-      this.closeOneClickPasswordModal();
-    }
-  }
-
   render() {
-    const { logout, events, admins, images, isSuperAdmin, userEmail, adminView, toggleAdminView } = this.props;
+    const {
+      logout, events, admins, images, isSuperAdmin, userEmail, adminView, toggleAdminView,
+    } = this.props;
     const {
       showEventsModal,
       showEventsConfirmationModal,
@@ -175,7 +177,7 @@ class ControlPanel extends React.Component {
         <BannerMessage
           showing={this.props.oneClickUpdated}
           success={this.props.oneClickUpdateSuccess}
-          message={this.props.oneClickUpdateSuccess ? "Password updated successfully" : this.props.oneClickError}
+          message={this.props.oneClickUpdateSuccess ? 'Password updated successfully' : this.props.oneClickError}
         />
         <h1 className="DisplayPrimary">Control Panel</h1>
         <div className="form-elem">
@@ -208,7 +210,7 @@ class ControlPanel extends React.Component {
           <Button
             className="control-panel-action-button"
             color="blue"
-            text={adminView ? "Switch to Member View" : "Switch to Admin View"}
+            text={adminView ? 'Switch to Member View' : 'Switch to Admin View'}
             onClick={toggleAdminView}
           />
 
@@ -346,9 +348,17 @@ ControlPanel.propTypes = {
   removeAdmin: PropTypes.func.isRequired,
   reassignAdmin: PropTypes.func.isRequired,
   addAdmin: PropTypes.func.isRequired,
-  events: PropTypes.arrayOf(PropTypes.object).isRequired,
-  admins: PropTypes.arrayOf(PropTypes.object).isRequired,
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  events: PropTypes.arrayOf(PropTypes.shape({
+    uuid: PropTypes.string,
+    title: PropTypes.string,
+  })).isRequired,
+  admins: PropTypes.arrayOf(PropTypes.shape({
+    email: PropTypes.string,
+    firstName: PropTypes.string,
+  })).isRequired,
+  images: PropTypes.arrayOf(PropTypes.shape({
+    uuid: PropTypes.string,
+  })).isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
   userEmail: PropTypes.string.isRequired,
   changeOneClickPassword: PropTypes.func.isRequired,

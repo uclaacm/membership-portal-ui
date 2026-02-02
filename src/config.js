@@ -10,6 +10,7 @@ export default {
   routes: {
     user: {
       user: '/api/v1/user',
+      career: '/api/v1/user/career',
       activity: '/api/v1/user/activity',
       admins: '/api/v1/user/admins',
     },
