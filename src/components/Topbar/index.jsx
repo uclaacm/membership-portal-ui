@@ -73,7 +73,7 @@ export default class Topbar extends React.Component {
             )}
 
             {/* Mobile only items */}
-            <NavLink to="/profile" className="topbar-mobile-only" activeClassName="selected">
+            <NavLink to="/profile" exact className="topbar-mobile-only" activeClassName="selected">
               <NavigationItem icon="fa-user-circle" text="Profile" />
             </NavLink>
             
