@@ -64,6 +64,7 @@ class State {
 
 const FetchUser = () => async (dispatch) => {
   try {
+    // Fetch basic profile
     const response = await fetch(Config.API_URL + Config.routes.user.user, {
       method: 'GET',
       headers: {
@@ -82,7 +83,23 @@ const FetchUser = () => async (dispatch) => {
     if (!data) throw new Error('Empty response from server');
     if (data.error) throw new Error(data.error.message);
 
-    dispatch(State.FetchUser(null, data.user));
+    // Fetch career profile
+    const careerResponse = await fetch(Config.API_URL + Config.routes.user.career, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${Storage.get('token')}`,
+      },
+    });
+
+    const careerData = await careerResponse.json();
+    if (careerData && !careerData.error && careerData.user) {
+      // Merge career data with user profile
+      dispatch(State.FetchUser(null, { ...data.user, ...careerData.user }));
+    } else {
+      dispatch(State.FetchUser(null, data.user));
+    }
   } catch (err) {
     dispatch(State.FetchUser(err.message));
   }
