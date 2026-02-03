@@ -170,7 +170,7 @@ export default class AdminAddEvent extends React.Component {
               <Button onClick={this.handleSync} style="blue" text="Sync" icon="" />
               <span> from </span>
               <a
-                href="https://docs.google.com/spreadsheets/d/19Fjjv-QLbCtjwbuw3rq0dcBvbP9R-rgawvAy4O_aR8A"
+                href="https://docs.google.com/spreadsheets/d/1iANP5StqWwmRBWXRekl8Q90ssLk9hnqxaH778l7e3dE"
                 target="_blank"
                 rel="noopener noreferrer"
               >
