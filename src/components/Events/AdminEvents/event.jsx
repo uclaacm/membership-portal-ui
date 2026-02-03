@@ -11,9 +11,11 @@ class AdminEventCard extends React.Component {
       showRsvpData: false,
       rsvpData: null,
       rsvps: 0,
+      emailsCopied: false,
     };
     this.editEvent = this.editEvent.bind(this);
     this.handleViewRsvps = this.handleViewRsvps.bind(this);
+    this.copyEmailsToClipboard = this.copyEmailsToClipboard.bind(this);
   }
 
   async componentDidMount() {
@@ -37,13 +39,19 @@ class AdminEventCard extends React.Component {
     if (handleEditClick) handleEditClick(event);
   }
 
-  copyEmailsToClipboard() {
+  copyEmailsToClipboard(e) {
     const { rsvpData } = this.state;
     if (!rsvpData || rsvpData.length === 0) return;
-
+    e.stopPropagation();
     const emails = rsvpData.map(rsvp => rsvp.user.email).join(', ');
     // eslint-disable-next-line no-undef
     navigator.clipboard.writeText(emails);
+    // Set copied state
+    this.setState({ emailsCopied: true });
+    // Reset after 2 seconds
+    setTimeout(() => {
+      this.setState({ emailsCopied: false });
+    }, 2000);
   }
 
   async handleViewRsvps(e) {
@@ -78,7 +86,7 @@ class AdminEventCard extends React.Component {
   render() {
     const { event } = this.props;
     const {
-      rsvps, showRsvpData, rsvpData, loading,
+      rsvps, showRsvpData, rsvpData, loading, emailsCopied,
     } = this.state;
 
     let buttonText = 'View All RSVPs';
@@ -125,8 +133,8 @@ class AdminEventCard extends React.Component {
                 {' '}
                 total)
               </h4>
-              <button type="button" className="copy-email-button" onClick={() => this.copyEmailsToClipboard()}>
-                Copy All Emails
+              <button type="button" className="copy-email-button" onClick={this.copyEmailsToClipboard}>
+                {emailsCopied ? 'Copied!' : 'Copy All Emails'}
               </button>
             </div>
             {rsvpData.length === 0 ? (
