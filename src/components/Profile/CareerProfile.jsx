@@ -106,14 +106,15 @@ export default class CareerProfile extends React.Component {
       skills: this.state.skills,
       careerInterests: this.state.careerInterests,
       isProfilePublic: this.state.isProfilePublic,
+      // Always include URL fields to allow clearing them
+      portfolioUrl: this.state.portfolioUrl,
+      personalWebsite: this.state.personalWebsite,
+      resumeUrl: this.state.resumeUrl,
     };
 
-    // Only include URL fields if they have values
+    // Only include LinkedIn/GitHub if they have values (validator enforces format)
     if (this.state.linkedinUrl) updates.linkedinUrl = this.state.linkedinUrl;
     if (this.state.githubUrl) updates.githubUrl = this.state.githubUrl;
-    if (this.state.portfolioUrl) updates.portfolioUrl = this.state.portfolioUrl;
-    if (this.state.personalWebsite) updates.personalWebsite = this.state.personalWebsite;
-    if (this.state.resumeUrl) updates.resumeUrl = this.state.resumeUrl;
 
     try {
       await this.props.updateCareerProfile(updates);
@@ -159,7 +160,7 @@ export default class CareerProfile extends React.Component {
               {/* Basic Info Section */}
               <div className="form-section">
                 <h2>Basic Information</h2>
-                
+
                 <div className="form-group">
                   <label htmlFor="pronouns">Pronouns</label>
                   <input
@@ -176,7 +177,10 @@ export default class CareerProfile extends React.Component {
                 <div className="form-group">
                   <label htmlFor="bio">
                     Bio
-                    <span className="char-count">{this.state.bio.length}/1000</span>
+                    <span className="char-count">
+                      {this.state.bio.length}
+                      /1000
+                    </span>
                   </label>
                   <textarea
                     id="bio"
@@ -193,7 +197,7 @@ export default class CareerProfile extends React.Component {
               {/* Professional Links Section */}
               <div className="form-section">
                 <h2>Professional Links</h2>
-                
+
                 <div className="form-group">
                   <label htmlFor="linkedinUrl">
                     <i className="fab fa-linkedin" />
@@ -282,10 +286,13 @@ export default class CareerProfile extends React.Component {
               <div className="form-section">
                 <h2>
                   Skills
-                  <span className="count-badge">{this.state.skills.length}/20</span>
+                  <span className="count-badge">
+                    {this.state.skills.length}
+                    /20
+                  </span>
                 </h2>
                 <p className="section-help">Add your technical and soft skills. Press Enter to add each skill.</p>
-                
+
                 <div className="form-group">
                   <input
                     type="text"
@@ -313,10 +320,13 @@ export default class CareerProfile extends React.Component {
               <div className="form-section">
                 <h2>
                   Career Interests
-                  <span className="count-badge">{this.state.careerInterests.length}/20</span>
+                  <span className="count-badge">
+                    {this.state.careerInterests.length}
+                    /20
+                  </span>
                 </h2>
                 <p className="section-help">What career fields or roles interest you? Press Enter to add each interest.</p>
-                
+
                 <div className="form-group">
                   <input
                     type="text"
@@ -343,7 +353,7 @@ export default class CareerProfile extends React.Component {
               {/* Privacy Section */}
               <div className="form-section">
                 <h2>Privacy Settings</h2>
-                
+
                 <div className="toggle-group">
                   <label className="toggle-label">
                     <input
@@ -392,25 +402,40 @@ export default class CareerProfile extends React.Component {
               <div className="progress-bar">
                 <div className="progress-fill" style={{ width: `${completeness}%` }} />
               </div>
-              <p className="progress-text">{completeness}% Complete</p>
+              <p className="progress-text">
+                {completeness}
+                % Complete
+              </p>
               <ul className="completeness-checklist">
                 <li className={this.state.bio && this.state.bio.length >= 50 ? 'complete' : ''}>
-                  {this.state.bio && this.state.bio.length >= 50 ? '✓' : '○'} Bio (50+ characters)
+                  {this.state.bio && this.state.bio.length >= 50 ? '✓' : '○'}
+                  {' '}
+                  Bio (50+ characters)
                 </li>
                 <li className={this.state.skills.length >= 3 ? 'complete' : ''}>
-                  {this.state.skills.length >= 3 ? '✓' : '○'} At least 3 skills
+                  {this.state.skills.length >= 3 ? '✓' : '○'}
+                  {' '}
+                  At least 3 skills
                 </li>
                 <li className={this.state.careerInterests.length >= 2 ? 'complete' : ''}>
-                  {this.state.careerInterests.length >= 2 ? '✓' : '○'} At least 2 career interests
+                  {this.state.careerInterests.length >= 2 ? '✓' : '○'}
+                  {' '}
+                  At least 2 career interests
                 </li>
                 <li className={this.state.linkedinUrl || this.state.githubUrl ? 'complete' : ''}>
-                  {this.state.linkedinUrl || this.state.githubUrl ? '✓' : '○'} Professional link
+                  {this.state.linkedinUrl || this.state.githubUrl ? '✓' : '○'}
+                  {' '}
+                  Professional link
                 </li>
                 <li className={this.state.portfolioUrl || this.state.personalWebsite ? 'complete' : ''}>
-                  {this.state.portfolioUrl || this.state.personalWebsite ? '✓' : '○'} Portfolio/website
+                  {this.state.portfolioUrl || this.state.personalWebsite ? '✓' : '○'}
+                  {' '}
+                  Portfolio/website
                 </li>
                 <li className={this.state.pronouns ? 'complete' : ''}>
-                  {this.state.pronouns ? '✓' : '○'} Pronouns
+                  {this.state.pronouns ? '✓' : '○'}
+                  {' '}
+                  Pronouns
                 </li>
               </ul>
             </div>

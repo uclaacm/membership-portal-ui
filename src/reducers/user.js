@@ -165,8 +165,13 @@ const UpdateCareerProfile = user => async (dispatch) => {
     if (!data) throw new Error('Empty response from server');
     if (data.error) throw new Error(data.error.message);
 
-    dispatch(State.FetchUser(null, data.user));
+    // Merge career profile data with existing profile instead of replacing
     dispatch(State.UpdateUser());
+    dispatch((innerDispatch, getState) => {
+      const currentProfile = getState().User.get('profile');
+      const mergedProfile = { ...currentProfile, ...data.user };
+      innerDispatch(State.FetchUser(null, mergedProfile));
+    });
   } catch (err) {
     dispatch(State.UpdateUser(err.message));
     throw err;

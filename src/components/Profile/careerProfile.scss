@@ -359,6 +359,14 @@
     }
 
     .career-profile-sidebar {
+      position: sticky;
+      top: 100px;
+      align-self: flex-start;
+
+      @media (max-width: 900px) {
+        position: static;
+      }
+
       .info-card {
         background: white;
         border-radius: 12px;
