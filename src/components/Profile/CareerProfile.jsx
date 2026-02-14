@@ -106,15 +106,14 @@ export default class CareerProfile extends React.Component {
       skills: this.state.skills,
       careerInterests: this.state.careerInterests,
       isProfilePublic: this.state.isProfilePublic,
-      // Always include URL fields to allow clearing them
+      // Required fields
+      linkedinUrl: this.state.linkedinUrl,
+      githubUrl: this.state.githubUrl,
+      // Optional URL fields that can be cleared
       portfolioUrl: this.state.portfolioUrl,
       personalWebsite: this.state.personalWebsite,
       resumeUrl: this.state.resumeUrl,
     };
-
-    // Only include LinkedIn/GitHub if they have values (validator enforces format)
-    if (this.state.linkedinUrl) updates.linkedinUrl = this.state.linkedinUrl;
-    if (this.state.githubUrl) updates.githubUrl = this.state.githubUrl;
 
     try {
       await this.props.updateCareerProfile(updates);
@@ -211,6 +210,7 @@ export default class CareerProfile extends React.Component {
                     value={this.state.linkedinUrl}
                     onChange={this.handleInputChange}
                     placeholder="https://linkedin.com/in/yourprofile"
+                    required
                   />
                 </div>
 
@@ -227,6 +227,7 @@ export default class CareerProfile extends React.Component {
                     value={this.state.githubUrl}
                     onChange={this.handleInputChange}
                     placeholder="https://github.com/yourusername"
+                    required
                   />
                 </div>
 
