@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Topbar from 'containers/topbar';
-import Sidebar from 'containers/sidebar';
 import ControlPanel from './controlPanel';
 
 export default class ControlPanelComponent extends React.Component {
@@ -29,7 +28,7 @@ export default class ControlPanelComponent extends React.Component {
     return (
       <div className="controlpanel">
         <Topbar />
-        {/*<Sidebar />*/}
+        {/* <Sidebar /> */}
         <ControlPanel
           logout={logout}
           userEmail={userEmail}
@@ -57,11 +56,17 @@ export default class ControlPanelComponent extends React.Component {
 ControlPanelComponent.propTypes = {
   logout: PropTypes.func.isRequired,
   userEmail: PropTypes.string.isRequired,
-  events: PropTypes.arrayOf(PropTypes.object).isRequired,
+  events: PropTypes.arrayOf(PropTypes.shape({
+    uuid: PropTypes.string,
+  })).isRequired,
   deleteEvent: PropTypes.func.isRequired,
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  images: PropTypes.arrayOf(PropTypes.shape({
+    uuid: PropTypes.string,
+  })).isRequired,
   deleteImage: PropTypes.func.isRequired,
-  admins: PropTypes.arrayOf(PropTypes.object).isRequired,
+  admins: PropTypes.arrayOf(PropTypes.shape({
+    email: PropTypes.string,
+  })).isRequired,
   removeAdmin: PropTypes.func.isRequired,
   addAdmin: PropTypes.func.isRequired,
   reassignAdmin: PropTypes.func.isRequired,

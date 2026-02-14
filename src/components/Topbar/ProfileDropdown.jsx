@@ -55,7 +55,7 @@ export default class ProfileDropdown extends React.Component {
               <i className="fa fa-user" />
               <span>My Profile</span>
             </Link>
-            <Link to="/profile/career" className="dropdown-item" onClick={this.toggleDropdown}>
+            <Link to="/profile/career/edit" className="dropdown-item" onClick={this.toggleDropdown}>
               <i className="fa fa-briefcase" />
               <span>Career Profile</span>
             </Link>

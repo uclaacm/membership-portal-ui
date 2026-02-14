@@ -6,7 +6,7 @@ import { routerReducer, routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 
 import {
-  User, FetchUser, UpdateUser, UserUpdateDone, FetchActivity,
+  User, FetchUser, UpdateUser, UpdateCareerProfile, UserUpdateDone, FetchActivity,
 } from './user';
 import {
   Admins, FetchAdmins, AddAdmin, DeleteAdmin, ChangeSuperAdmin,
@@ -63,6 +63,7 @@ const Action = {
   ChangeOneClickPasswordDone,
   FetchUser,
   UpdateUser,
+  UpdateCareerProfile,
   UserUpdateDone,
   FetchActivity,
   AddAdmin,

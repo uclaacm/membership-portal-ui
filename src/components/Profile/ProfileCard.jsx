@@ -148,7 +148,7 @@ export default class ProfileCard extends React.Component {
         <div className="profile-card-divider" />
 
         <div className="profile-card-actions">
-          <Link to="/profile/career" className="card-link">
+          <Link to="/profile/career/edit" className="card-link">
             <i className="fa fa-briefcase" />
             <span>Career Profile</span>
           </Link>
