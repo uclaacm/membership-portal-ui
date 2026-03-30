@@ -37,6 +37,7 @@ export default {
     leaderboard: '/api/v1/leaderboard',
     admin: {
       promote: '/api/v1/admin/promote',
+      promoteOfficer: '/api/v1/admin/promote-officer',
     },
     image: {
       upload: '/api/v1/image',

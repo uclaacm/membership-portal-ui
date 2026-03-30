@@ -8,9 +8,9 @@ import ControlPanelComponent from 'components/ControlPanel';
 
 class ControlPanel extends React.Component {
   componentWillMount() {
-    const { isAdmin, isSuperAdmin, redirectHome } = this.props;
+    const { isAdmin, isOfficer, isSuperAdmin, redirectHome } = this.props;
 
-    if (!isAdmin) {
+    if (!isAdmin && !isOfficer) {
       return redirectHome();
     }
     // when data is actually fetched
@@ -25,7 +25,7 @@ class ControlPanel extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.isAdmin) {
+    if (!nextProps.isAdmin && !nextProps.isOfficer) {
       return nextProps.redirectHome();
     }
 
@@ -48,6 +48,7 @@ class ControlPanel extends React.Component {
       removeAdmin,
       addAdmin,
       reassignAdmin,
+      isOfficer,
       isSuperAdmin,
       changeOneClickPassword,
       oneClickUpdated,
@@ -58,6 +59,7 @@ class ControlPanel extends React.Component {
     } = this.props;
     return (
       <ControlPanelComponent
+        isOfficer={isOfficer}
         logout={logout}
         userEmail={userEmail}
         events={events.reverse()}
@@ -85,6 +87,7 @@ const mapStateToProps = state => ({
   authenticated: state.Auth.get("authenticated"),
   isAdmin: state.Auth.get("isAdmin"),
   isSuperAdmin: state.Auth.get("isSuperAdmin"),
+  isOfficer: state.Auth.get("isOfficer"),
   events: state.Events.get("events"),
   images: state.Images.get("images"),
   admins: state.Admins.get("admins"),
@@ -150,6 +153,7 @@ const mapDispatchToProps = dispatch => ({
 
 ControlPanel.propTypes = {
   isAdmin: PropTypes.bool.isRequired,
+  isOfficer: PropTypes.bool.isRequired,
   redirectHome: PropTypes.func.isRequired,
   userEmail: PropTypes.string.isRequired,
   logout: PropTypes.func.isRequired,
