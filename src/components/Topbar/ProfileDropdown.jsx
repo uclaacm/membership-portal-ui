@@ -34,9 +34,15 @@ export default class ProfileDropdown extends React.Component {
 
   render() {
     const {
-      picture, isAdmin, adminView, onToggleAdminView,
+      picture, isAdmin, adminView, onToggleAdminView, isOfficer, officerView, onToggleOfficerView,
     } = this.props;
     const { isOpen } = this.state;
+
+    // Determine if user has elevated privileges (admin takes precedence)
+    const hasElevatedPrivileges = isAdmin || isOfficer;
+    const isAdminUser = isAdmin;
+    const toggleCallback = isAdminUser ? onToggleAdminView : onToggleOfficerView;
+    const viewLabel = isAdminUser ? (adminView ? 'Member View' : 'Admin View') : (officerView ? 'Member View' : 'Officer View');
 
     return (
       <div className="profile-dropdown" ref={this.wrapperRef}>
@@ -59,12 +65,12 @@ export default class ProfileDropdown extends React.Component {
               <i className="fa fa-briefcase" />
               <span>Career Profile</span>
             </Link>
-            {isAdmin && (
+            {hasElevatedPrivileges && (
               <>
                 <div className="dropdown-divider" />
-                <button className="dropdown-item" onClick={onToggleAdminView}>
+                <button className="dropdown-item" onClick={toggleCallback}>
                   <i className="fa fa-toggle-on" />
-                  <span>{adminView ? 'Member View' : 'Admin View'}</span>
+                  <span>{viewLabel}</span>
                 </button>
               </>
             )}
@@ -86,6 +92,9 @@ ProfileDropdown.propTypes = {
   isAdmin: PropTypes.bool,
   adminView: PropTypes.bool,
   onToggleAdminView: PropTypes.func,
+  isOfficer: PropTypes.bool,
+  officerView: PropTypes.bool,
+  onToggleOfficerView: PropTypes.func,
 };
 
 ProfileDropdown.defaultProps = {
@@ -93,4 +102,7 @@ ProfileDropdown.defaultProps = {
   isAdmin: false,
   adminView: false,
   onToggleAdminView: () => {},
+  isOfficer: false,
+  officerView: false,
+  onToggleOfficerView: () => {},
 };

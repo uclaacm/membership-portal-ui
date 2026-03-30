@@ -21,6 +21,9 @@ class TopbarContainer extends React.Component {
         isRealAdmin={this.props.isAdmin}
         adminView={this.props.adminView}
         onToggleAdminView={this.props.toggleAdminView}
+        isOfficer={this.props.isOfficer}
+        officerView={this.props.adminView}
+        onToggleOfficerView={this.props.toggleAdminView}
       />
     );
   }
