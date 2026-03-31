@@ -27,11 +27,15 @@ import {
   DeleteEvent,
   UpdateEventDone,
   CreateEventDone,
+  SyncEventsFromSheets,
+  SyncEventsDone,
 } from './events';
 import { Leaderboard, FetchLeaderboard, InvalidateLeaderboard } from './leaderboard';
 import { CheckIn, CheckInto, ResetCheckIn } from './checkin';
 import { Registration, RegisterUser, registerDone } from './registration';
-import { Images, GetAllImages, CreateImage, DeleteImage } from './image';
+import {
+  Images, GetAllImages, CreateImage, DeleteImage,
+} from './image';
 
 const history = createBrowserHistory();
 const routing = routerMiddleware(history);
@@ -76,6 +80,8 @@ const Action = {
   DeleteEvent,
   CreateEventDone,
   UpdateEventDone,
+  SyncEventsFromSheets,
+  SyncEventsDone,
   FetchLeaderboard,
   InvalidateLeaderboard,
   RegisterUser,

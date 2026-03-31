@@ -98,9 +98,7 @@ export default class Topbar extends React.Component {
           </div>
 
           {/* Profile Icon (Desktop only) */}
-          {(this.props.isRealAdmin || this.props.isOfficer) && (
-            <ProfileDropdown 
-              className="topbar-desktop-only"
+          <ProfileDropdown
               picture={this.props.picture} 
               onLogout={this.props.onLogout}
               isAdmin={this.props.isRealAdmin}
@@ -110,7 +108,6 @@ export default class Topbar extends React.Component {
               officerView={this.props.officerView}
               onToggleOfficerView={this.props.onToggleOfficerView}
             />
-          )}
         </div>
       </div>
     );
