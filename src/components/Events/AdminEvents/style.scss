@@ -67,11 +67,39 @@
           align-items: center;
         }
 
+        a {
+          color: vars.$secondaryblue;
+          text-decoration: underline;
+        }
+
         .divider {
           width: 100%;
           height: 1px;
           background-color: #dadada;
           margin: 15px 0px 20px 0px;
+        }
+
+        .text-divider {
+          color: vars.$secondaryblack;
+          display: flex;
+          align-items: center;
+          text-align: center;
+          margin: 15px 0px 20px 0px;
+        }
+
+        .text-divider::before,
+        .text-divider::after {
+          content: "";
+          flex: 1;
+          border-bottom: 1px solid #dadada;
+        }
+
+        .text-divider:not(:empty)::before {
+          margin-right: 0.25em;
+        }
+
+        .text-divider:not(:empty)::after {
+          margin-left: 0.25em;
         }
 
         .input-field {
@@ -216,6 +244,7 @@
         }
 
         .button-area {
+          color: vars.$secondaryblack;
           text-align: center;
           width: 100%;
 
@@ -338,10 +367,36 @@
     border-bottom-right-radius: 4px;
 
     .rsvp-header {
-      margin: 0 0 15px 0;
+      margin: 0;
       font-size: 1.1em;
       color: #333;
       font-weight: 600;
+    }
+
+    .copy-email-button {
+      background-color: rgba(30, 108, 255, 1);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.85em;
+      font-weight: 500;
+      transition: all 0.2s ease-in-out;
+      white-space: nowrap;
+      float: right;
+      margin-right: 15px;
+
+      &:hover {
+        background-color: rgb(0, 41, 117);
+      }
+    }
+
+    .rsvp-header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
     }
 
     .no-rsvps {
@@ -488,9 +543,6 @@
         width: 100%;
         font-weight: bold;
         font-size: 1.2em;
-      }
-
-      .label {
       }
     }
 

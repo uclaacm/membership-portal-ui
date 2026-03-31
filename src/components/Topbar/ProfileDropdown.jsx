@@ -43,7 +43,6 @@ export default class ProfileDropdown extends React.Component {
     const isAdminUser = isAdmin;
     const toggleCallback = isAdminUser ? onToggleAdminView : onToggleOfficerView;
     const viewLabel = isAdminUser ? (adminView ? 'Member View' : 'Admin View') : (officerView ? 'Member View' : 'Officer View');
-
     return (
       <div className="profile-dropdown" ref={this.wrapperRef}>
         <div className="profile-dropdown-trigger" onClick={this.toggleDropdown}>
