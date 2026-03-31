@@ -7,25 +7,21 @@ import AdminsModal from 'components/Modal/adminsModal';
 import ReassignModal from 'components/Modal/reassignModal';
 import OneClickPasswordModal from 'components/Modal/oneClickPasswordModal';
 import ConfirmationModal from 'components/Modal/confirmationModal';
-import PropTypes from 'prop-types';
 import ChangeToAdmin from '../Profile/ChangeToAdmin';
-
+import PropTypes from 'prop-types';
 
 class ControlPanel extends React.Component {
   constructor() {
     super();
     this.state = {
-      // Delete events
       showEventsModal: false,
       showEventsConfirmationModal: false,
       deleteUUID: null,
 
-      // Delete images
       showImagesModal: false,
       showImagesConfirmationModal: false,
       deleteImageUUID: null,
 
-      // Manage admins
       showAdminsModal: false,
       showReassignModal: false,
       showRemoveAdminConfirmationModal: false,
@@ -43,226 +39,148 @@ class ControlPanel extends React.Component {
     }
   }
 
-  openEventsModal = () => {
-    this.setState({ showEventsModal: true });
-  };
+  openEventsModal = () => this.setState({ showEventsModal: true });
+  closeEventsModal = () => this.setState({ showEventsModal: false });
+  openEventsConfirmationModal = uuid => this.setState({ showEventsConfirmationModal: true, deleteUUID: uuid });
+  closeEventsConfirmationModal = () => this.setState({ showEventsConfirmationModal: false });
 
-  closeEventsModal = () => {
-    this.setState({ showEventsModal: false });
-  };
+  openImagesModal = () => this.setState({ showImagesModal: true });
+  closeImagesModal = () => this.setState({ showImagesModal: false });
+  openImagesConfirmationModal = uuid => this.setState({ showImagesConfirmationModal: true, deleteImageUUID: uuid });
+  closeImagesConfirmationModal = () => this.setState({ showImagesConfirmationModal: false });
 
-  openEventsConfirmationModal = (uuid) => {
-    this.setState({ showEventsConfirmationModal: true, deleteUUID: uuid });
-  };
+  openAdminsModal = () => this.setState({ showAdminsModal: true });
+  closeAdminsModal = () => this.setState({ showAdminsModal: false });
+  openReassignModal = () => this.setState({ showReassignModal: true });
+  closeReassignModal = () => this.setState({ showReassignModal: false });
+  openRemoveAdminConfirmationModal = email => this.setState({ showRemoveAdminConfirmationModal: true, removeEmail: email });
+  closeRemoveAdminConfirmationModal = () => this.setState({ showRemoveAdminConfirmationModal: false });
+  openReassignAdminConfirmationModal = email => this.setState({ showReassignAdminConfirmationModal: true, reassignEmail: email });
+  closeReassignAdminConfirmationModal = () => this.setState({ showReassignAdminConfirmationModal: false });
 
-  closeEventsConfirmationModal = () => {
-    this.setState({ showEventsConfirmationModal: false });
-  };
-
-  openImagesModal = () => {
-    this.setState({ showImagesModal: true });
-  };
-
-  closeImagesModal = () => {
-    this.setState({ showImagesModal: false });
-  };
-
-  openImagesConfirmationModal = (uuid) => {
-    this.setState({ showImagesConfirmationModal: true, deleteImageUUID: uuid });
-  };
-
-  closeImagesConfirmationModal = () => {
-    this.setState({ showImagesConfirmationModal: false });
-  };
-
-  openAdminsModal = () => {
-    this.setState({ showAdminsModal: true });
-  };
-
-  closeAdminsModal = () => {
-    this.setState({ showAdminsModal: false });
-  };
-
-  openReassignModal = () => {
-    this.setState({ showReassignModal: true });
-  };
-
-  closeReassignModal = () => {
-    this.setState({ showReassignModal: false });
-  };
-
-  openRemoveAdminConfirmationModal = (email) => {
-    this.setState({ showRemoveAdminConfirmationModal: true, removeEmail: email });
-  };
-
-  closeRemoveAdminConfirmationModal = () => {
-    this.setState({ showRemoveAdminConfirmationModal: false });
-  };
-
-  openReassignAdminConfirmationModal = (email) => {
-    this.setState({ showReassignAdminConfirmationModal: true, reassignEmail: email });
-  };
-
-  closeReassignAdminConfirmationModal = () => {
-    this.setState({ showReassignAdminConfirmationModal: false });
-  };
-
-  openOneClickPasswordModal = () => {
-    this.setState({ showOneClickPasswordModal: true });
-  };
-
-  closeOneClickPasswordModal = () => {
-    this.setState({ showOneClickPasswordModal: false });
-  };
+  openOneClickPasswordModal = () => this.setState({ showOneClickPasswordModal: true });
+  closeOneClickPasswordModal = () => this.setState({ showOneClickPasswordModal: false });
 
   triggerDeleteEvent = () => {
-    const { deleteEvent } = this.props;
-    const { deleteUUID } = this.state;
-    deleteEvent(deleteUUID);
+    this.props.deleteEvent(this.state.deleteUUID);
     this.closeEventsConfirmationModal();
   };
 
   triggerDeleteImage = () => {
-    const { deleteImage } = this.props;
-    const { deleteImageUUID } = this.state;
-    deleteImage(deleteImageUUID);
+    this.props.deleteImage(this.state.deleteImageUUID);
     this.closeImagesConfirmationModal();
   };
 
   triggerRemoveAdmin = () => {
-    const { removeAdmin } = this.props;
-    const { removeEmail } = this.state;
-    removeAdmin(removeEmail);
+    this.props.removeAdmin(this.state.removeEmail);
     this.closeRemoveAdminConfirmationModal();
   };
 
   triggerReassignAdmin = () => {
-    const { reassignAdmin } = this.props;
-    const { reassignEmail } = this.state;
-    reassignAdmin(reassignEmail);
+    this.props.reassignAdmin(this.state.reassignEmail);
     this.closeReassignAdminConfirmationModal();
   };
 
-  triggerAddAdmin = (email) => {
-    const { addAdmin } = this.props;
-    addAdmin(email);
-  };
+  triggerAddAdmin = email => this.props.addAdmin(email);
 
   triggerChangePassword = (oldPassword, newPassword) => {
-    const { changeOneClickPassword } = this.props;
-    changeOneClickPassword(oldPassword, newPassword);
+    this.props.changeOneClickPassword(oldPassword, newPassword);
   };
 
   render() {
     const {
-      logout, events, admins, images, isSuperAdmin, userEmail, adminView, toggleAdminView,
+      logout, events, admins, images, isSuperAdmin, isOfficer,
+      userEmail, adminView, toggleAdminView,
+      oneClickUpdated, oneClickUpdateSuccess, oneClickError,
     } = this.props;
+
     const {
-      showEventsModal,
-      showEventsConfirmationModal,
-
-      showImagesModal,
-      showImagesConfirmationModal,
-
-      showAdminsModal,
-      showReassignModal,
-      showRemoveAdminConfirmationModal,
-      showReassignAdminConfirmationModal,
-
+      showEventsModal, showEventsConfirmationModal,
+      showImagesModal, showImagesConfirmationModal,
+      showAdminsModal, showReassignModal,
+      showRemoveAdminConfirmationModal, showReassignAdminConfirmationModal,
       showOneClickPasswordModal,
     } = this.state;
 
     return (
       <div className="control-panel-wrapper">
         <BannerMessage
-          showing={this.props.oneClickUpdated}
-          success={this.props.oneClickUpdateSuccess}
-          message={this.props.oneClickUpdateSuccess ? 'Password updated successfully' : this.props.oneClickError}
+          showing={oneClickUpdated}
+          success={oneClickUpdateSuccess}
+          message={oneClickUpdateSuccess ? 'Password updated successfully' : oneClickError}
         />
-        <h1 className="DisplayPrimary">Control Panel</h1>
-        <div className="form-elem">
-          <Button className="signout-action-button" color="blue" text="Sign Out" onClick={logout} />
-          <br />
-          <Button
-            className="deleteevents-action-button"
-            color="red"
-            text="Delete Events"
-            onClick={this.openEventsModal}
-          />
-          <br />
 
-          <Button
-            className="manageimages-action-button"
-            color="red"
-            text="Manage Images"
-            onClick={this.openImagesModal}
-          />
-          <br />
+        <h1 className="DisplayPrimary panel-title">Control Panel</h1>
+        <p className="panel-subtitle">Manage events, members, and portal settings.</p>
 
-          <Button
-            className="control-panel-action-button"
-            color="red"
-            text="Manage One-Click API"
-            onClick={this.openOneClickPasswordModal}
-          />
-          <br />
+        <div className="panel-section">
+          <h2 className="section-title">User Management</h2>
+          <div className="panel-grid">
+            <div className="panel-card">
+              <span className="card-title">Assign Role</span>
+              <span className="card-desc">Promote a member to Officer or Admin. Officers get committee-scoped access; Admin requires a password.</span>
+              <ChangeToAdmin />
+            </div>
 
-          <Button
-            className="control-panel-action-button"
-            color="blue"
-            text={adminView ? 'Switch to Member View' : 'Switch to Admin View'}
-            onClick={toggleAdminView}
-          />
-
-          <ChangeToAdmin />
-          <br />
-
-          {isSuperAdmin ? (
-            <Button
-              className="control-panel-action-button"
-              color="red"
-              text="Manage Admins"
-              onClick={this.openAdminsModal}
-            />
-          ) : (
-            <></>
-          )}
+            {isSuperAdmin && (
+              <div className="panel-card">
+                <span className="card-title">Manage Admins</span>
+                <span className="card-desc">Add or remove admins and reassign the Super Admin role.</span>
+                <Button color="red" text="Manage Admins" onClick={this.openAdminsModal} />
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* This input and button don't do anything? */}
-        {/*
-        <div className="form-elem">
-          <h1>Create a milestone</h1>
-          <input type="text" name="name" placeholder="Quarter (e.g. Fall 2017)" />
-        </div>
-        <div className="form-elem">
-          <Button
-            className="control-panel-action-button"
-            color="blue"
-            text="Create"
-          />
-        </div>
-        */}
+        <div className="panel-section">
+          <h2 className="section-title">Content</h2>
+          <div className="panel-grid">
+            <div className="panel-card">
+              <span className="card-title">Events</span>
+              <span className="card-desc">Delete events from the portal.</span>
+              <Button color="red" text="Manage Events" onClick={this.openEventsModal} />
+            </div>
 
-        {/* Event analytics were never implemented? */}
-        {/*
-        <div className="form-elem">
-          <h1>Event analytics</h1>
-          <select className="Headline-2Secondary">
-            <option>General</option>
-            <option>AI</option>
-            <option>Board</option>
-            <option>Cyber</option>
-            <option>Design</option>
-            <option>Hack</option>
-            <option>ICPC</option>
-            <option>Studio</option>
-            <option>TeachLA</option>
-            <option>W</option>
-          </select>
-        </div>
-        */}
+            <div className="panel-card">
+              <span className="card-title">Images</span>
+              <span className="card-desc">Remove images used across the portal.</span>
+              <Button color="red" text="Manage Images" onClick={this.openImagesModal} />
+            </div>
 
+            <div className="panel-card">
+              <span className="card-title">One-Click API</span>
+              <span className="card-desc">Update the password for the one-click attendance API.</span>
+              <Button color="red" text="Update Password" onClick={this.openOneClickPasswordModal} />
+            </div>
+          </div>
+        </div>
+
+        <div className="panel-section">
+          <h2 className="section-title">Session</h2>
+          <div className="panel-grid">
+            <div className="panel-card">
+              <span className="card-title">View Mode</span>
+              <span className="card-desc">
+                {adminView
+                  ? `Currently viewing as ${isOfficer ? 'officer' : 'admin'}.`
+                  : 'Currently viewing as a member.'}
+              </span>
+              <Button
+                color="blue"
+                text={adminView ? 'Switch to Member View' : `Switch to ${isOfficer ? 'Officer' : 'Admin'} View`}
+                onClick={toggleAdminView}
+              />
+            </div>
+
+            <div className="panel-card">
+              <span className="card-title">Sign Out</span>
+              <span className="card-desc">Log out of your account.</span>
+              <Button color="red" text="Sign Out" onClick={logout} />
+            </div>
+          </div>
+        </div>
+
+        {/* Modals */}
         <EventsModal
           opened={showEventsModal}
           events={events}
@@ -293,7 +211,13 @@ class ControlPanel extends React.Component {
           submit={this.triggerDeleteImage}
         />
 
-        {isSuperAdmin ? (
+        <OneClickPasswordModal
+          opened={showOneClickPasswordModal}
+          onClose={this.closeOneClickPasswordModal}
+          onChange={this.triggerChangePassword}
+        />
+
+        {isSuperAdmin && (
           <>
             <AdminsModal
               opened={showAdminsModal}
@@ -328,37 +252,22 @@ class ControlPanel extends React.Component {
               submit={this.triggerReassignAdmin}
             />
           </>
-        ) : (
-          <></>
         )}
-
-        <OneClickPasswordModal
-          opened={showOneClickPasswordModal}
-          onClose={this.closeOneClickPasswordModal}
-          onChange={this.triggerChangePassword}
-        />
       </div>
     );
   }
 }
 
 ControlPanel.propTypes = {
+  isOfficer: PropTypes.bool.isRequired,
   logout: PropTypes.func.isRequired,
   deleteEvent: PropTypes.func.isRequired,
   removeAdmin: PropTypes.func.isRequired,
   reassignAdmin: PropTypes.func.isRequired,
   addAdmin: PropTypes.func.isRequired,
-  events: PropTypes.arrayOf(PropTypes.shape({
-    uuid: PropTypes.string,
-    title: PropTypes.string,
-  })).isRequired,
-  admins: PropTypes.arrayOf(PropTypes.shape({
-    email: PropTypes.string,
-    firstName: PropTypes.string,
-  })).isRequired,
-  images: PropTypes.arrayOf(PropTypes.shape({
-    uuid: PropTypes.string,
-  })).isRequired,
+  events: PropTypes.arrayOf(PropTypes.object).isRequired,
+  admins: PropTypes.arrayOf(PropTypes.object).isRequired,
+  images: PropTypes.arrayOf(PropTypes.object).isRequired,
   isSuperAdmin: PropTypes.bool.isRequired,
   userEmail: PropTypes.string.isRequired,
   changeOneClickPassword: PropTypes.func.isRequired,

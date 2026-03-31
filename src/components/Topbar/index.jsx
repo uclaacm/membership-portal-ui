@@ -77,10 +77,10 @@ export default class Topbar extends React.Component {
               <NavigationItem icon="fa-user-circle" text="Profile" />
             </NavLink>
             
-            {this.props.isRealAdmin && (
-              <a className="topbar-mobile-only" onClick={this.props.onToggleAdminView}>
+            {(this.props.isRealAdmin || this.props.isOfficer) && (
+              <a className="topbar-mobile-only" onClick={this.props.isRealAdmin ? this.props.onToggleAdminView : this.props.onToggleOfficerView}>
                 <div className="navigation-item">
-                  <span>{this.props.adminView ? 'Member View' : 'Admin View'}</span>
+                  <span>{this.props.isRealAdmin ? (this.props.adminView ? 'Member View' : 'Admin View') : (this.props.officerView ? 'Member View' : 'Officer View')}</span>
                 </div>
               </a>
             )}
@@ -98,7 +98,7 @@ export default class Topbar extends React.Component {
           </div>
 
           {/* Profile Icon (Desktop only) */}
-          {!isAdmin && (
+          {(this.props.isRealAdmin || this.props.isOfficer) && (
             <ProfileDropdown 
               className="topbar-desktop-only"
               picture={this.props.picture} 
@@ -106,6 +106,9 @@ export default class Topbar extends React.Component {
               isAdmin={this.props.isRealAdmin}
               adminView={this.props.adminView}
               onToggleAdminView={this.props.onToggleAdminView}
+              isOfficer={this.props.isOfficer}
+              officerView={this.props.officerView}
+              onToggleOfficerView={this.props.onToggleOfficerView}
             />
           )}
         </div>
@@ -121,4 +124,7 @@ Topbar.propTypes = {
   isRealAdmin: PropTypes.bool,
   adminView: PropTypes.bool,
   onToggleAdminView: PropTypes.func,
+  isOfficer: PropTypes.bool,
+  officerView: PropTypes.bool,
+  onToggleOfficerView: PropTypes.func,
 };
