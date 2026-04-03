@@ -168,10 +168,6 @@ class AdminEventCard extends React.Component {
                 ))}
               </div>
             )}
-            <details className="json-toggle">
-              <summary>View Raw JSON</summary>
-              <pre>{JSON.stringify({ error: null, rsvps: rsvpData }, null, 2)}</pre>
-            </details>
           </div>
         )}
       </div>
