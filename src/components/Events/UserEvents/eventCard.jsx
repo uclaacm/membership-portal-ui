@@ -164,7 +164,7 @@ class EventCard extends React.Component {
                                 </button>
                                 <h3>{event.title}</h3>
                                 <div className="description-scroll">
-                                    <p style={{ whiteSpace: 'pre-wrap'}}>{this.getPlainTextDescription(event.description)}</p>
+                                    <p>{this.getPlainTextDescription(event.description)}</p>
                                 </div>
                             </div>
                         </div>
