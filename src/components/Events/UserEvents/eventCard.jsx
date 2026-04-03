@@ -84,6 +84,26 @@ class EventCard extends React.Component {
         this.setState({ loading: false });
     }
 
+    getPlainTextDescription(description) {
+        // Strips HTML tags while preserving basic formatting (line breaks)
+        if (description == null) return '';
+        if (typeof description !== 'string') return String(description);
+        const withLineBreaks = description
+            .replace(/<\s*br\s*\/?\s*>/gi, '\n')
+            .replace(/<\s*\/\s*p\s*>/gi, '\n\n')
+            .replace(/<\s*\/\s*div\s*>/gi, '\n\n');
+
+        if (typeof DOMParser === 'undefined') {
+            return withLineBreaks.replace(/\n{3,}/g, '\n\n').trim();
+        }
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(withLineBreaks, 'text/html');
+        const plainText = doc.body.textContent || '';
+
+        return plainText.replace(/\n{3,}/g, '\n\n').trim();
+    }
+
     render() {
         const { event } = this.props;
         const { isRsvped, loading, isFlipped } = this.state;
@@ -144,7 +164,7 @@ class EventCard extends React.Component {
                                 </button>
                                 <h3>{event.title}</h3>
                                 <div className="description-scroll">
-                                    <p>{event.description}</p>
+                                    <p>{this.getPlainTextDescription(event.description)}</p>
                                 </div>
                             </div>
                         </div>
