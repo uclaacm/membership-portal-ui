@@ -98,18 +98,26 @@ const CreateImage = formData => async (dispatch) => {
     });
 
     const status = await response.status;
-    if (status === 401 || status === 403) {
-      dispatch(LogoutUser());
+    if (status === 401) {
+      return dispatch(LogoutUser());
     }
 
     const data = await response.json();
     if (!data) throw new Error('Empty response from server');
+    if (status === 403) {
+      throw new Error((data.error && data.error.message) || 'You do not have permission to upload images.');
+    }
+    if (status >= 400) {
+      throw new Error((data.error && data.error.message) || `Server error: ${status}`);
+    }
     if (data.error) throw new Error(data.error.message);
 
     dispatch(State.CreateImage(null, data.uuid));
     dispatch(GetAllImages());
+    return { success: true, uuid: data.uuid };
   } catch (err) {
     dispatch(State.CreateImage(err.message));
+    return { success: false, error: err };
   }
 };
 

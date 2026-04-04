@@ -87,6 +87,12 @@ class ControlPanel extends React.Component {
     this.props.changeOneClickPassword(oldPassword, newPassword);
   };
 
+  extractImageUuidFromCover = (cover) => {
+    if (!cover || typeof cover !== 'string') return null;
+    const match = cover.match(/\/image\/raw\/([0-9a-f-]{36})/i);
+    return match ? match[1] : null;
+  };
+
   render() {
     const {
       logout, events, admins, images, isSuperAdmin, isOfficer, isAdmin,
@@ -111,9 +117,8 @@ class ControlPanel extends React.Component {
 
     const allowedImageUuids = new Set(
       visibleEvents
-        .map((event) => (event.cover || '').match(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i))
-        .filter(Boolean)
-        .map((match) => match[0]),
+        .map((event) => this.extractImageUuidFromCover(event.cover))
+        .filter(Boolean),
     );
 
     const visibleImages = isCommitteeScopedOfficer
@@ -179,7 +184,7 @@ class ControlPanel extends React.Component {
 
             <div className="panel-card">
               <span className="card-title">Images</span>
-              <span className="card-desc">Remove images used across the portal.</span>
+              <span className="card-desc">Remove uploaded portal images linked to event covers. External image URLs are not listed here.</span>
               <Button color="red" text="Manage Images" onClick={this.openImagesModal} />
             </div>
 
