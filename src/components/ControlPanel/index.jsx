@@ -7,12 +7,15 @@ import ControlPanel from './controlPanel';
 export default class ControlPanelComponent extends React.Component {
   render() {
     const {
+      isAdmin,
+      isOfficer,
       logout,
       userEmail,
       events,
       deleteEvent,
       images,
       deleteImage,
+      officerCommittees,
       admins,
       removeAdmin,
       addAdmin,
@@ -22,6 +25,8 @@ export default class ControlPanelComponent extends React.Component {
       oneClickUpdated,
       oneClickUpdateSuccess,
       oneClickError,
+      eventDeleteError,
+      imageDeleteError,
       adminView,
       toggleAdminView,
     } = this.props;
@@ -30,12 +35,15 @@ export default class ControlPanelComponent extends React.Component {
         <Topbar />
         {/* <Sidebar /> */}
         <ControlPanel
+          isAdmin={isAdmin}
+          isOfficer={isOfficer}
           logout={logout}
           userEmail={userEmail}
           events={events}
           deleteEvent={deleteEvent}
           images={images}
           deleteImage={deleteImage}
+          officerCommittees={officerCommittees}
           admins={admins}
           removeAdmin={removeAdmin}
           addAdmin={addAdmin}
@@ -45,6 +53,8 @@ export default class ControlPanelComponent extends React.Component {
           oneClickUpdated={oneClickUpdated}
           oneClickUpdateSuccess={oneClickUpdateSuccess}
           oneClickError={oneClickError}
+          eventDeleteError={eventDeleteError}
+          imageDeleteError={imageDeleteError}
           adminView={adminView}
           toggleAdminView={toggleAdminView}
         />
@@ -54,6 +64,8 @@ export default class ControlPanelComponent extends React.Component {
 }
 
 ControlPanelComponent.propTypes = {
+  isAdmin: PropTypes.bool.isRequired,
+  isOfficer: PropTypes.bool.isRequired,
   logout: PropTypes.func.isRequired,
   userEmail: PropTypes.string.isRequired,
   events: PropTypes.arrayOf(PropTypes.shape({
@@ -64,6 +76,7 @@ ControlPanelComponent.propTypes = {
     uuid: PropTypes.string,
   })).isRequired,
   deleteImage: PropTypes.func.isRequired,
+  officerCommittees: PropTypes.arrayOf(PropTypes.string).isRequired,
   admins: PropTypes.arrayOf(PropTypes.shape({
     email: PropTypes.string,
   })).isRequired,
@@ -75,6 +88,8 @@ ControlPanelComponent.propTypes = {
   oneClickUpdated: PropTypes.bool.isRequired,
   oneClickUpdateSuccess: PropTypes.bool.isRequired,
   oneClickError: PropTypes.string.isRequired,
+  eventDeleteError: PropTypes.string,
+  imageDeleteError: PropTypes.string,
   adminView: PropTypes.bool.isRequired,
   toggleAdminView: PropTypes.func.isRequired,
 };

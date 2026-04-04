@@ -89,9 +89,11 @@ class ControlPanel extends React.Component {
 
   render() {
     const {
-      logout, events, admins, images, isSuperAdmin, isOfficer,
+      logout, events, admins, images, isSuperAdmin, isOfficer, isAdmin,
+      officerCommittees,
       userEmail, adminView, toggleAdminView,
       oneClickUpdated, oneClickUpdateSuccess, oneClickError,
+      eventDeleteError, imageDeleteError,
     } = this.props;
 
     const {
@@ -102,8 +104,42 @@ class ControlPanel extends React.Component {
       showOneClickPasswordModal,
     } = this.state;
 
+    const isCommitteeScopedOfficer = isOfficer && !isAdmin;
+    const visibleEvents = isCommitteeScopedOfficer
+      ? events.filter((event) => officerCommittees.includes(event.committee))
+      : events;
+
+    const allowedImageUuids = new Set(
+      visibleEvents
+        .map((event) => (event.cover || '').match(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i))
+        .filter(Boolean)
+        .map((match) => match[0]),
+    );
+
+    const visibleImages = isCommitteeScopedOfficer
+      ? images.filter((image) => allowedImageUuids.has(image.uuid))
+      : images;
+
+    const deleteErrorMessage = eventDeleteError || imageDeleteError;
+    let roleMessage = 'You are signed in as a member.';
+    if (isAdmin) {
+      roleMessage = 'You are signed in as admin';
+    } else if (isOfficer) {
+      if (officerCommittees.length > 0) {
+        roleMessage = `You are signed in as an Officer for ${officerCommittees.join(', ')}`;
+      } else {
+        roleMessage = 'You are signed in as an Officer';
+      }
+    }
+
     return (
       <div className="control-panel-wrapper">
+        <BannerMessage
+          showing={!!deleteErrorMessage}
+          success={false}
+          message={deleteErrorMessage}
+        />
+
         <BannerMessage
           showing={oneClickUpdated}
           success={oneClickUpdateSuccess}
@@ -112,6 +148,7 @@ class ControlPanel extends React.Component {
 
         <h1 className="DisplayPrimary panel-title">Control Panel</h1>
         <p className="panel-subtitle">Manage events, members, and portal settings.</p>
+  <p className="panel-subtitle">{roleMessage}</p>
 
         <div className="panel-section">
           <h2 className="section-title">User Management</h2>
@@ -183,14 +220,14 @@ class ControlPanel extends React.Component {
         {/* Modals */}
         <EventsModal
           opened={showEventsModal}
-          events={events}
+          events={visibleEvents}
           onDelete={this.openEventsConfirmationModal}
           onClose={this.closeEventsModal}
         />
 
         <ImagesModal
           opened={showImagesModal}
-          images={images}
+          images={visibleImages}
           onDelete={this.openImagesConfirmationModal}
           onClose={this.closeImagesModal}
         />
@@ -259,9 +296,12 @@ class ControlPanel extends React.Component {
 }
 
 ControlPanel.propTypes = {
+  isAdmin: PropTypes.bool.isRequired,
   isOfficer: PropTypes.bool.isRequired,
+  officerCommittees: PropTypes.arrayOf(PropTypes.string).isRequired,
   logout: PropTypes.func.isRequired,
   deleteEvent: PropTypes.func.isRequired,
+  deleteImage: PropTypes.func.isRequired,
   removeAdmin: PropTypes.func.isRequired,
   reassignAdmin: PropTypes.func.isRequired,
   addAdmin: PropTypes.func.isRequired,
@@ -274,6 +314,8 @@ ControlPanel.propTypes = {
   oneClickUpdated: PropTypes.bool.isRequired,
   oneClickUpdateSuccess: PropTypes.bool.isRequired,
   oneClickError: PropTypes.string.isRequired,
+  eventDeleteError: PropTypes.string,
+  imageDeleteError: PropTypes.string,
   adminView: PropTypes.bool.isRequired,
   toggleAdminView: PropTypes.func.isRequired,
 };
