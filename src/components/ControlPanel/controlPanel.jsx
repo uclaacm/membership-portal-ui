@@ -147,8 +147,7 @@ class ControlPanel extends React.Component {
         />
 
         <h1 className="DisplayPrimary panel-title">Control Panel</h1>
-        <p className="panel-subtitle">Manage events, members, and portal settings.</p>
-  <p className="panel-subtitle">{roleMessage}</p>
+        <p className="panel-subtitle">Manage events, members, and portal settings. {roleMessage}</p>
 
         <div className="panel-section">
           <h2 className="section-title">User Management</h2>
