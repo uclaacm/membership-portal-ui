@@ -20,6 +20,7 @@ const CREATE_IMAGE_ERROR = Symbol();
 const defaultState = Immutable.fromJS({
   images: [],
   error: null,
+  deleteError: null,
   created: false,
   deleted: false,
   createSuccess: false,
@@ -124,12 +125,21 @@ const DeleteImage = uuid => async (dispatch) => {
     });
 
     const status = await response.status;
-    if (status === 401 || status === 403) {
-      dispatch(LogoutUser());
+    if (status === 401) {
+      return dispatch(LogoutUser());
     }
 
     const data = await response.json();
     if (!data) throw new Error('Empty response from server');
+
+    if (status === 403) {
+      throw new Error((data.error && data.error.message) || 'You do not have permission to delete this image.');
+    }
+
+    if (status >= 400) {
+      throw new Error((data.error && data.error.message) || `Server error: ${status}`);
+    }
+    if (data.error) throw new Error(data.error.message);
 
     dispatch(State.DeleteImage());
     dispatch(GetAllImages());
@@ -173,7 +183,8 @@ const Images = (state = defaultState, action) => {
 
     case DELETE_IMAGE_SUCCESS:
       return state.withMutations((val) => {
-        val.set('error', 'null');
+        val.set('error', null);
+        val.set('deleteError', null);
         val.set('deleted', true);
         val.set('deleteSuccess', true);
       });
@@ -181,6 +192,7 @@ const Images = (state = defaultState, action) => {
     case DELETE_IMAGE_ERROR:
       return state.withMutations((val) => {
         val.set('error', action.error);
+        val.set('deleteError', action.error);
         val.set('deleted', true);
         val.set('deleteSuccess', false);
       });
