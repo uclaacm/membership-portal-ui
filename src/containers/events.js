@@ -164,7 +164,7 @@ const mapDispatchToProps = dispatch => ({
   },
 
   createImage: (formData) => {
-    dispatch(Action.CreateImage(formData));
+    return dispatch(Action.CreateImage(formData));
   },
 });
 

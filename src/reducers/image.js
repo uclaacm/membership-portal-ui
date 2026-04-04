@@ -102,7 +102,14 @@ const CreateImage = formData => async (dispatch) => {
       return dispatch(LogoutUser());
     }
 
-    const data = await response.json();
+    let data;
+    const text = await response.text();
+    try {
+      data = JSON.parse(text);
+    } catch (parseErr) {
+      throw new Error(`Invalid response format: ${text}`);
+    }
+    
     if (!data) throw new Error('Empty response from server');
     if (status === 403) {
       throw new Error((data.error && data.error.message) || 'You do not have permission to upload images.');
@@ -113,7 +120,14 @@ const CreateImage = formData => async (dispatch) => {
     if (data.error) throw new Error(data.error.message);
 
     dispatch(State.CreateImage(null, data.uuid));
-    dispatch(GetAllImages());
+    
+    // GetAllImages is async, make sure it completes
+    try {
+      await dispatch(GetAllImages());
+    } catch (err) {
+      // Don't fail the upload if image listing fails
+    }
+    
     return { success: true, uuid: data.uuid };
   } catch (err) {
     dispatch(State.CreateImage(err.message));

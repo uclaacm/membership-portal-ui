@@ -74,19 +74,28 @@ export default class AdminAddEvent extends React.Component {
     }
 
     const callback = () => { if (this.props.onClickAdd) this.props.onClickAdd(this.state.event); };
+    const selectedFile = this.coverUploadRef.current
+      && this.coverUploadRef.current.files
+      && this.coverUploadRef.current.files[0]
+      ? this.coverUploadRef.current.files[0]
+      : this.state.coverImageFile;
 
-    if (this.state.coverImageFile) {
+    if (selectedFile) {
       const formData = new FormData();
-      formData.append('image', this.state.coverImageFile);
+      formData.append('image', selectedFile);
 
       const uploadResult = await this.props.createImage(formData);
       if (!uploadResult || !uploadResult.success || !uploadResult.uuid) {
+        this.setState({
+          coverUrlError: 'Image upload failed. Please try again or use an image URL.',
+        });
         return;
       }
 
       this.setState((prev) => {
         const newState = Object.assign({}, prev);
         newState.event.cover = `${Config.API_URL + Config.routes.image.specific}/${uploadResult.uuid}`;
+        newState.coverUrlError = '';
         return newState;
       }, callback);
     } else {
@@ -131,19 +140,18 @@ export default class AdminAddEvent extends React.Component {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      const localPreviewUrl = (window.URL && window.URL.createObjectURL)
+        ? window.URL.createObjectURL(file)
+        : this.state.event.cover;
 
-        this.setState((prev) => {
-          const newState = Object.assign({}, prev);
-          newState.event.cover = reader.result;       // don't freak out, this is temporary/local-only until handleSubmit
-          newState.coverImageFile = file;
-          newState.coverUrlError = '';
-          return newState;
-        });
-
-      };
-      reader.readAsDataURL(file);
+      this.setState((prev) => {
+        const newState = Object.assign({}, prev);
+        // Local preview only; persisted cover URL is set after successful upload.
+        newState.event.cover = localPreviewUrl;
+        newState.coverImageFile = file;
+        newState.coverUrlError = '';
+        return newState;
+      });
     }
   }
 

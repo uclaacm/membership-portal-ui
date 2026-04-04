@@ -184,7 +184,7 @@ class ControlPanel extends React.Component {
 
             <div className="panel-card">
               <span className="card-title">Images</span>
-              <span className="card-desc">Remove uploaded portal images linked to event covers. External image URLs are not listed here.</span>
+              <span className="card-desc">Remove uploaded portal images. </span>
               <Button color="red" text="Manage Images" onClick={this.openImagesModal} />
             </div>
 
