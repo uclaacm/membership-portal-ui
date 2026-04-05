@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Utils from 'utils';
 import Config from 'config';
 import './profileCard.scss';
+import ChangeToAdmin from './ChangeToAdmin';
 
 export default class ProfileCard extends React.Component {
   constructor(props) {
@@ -153,13 +154,18 @@ export default class ProfileCard extends React.Component {
             <span>Career Profile</span>
           </Link>
           {isAdmin && (
+            <ChangeToAdmin />
+          )}
+
+          {/* Register Officer Account link (legacy, kept for reference)
             <a href="#" className="card-link" onClick={this.handleRegisterClick}>
               <i className="fa fa-user-plus" />
               <span>Register as an Officer</span>
             </a>
-          )}
+          */}
         </div>
 
+        {/* Register Officer Account Modal (legacy, kept for reference)
         {this.state.showModal && (
           <div className="modal-overlay" onClick={this.closeModal}>
             <div className="modal" onClick={e => e.stopPropagation()}>
@@ -186,6 +192,7 @@ export default class ProfileCard extends React.Component {
             </div>
           </div>
         )}
+        */}
       </div>
     );
   }
