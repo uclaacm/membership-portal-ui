@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Utils from 'utils';
 import './profileCard.scss';
-import AssignRole from './ChangeToAdmin';
 
 export default class ProfileCard extends React.Component {
   render() {
@@ -102,9 +101,6 @@ export default class ProfileCard extends React.Component {
             <i className="fa fa-briefcase" />
             <span>Career Profile</span>
           </Link>
-          {isAdmin && (
-            <AssignRole />
-          )}
         </div>
       </div>
     );
