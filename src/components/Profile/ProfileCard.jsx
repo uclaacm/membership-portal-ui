@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Utils from 'utils';
 import Config from 'config';
 import './profileCard.scss';
-import ChangeToAdmin from './ChangeToAdmin';
+import AssignRole from './ChangeToAdmin';
 
 export default class ProfileCard extends React.Component {
   constructor(props) {
