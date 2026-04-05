@@ -3,6 +3,46 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './careerProfile.scss';
 
+const isValidLinkedInUrl = (url) => {
+  if (!url || url.trim() === '') return true;
+  const linkedInPattern = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i;
+  return linkedInPattern.test(url);
+};
+
+const isValidGitHubUrl = (url) => {
+  if (!url || url.trim() === '') return true;
+  const gitHubPattern = /^https?:\/\/(www\.)?github\.com\/.+/i;
+  return gitHubPattern.test(url);
+};
+
+const isValidUrl = (url) => {
+  if (!url || url.trim() === '') return true;
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+const getLinkedInUrlError = (url) => {
+  if (!url || url.trim() === '') return null;
+  if (!isValidUrl(url)) return 'Please enter a valid URL';
+  if (!isValidLinkedInUrl(url)) {
+    return 'LinkedIn URL must be in the format: https://linkedin.com/in/username';
+  }
+  return null;
+};
+
+const getGitHubUrlError = (url) => {
+  if (!url || url.trim() === '') return null;
+  if (!isValidUrl(url)) return 'Please enter a valid URL';
+  if (!isValidGitHubUrl(url)) {
+    return 'GitHub URL must be in the format: https://github.com/username';
+  }
+  return null;
+};
+
 export default class CareerProfile extends React.Component {
   constructor(props) {
     super(props);
@@ -22,10 +62,12 @@ export default class CareerProfile extends React.Component {
       saving: false,
       saveSuccess: false,
       saveError: null,
+      validationErrors: {},
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.addSkill = this.addSkill.bind(this);
     this.removeSkill = this.removeSkill.bind(this);
@@ -51,7 +93,37 @@ export default class CareerProfile extends React.Component {
   }
 
   handleInputChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+    
+    if (this.state.validationErrors[name]) {
+      this.setState(prevState => ({
+        validationErrors: { ...prevState.validationErrors, [name]: null },
+      }));
+    }
+  }
+
+  handleBlur(e) {
+    const { name, value } = e.target;
+    const errors = {};
+
+    // Validate LinkedIn URL
+    if (name === 'linkedinUrl') {
+      const error = getLinkedInUrlError(value);
+      if (error) errors.linkedinUrl = error;
+    }
+
+    // Validate GitHub URL
+    if (name === 'githubUrl') {
+      const error = getGitHubUrlError(value);
+      if (error) errors.githubUrl = error;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      this.setState(prevState => ({
+        validationErrors: { ...prevState.validationErrors, ...errors },
+      }));
+    }
   }
 
   handleToggle() {
@@ -98,7 +170,20 @@ export default class CareerProfile extends React.Component {
 
   async handleSubmit(e) {
     e.preventDefault();
-    this.setState({ saving: true, saveError: null, saveSuccess: false });
+    
+    const validationErrors = {};
+    const linkedinError = getLinkedInUrlError(this.state.linkedinUrl);
+    const githubError = getGitHubUrlError(this.state.githubUrl);
+    
+    if (linkedinError) validationErrors.linkedinUrl = linkedinError;
+    if (githubError) validationErrors.githubUrl = githubError;
+    
+    if (Object.keys(validationErrors).length > 0) {
+      this.setState({ validationErrors, saveError: 'Please fix the validation errors before saving.' });
+      return;
+    }
+    
+    this.setState({ saving: true, saveError: null, saveSuccess: false, validationErrors: {} });
 
     const updates = {
       bio: this.state.bio,
@@ -202,6 +287,7 @@ export default class CareerProfile extends React.Component {
                     <i className="fab fa-linkedin" />
                     {' '}
                     LinkedIn
+                    {this.state.linkedinUrl && !this.state.validationErrors.linkedinUrl && <span className="valid-check"> ✓</span>}
                   </label>
                   <input
                     type="url"
@@ -209,9 +295,15 @@ export default class CareerProfile extends React.Component {
                     name="linkedinUrl"
                     value={this.state.linkedinUrl}
                     onChange={this.handleInputChange}
+                    onBlur={this.handleBlur}
                     placeholder="https://linkedin.com/in/yourprofile"
                     required
+                    className={this.state.validationErrors.linkedinUrl ? 'error' : ''}
                   />
+                  {this.state.validationErrors.linkedinUrl && (
+                    <span className="error-message">{this.state.validationErrors.linkedinUrl}</span>
+                  )}
+                  <p className="help-text">Example: https://linkedin.com/in/yourname</p>
                 </div>
 
                 <div className="form-group">
@@ -219,6 +311,7 @@ export default class CareerProfile extends React.Component {
                     <i className="fab fa-github" />
                     {' '}
                     GitHub
+                    {this.state.githubUrl && !this.state.validationErrors.githubUrl && <span className="valid-check"> ✓</span>}
                   </label>
                   <input
                     type="url"
@@ -226,9 +319,15 @@ export default class CareerProfile extends React.Component {
                     name="githubUrl"
                     value={this.state.githubUrl}
                     onChange={this.handleInputChange}
+                    onBlur={this.handleBlur}
                     placeholder="https://github.com/yourusername"
                     required
+                    className={this.state.validationErrors.githubUrl ? 'error' : ''}
                   />
+                  {this.state.validationErrors.githubUrl && (
+                    <span className="error-message">{this.state.validationErrors.githubUrl}</span>
+                  )}
+                  <p className="help-text">Example: https://github.com/yourusername</p>
                 </div>
 
                 <div className="form-group">
