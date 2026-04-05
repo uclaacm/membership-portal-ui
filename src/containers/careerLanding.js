@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Action } from 'reducers';
 import Topbar from 'containers/topbar';
-import CareerProfile from 'components/Profile/CareerProfile';
+import CareerLanding from 'components/Profile/CareerLanding';
 
-class CareerProfileContainer extends React.Component {
+class CareerLandingContainer extends React.Component {
   componentWillMount() {
     if (this.props.authenticated) {
       this.props.fetchUser();
@@ -15,10 +15,7 @@ class CareerProfileContainer extends React.Component {
     return (
       <div>
         <Topbar />
-        <CareerProfile 
-          profile={this.props.profile} 
-          updateCareerProfile={this.props.updateCareerProfile}
-        />
+        <CareerLanding profile={this.props.profile} />
       </div>
     );
   }
@@ -39,7 +36,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   fetchUser: () => dispatch(Action.FetchUser()),
-  updateCareerProfile: (user) => dispatch(Action.UpdateCareerProfile(user)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CareerProfileContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(CareerLandingContainer);
