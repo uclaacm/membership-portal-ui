@@ -87,7 +87,8 @@ export default class CareerProfile extends React.Component {
         resumeUrl: this.props.profile.resumeUrl || '',
         skills: this.props.profile.skills || [],
         careerInterests: this.props.profile.careerInterests || [],
-        isProfilePublic: this.props.profile.isProfilePublic !== undefined ? this.props.profile.isProfilePublic : true,
+        // Below line caused profile visibility toggle to reset, leading to confusion
+        // isProfilePublic: this.props.profile.isProfilePublic !== undefined ? this.props.profile.isProfilePublic : true,
       });
     }
   }
@@ -95,7 +96,7 @@ export default class CareerProfile extends React.Component {
   handleInputChange(e) {
     const { name, value } = e.target;
     this.setState({ [name]: value });
-    
+
     if (this.state.validationErrors[name]) {
       this.setState(prevState => ({
         validationErrors: { ...prevState.validationErrors, [name]: null },
@@ -170,20 +171,22 @@ export default class CareerProfile extends React.Component {
 
   async handleSubmit(e) {
     e.preventDefault();
-    
+
     const validationErrors = {};
     const linkedinError = getLinkedInUrlError(this.state.linkedinUrl);
     const githubError = getGitHubUrlError(this.state.githubUrl);
-    
+
     if (linkedinError) validationErrors.linkedinUrl = linkedinError;
     if (githubError) validationErrors.githubUrl = githubError;
-    
+
     if (Object.keys(validationErrors).length > 0) {
       this.setState({ validationErrors, saveError: 'Please fix the validation errors before saving.' });
       return;
     }
-    
-    this.setState({ saving: true, saveError: null, saveSuccess: false, validationErrors: {} });
+
+    this.setState({
+      saving: true, saveError: null, saveSuccess: false, validationErrors: {},
+    });
 
     const updates = {
       bio: this.state.bio,
@@ -203,7 +206,10 @@ export default class CareerProfile extends React.Component {
     try {
       await this.props.updateCareerProfile(updates);
       this.setState({ saving: false, saveSuccess: true });
-      setTimeout(() => this.setState({ saveSuccess: false }), 3000);
+      setTimeout(() => {
+        this.setState({ saveSuccess: false });
+        window.location.replace('/profile/career');
+      }, 1000);
     } catch (error) {
       this.setState({ saving: false, saveError: error.message || 'Failed to save changes' });
     }
