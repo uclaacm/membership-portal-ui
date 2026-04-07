@@ -87,8 +87,6 @@ export default class CareerProfile extends React.Component {
         resumeUrl: this.props.profile.resumeUrl || '',
         skills: this.props.profile.skills || [],
         careerInterests: this.props.profile.careerInterests || [],
-        // Below line caused profile visibility toggle to reset, leading to confusion
-        // isProfilePublic: this.props.profile.isProfilePublic !== undefined ? this.props.profile.isProfilePublic : true,
       });
     }
   }
@@ -209,7 +207,7 @@ export default class CareerProfile extends React.Component {
       setTimeout(() => {
         this.setState({ saveSuccess: false });
         window.location.replace('/profile/career');
-      }, 1000);
+      }, 2000);
     } catch (error) {
       this.setState({ saving: false, saveError: error.message || 'Failed to save changes' });
     }
