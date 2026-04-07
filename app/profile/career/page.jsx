@@ -1,25 +1,31 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom, officerViewAtom } from '@/lib/atoms';
 import Topbar from '@/components/Topbar';
+import CareerLanding from '@/app/profile/CareerLanding';
 import logoutUser from '@/app/actions/auth/logoutUser';
-import Resources from './resources';
-import './style.scss';
+import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom } from '@/lib/atoms';
 
-export default function ResourcesPage() {
+export default function CareerPage() {
   const userProfile = useAtomValue(authUserProfileAtom);
   const isAdmin = useAtomValue(isAdminAtom);
   const isOfficer = useAtomValue(isOfficerAtom);
   const [adminView, setAdminView] = useAtom(adminViewAtom);
-  const [officerView, setOfficerView] = useAtom(officerViewAtom);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     await logoutUser();
   };
 
+  if (!mounted) return null;
+
   return (
-    <div className="resources">
+    <div className="career">
       <Topbar
         isAdmin={adminView}
         picture={userProfile?.picture}
@@ -31,7 +37,7 @@ export default function ResourcesPage() {
         officerView={adminView}
         onToggleOfficerView={() => setAdminView(v => !v)}
       />
-      <Resources />
+      <CareerLanding profile={userProfile || {}} />
     </div>
   );
 }
