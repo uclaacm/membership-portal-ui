@@ -31,7 +31,7 @@ import {
   SyncEventsDone,
 } from './events';
 import { Leaderboard, FetchLeaderboard, InvalidateLeaderboard } from './leaderboard';
-import { CheckIn, CheckInto, ResetCheckIn } from './checkin';
+import { CheckIn, CheckInto, ResetCheckIn, FetchCheckedInEvents } from './checkin';
 import { Registration, RegisterUser, registerDone } from './registration';
 import {
   Images, GetAllImages, CreateImage, DeleteImage,
@@ -88,6 +88,7 @@ const Action = {
   registerDone,
   CheckInto,
   ResetCheckIn,
+  FetchCheckedInEvents,
   CreateRSVP,
   CancelRSVP,
   FetchUserRSVPs,
