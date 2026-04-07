@@ -169,7 +169,7 @@ const UpdateCareerProfile = user => async (dispatch) => {
     dispatch(State.UpdateUser());
     dispatch((innerDispatch, getState) => {
       const currentProfile = getState().User.get('profile');
-      const mergedProfile = { ...currentProfile, ...data.user };
+      const mergedProfile = { ...currentProfile, ...user, ...data.user };
       innerDispatch(State.FetchUser(null, mergedProfile));
     });
   } catch (err) {
