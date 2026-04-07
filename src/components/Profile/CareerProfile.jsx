@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import './careerProfile.scss';
 
 const isValidLinkedInUrl = (url) => {
@@ -43,7 +43,7 @@ const getGitHubUrlError = (url) => {
   return null;
 };
 
-export default class CareerProfile extends React.Component {
+class CareerProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -206,7 +206,7 @@ export default class CareerProfile extends React.Component {
       this.setState({ saving: false, saveSuccess: true });
       setTimeout(() => {
         this.setState({ saveSuccess: false });
-        history.push('/profile/career');
+        this.props.history.push('/profile/career');
       }, 2000);
     } catch (error) {
       this.setState({ saving: false, saveError: error.message || 'Failed to save changes' });
@@ -559,6 +559,8 @@ export default class CareerProfile extends React.Component {
     );
   }
 }
+
+export default withRouter(CareerProfile);
 
 CareerProfile.propTypes = {
   profile: PropTypes.object,
