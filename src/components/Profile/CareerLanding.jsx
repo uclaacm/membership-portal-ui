@@ -116,14 +116,23 @@ export default class CareerLanding extends React.Component {
           </div>
 
           {/* Right Side: Profile Preview */}
-          {completeness > 0 && (
-            <div className="profile-preview">
-              <div className="preview-header">
-                <h2>Your Career Profile</h2>
+          <div className="profile-preview">
+            <div className="preview-header">
+              <h2>Your Career Profile</h2>
+              <Link to="/profile/career/edit" className="edit-link">
+                <i className="fa fa-edit" /> Edit
+              </Link>
+            </div>
+            {completeness === 0 ? (
+              <div className="preview-empty">
+                <i className="fa fa-user-circle" />
+                <p>Your career profile is empty.</p>
+                <p>Fill it out to let recruiters and committee leads find you!</p>
                 <Link to="/profile/career/edit" className="edit-link">
-                  <i className="fa fa-edit" /> Edit
+                  Get Started
                 </Link>
               </div>
+            ) : (
               <div className="preview-content">
                 {profile.bio && (
                   <div className="preview-section">
@@ -131,7 +140,7 @@ export default class CareerLanding extends React.Component {
                     <p>{profile.bio}</p>
                   </div>
                 )}
-                
+
                 {profile.pronouns && (
                   <div className="preview-section">
                     <h3>Pronouns</h3>
@@ -194,8 +203,8 @@ export default class CareerLanding extends React.Component {
                   </div>
                 )}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     );
