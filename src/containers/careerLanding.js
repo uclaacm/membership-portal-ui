@@ -21,18 +21,10 @@ class CareerLandingContainer extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  if (state.User.get('fetchSuccess')) {
-    return {
-      authenticated: state.Auth.get('authenticated'),
-      profile: state.User.get('profile'),
-    };
-  }
-  return {
-    authenticated: state.Auth.get('authenticated'),
-    profile: {},
-  };
-};
+const mapStateToProps = (state) => ({
+  authenticated: state.Auth.get('authenticated'),
+  profile: state.User.get('profile') || {},
+});
 
 const mapDispatchToProps = (dispatch) => ({
   fetchUser: () => dispatch(Action.FetchUser()),
