@@ -206,7 +206,7 @@ export default class CareerProfile extends React.Component {
       this.setState({ saving: false, saveSuccess: true });
       setTimeout(() => {
         this.setState({ saveSuccess: false });
-        window.location.replace('/profile/career');
+        history.push('/profile/career');
       }, 2000);
     } catch (error) {
       this.setState({ saving: false, saveError: error.message || 'Failed to save changes' });
