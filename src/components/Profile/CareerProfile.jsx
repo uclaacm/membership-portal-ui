@@ -56,7 +56,8 @@ class CareerProfile extends React.Component {
       resumeUrl: props.profile.resumeUrl || '',
       skills: props.profile.skills || [],
       careerInterests: props.profile.careerInterests || [],
-      isProfilePublic: props.profile.isProfilePublic !== undefined ? props.profile.isProfilePublic : true,
+      isProfilePublic:
+        props.profile.isProfilePublic !== undefined ? props.profile.isProfilePublic : true,
       skillInput: '',
       careerInterestInput: '',
       saving: false,
@@ -76,19 +77,39 @@ class CareerProfile extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.profile !== this.props.profile) {
-      this.setState({
-        bio: this.props.profile.bio || '',
-        pronouns: this.props.profile.pronouns || '',
-        linkedinUrl: this.props.profile.linkedinUrl || '',
-        githubUrl: this.props.profile.githubUrl || '',
-        portfolioUrl: this.props.profile.portfolioUrl || '',
-        personalWebsite: this.props.profile.personalWebsite || '',
-        resumeUrl: this.props.profile.resumeUrl || '',
-        skills: this.props.profile.skills || [],
-        careerInterests: this.props.profile.careerInterests || [],
-      });
-    }
+    const { profile } = this.props;
+    const prev = prevProps.profile || {};
+    const next = profile || {};
+
+    const changed = prev.bio !== next.bio
+      || prev.pronouns !== next.pronouns
+      || prev.linkedinUrl !== next.linkedinUrl
+      || prev.githubUrl !== next.githubUrl
+      || prev.portfolioUrl !== next.portfolioUrl
+      || prev.personalWebsite !== next.personalWebsite
+      || prev.resumeUrl !== next.resumeUrl
+      || prev.isProfilePublic !== next.isProfilePublic
+      || prev.skills !== next.skills
+      || prev.careerInterests !== next.careerInterests;
+
+    if (!changed) return;
+
+    // eslint-disable-next-line react/no-did-update-set-state
+    this.setState(prevState => ({
+      bio: next.bio !== undefined ? next.bio : prevState.bio,
+      pronouns: next.pronouns !== undefined ? next.pronouns : prevState.pronouns,
+      linkedinUrl: next.linkedinUrl !== undefined ? next.linkedinUrl : prevState.linkedinUrl,
+      githubUrl: next.githubUrl !== undefined ? next.githubUrl : prevState.githubUrl,
+      portfolioUrl: next.portfolioUrl !== undefined ? next.portfolioUrl : prevState.portfolioUrl,
+      personalWebsite:
+        next.personalWebsite !== undefined ? next.personalWebsite : prevState.personalWebsite,
+      resumeUrl: next.resumeUrl !== undefined ? next.resumeUrl : prevState.resumeUrl,
+      skills: next.skills !== undefined ? next.skills : prevState.skills,
+      careerInterests:
+        next.careerInterests !== undefined ? next.careerInterests : prevState.careerInterests,
+      isProfilePublic:
+        next.isProfilePublic !== undefined ? next.isProfilePublic : prevState.isProfilePublic,
+    }));
   }
 
   handleInputChange(e) {
@@ -130,10 +151,11 @@ class CareerProfile extends React.Component {
   }
 
   addSkill(e) {
-    if (e.key === 'Enter' && this.state.skillInput.trim()) {
+    const { skillInput, skills } = this.state;
+    if (e.key === 'Enter' && skillInput.trim()) {
       e.preventDefault();
-      const newSkill = this.state.skillInput.trim();
-      if (this.state.skills.length < 20 && !this.state.skills.includes(newSkill)) {
+      const newSkill = skillInput.trim();
+      if (skills.length < 20 && !skills.includes(newSkill)) {
         this.setState(prevState => ({
           skills: [...prevState.skills, newSkill],
           skillInput: '',
@@ -149,10 +171,11 @@ class CareerProfile extends React.Component {
   }
 
   addCareerInterest(e) {
-    if (e.key === 'Enter' && this.state.careerInterestInput.trim()) {
+    const { careerInterestInput, careerInterests } = this.state;
+    if (e.key === 'Enter' && careerInterestInput.trim()) {
       e.preventDefault();
-      const newInterest = this.state.careerInterestInput.trim();
-      if (this.state.careerInterests.length < 20 && !this.state.careerInterests.includes(newInterest)) {
+      const newInterest = careerInterestInput.trim();
+      if (careerInterests.length < 20 && !careerInterests.includes(newInterest)) {
         this.setState(prevState => ({
           careerInterests: [...prevState.careerInterests, newInterest],
           careerInterestInput: '',
@@ -168,6 +191,16 @@ class CareerProfile extends React.Component {
   }
 
   async handleSubmit(e) {
+    const { updateCareerProfile } = this.props;
+    const {
+      bio,
+      pronouns,
+      skills,
+      careerInterests,
+      isProfilePublic,
+      linkedinUrl, githubUrl, portfolioUrl, personalWebsite, resumeUrl,
+    } = this.state;
+
     e.preventDefault();
 
     const validationErrors = {};
@@ -187,22 +220,22 @@ class CareerProfile extends React.Component {
     });
 
     const updates = {
-      bio: this.state.bio,
-      pronouns: this.state.pronouns,
-      skills: this.state.skills,
-      careerInterests: this.state.careerInterests,
-      isProfilePublic: this.state.isProfilePublic,
+      bio,
+      pronouns,
+      skills,
+      careerInterests,
+      isProfilePublic,
       // Required fields
-      linkedinUrl: this.state.linkedinUrl,
-      githubUrl: this.state.githubUrl,
+      linkedinUrl,
+      githubUrl,
       // Optional URL fields that can be cleared
-      portfolioUrl: this.state.portfolioUrl,
-      personalWebsite: this.state.personalWebsite,
-      resumeUrl: this.state.resumeUrl,
+      portfolioUrl,
+      personalWebsite,
+      resumeUrl,
     };
 
     try {
-      await this.props.updateCareerProfile(updates);
+      await updateCareerProfile(updates);
       this.setState({ saving: false, saveSuccess: true });
       setTimeout(() => {
         this.setState({ saveSuccess: false });
@@ -214,20 +247,46 @@ class CareerProfile extends React.Component {
   }
 
   calculateCompleteness() {
-    let completed = 0;
+    const {
+      bio,
+      skills,
+      careerInterests,
+      linkedinUrl,
+      githubUrl,
+      portfolioUrl,
+      personalWebsite,
+      pronouns,
+    } = this.state;
     const total = 6;
 
-    if (this.state.bio && this.state.bio.length >= 50) completed++;
-    if (this.state.skills.length >= 3) completed++;
-    if (this.state.careerInterests.length >= 2) completed++;
-    if (this.state.linkedinUrl || this.state.githubUrl) completed++;
-    if (this.state.portfolioUrl || this.state.personalWebsite) completed++;
-    if (this.state.pronouns) completed++;
+    const completed = Number(bio && bio.length >= 50)
+      + Number(skills.length >= 3)
+      + Number(careerInterests.length >= 2)
+      + Number(linkedinUrl || githubUrl)
+      + Number(portfolioUrl || personalWebsite)
+      + Number(pronouns);
 
     return Math.round((completed / total) * 100);
   }
 
   render() {
+    const {
+      bio,
+      pronouns,
+      linkedinUrl,
+      githubUrl,
+      portfolioUrl,
+      personalWebsite,
+      resumeUrl,
+      skills,
+      careerInterests,
+      isProfilePublic,
+      skillInput,
+      careerInterestInput,
+      saving,
+      saveSuccess,
+      saveError,
+    } = this.state;
     const completeness = this.calculateCompleteness();
 
     return (
@@ -250,35 +309,37 @@ class CareerProfile extends React.Component {
                 <h2>Basic Information</h2>
 
                 <div className="form-group">
-                  <label htmlFor="pronouns">Pronouns</label>
-                  <input
-                    type="text"
-                    id="pronouns"
-                    name="pronouns"
-                    value={this.state.pronouns}
-                    onChange={this.handleInputChange}
-                    placeholder="e.g., she/her, he/him, they/them"
-                    maxLength={50}
-                  />
+                  <label htmlFor="pronouns">
+                    Pronouns
+                    <input
+                      type="text"
+                      id="pronouns"
+                      name="pronouns"
+                      value={pronouns}
+                      onChange={this.handleInputChange}
+                      placeholder="e.g., she/her, he/him, they/them"
+                      maxLength={50}
+                    />
+                  </label>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="bio">
                     Bio
                     <span className="char-count">
-                      {this.state.bio.length}
+                      {bio.length}
                       /1000
                     </span>
+                    <textarea
+                      id="bio"
+                      name="bio"
+                      value={bio}
+                      onChange={this.handleInputChange}
+                      placeholder="Tell us about yourself, your interests, and what you're working on..."
+                      rows={6}
+                      maxLength={1000}
+                    />
                   </label>
-                  <textarea
-                    id="bio"
-                    name="bio"
-                    value={this.state.bio}
-                    onChange={this.handleInputChange}
-                    placeholder="Tell us about yourself, your interests, and what you're working on..."
-                    rows={6}
-                    maxLength={1000}
-                  />
                 </div>
               </div>
 
@@ -340,15 +401,15 @@ class CareerProfile extends React.Component {
                     {' '}
                     Portfolio
                     <span className="optional-label"> (Optional)</span>
+                    <input
+                      type="url"
+                      id="portfolioUrl"
+                      name="portfolioUrl"
+                      value={portfolioUrl}
+                      onChange={this.handleInputChange}
+                      placeholder="https://yourportfolio.com"
+                    />
                   </label>
-                  <input
-                    type="url"
-                    id="portfolioUrl"
-                    name="portfolioUrl"
-                    value={this.state.portfolioUrl}
-                    onChange={this.handleInputChange}
-                    placeholder="https://yourportfolio.com"
-                  />
                 </div>
 
                 <div className="form-group">
@@ -357,15 +418,15 @@ class CareerProfile extends React.Component {
                     {' '}
                     Personal Website
                     <span className="optional-label"> (Optional)</span>
+                    <input
+                      type="url"
+                      id="personalWebsite"
+                      name="personalWebsite"
+                      value={personalWebsite}
+                      onChange={this.handleInputChange}
+                      placeholder="https://yourwebsite.com"
+                    />
                   </label>
-                  <input
-                    type="url"
-                    id="personalWebsite"
-                    name="personalWebsite"
-                    value={this.state.personalWebsite}
-                    onChange={this.handleInputChange}
-                    placeholder="https://yourwebsite.com"
-                  />
                 </div>
 
                 <div className="form-group">
@@ -374,15 +435,15 @@ class CareerProfile extends React.Component {
                     {' '}
                     Resume URL
                     <span className="optional-label"> (Optional)</span>
+                    <input
+                      type="url"
+                      id="resumeUrl"
+                      name="resumeUrl"
+                      value={resumeUrl}
+                      onChange={this.handleInputChange}
+                      placeholder="https://drive.google.com/..."
+                    />
                   </label>
-                  <input
-                    type="url"
-                    id="resumeUrl"
-                    name="resumeUrl"
-                    value={this.state.resumeUrl}
-                    onChange={this.handleInputChange}
-                    placeholder="https://drive.google.com/..."
-                  />
                 </div>
               </div>
 
@@ -391,7 +452,7 @@ class CareerProfile extends React.Component {
                 <h2>
                   Skills
                   <span className="count-badge">
-                    {this.state.skills.length}
+                    {skills.length}
                     /20
                   </span>
                 </h2>
@@ -401,17 +462,17 @@ class CareerProfile extends React.Component {
                   <input
                     type="text"
                     name="skillInput"
-                    value={this.state.skillInput}
+                    value={skillInput}
                     onChange={this.handleInputChange}
                     onKeyDown={this.addSkill}
                     placeholder="Type a skill and press Enter"
                     maxLength={50}
-                    disabled={this.state.skills.length >= 20}
+                    disabled={skills.length >= 20}
                   />
                 </div>
 
                 <div className="tags-container">
-                  {this.state.skills.map(skill => (
+                  {skills.map(skill => (
                     <span key={skill} className="tag">
                       {skill}
                       <button type="button" onClick={() => this.removeSkill(skill)}>×</button>
@@ -425,27 +486,29 @@ class CareerProfile extends React.Component {
                 <h2>
                   Career Interests
                   <span className="count-badge">
-                    {this.state.careerInterests.length}
+                    {careerInterests.length}
                     /20
                   </span>
                 </h2>
-                <p className="section-help">What career fields or roles interest you? Press Enter to add each interest.</p>
+                <p className="section-help">
+                  What career fields or roles interest you? Press Enter to add each interest.
+                </p>
 
                 <div className="form-group">
                   <input
                     type="text"
                     name="careerInterestInput"
-                    value={this.state.careerInterestInput}
+                    value={careerInterestInput}
                     onChange={this.handleInputChange}
                     onKeyDown={this.addCareerInterest}
                     placeholder="Type a career interest and press Enter"
                     maxLength={50}
-                    disabled={this.state.careerInterests.length >= 20}
+                    disabled={careerInterests.length >= 20}
                   />
                 </div>
 
                 <div className="tags-container">
-                  {this.state.careerInterests.map(interest => (
+                  {careerInterests.map(interest => (
                     <span key={interest} className="tag">
                       {interest}
                       <button type="button" onClick={() => this.removeCareerInterest(interest)}>×</button>
@@ -459,17 +522,19 @@ class CareerProfile extends React.Component {
                 <h2>Privacy Settings</h2>
 
                 <div className="toggle-group">
-                  <label className="toggle-label">
+                  <label className="toggle-label" htmlFor="isProfilePublic">
                     <input
                       type="checkbox"
-                      checked={this.state.isProfilePublic}
+                      id="isProfilePublic"
+                      checked={isProfilePublic}
                       onChange={this.handleToggle}
                     />
                     <span className="toggle-switch" />
                     <span className="toggle-text">
                       Make my career profile public
                       <span className="toggle-description">
-                        Allow other ACM members and recruiters to view your career profile in the directory
+                        Allow other ACM members and recruiters to view your career profile in
+                        the directory
                       </span>
                     </span>
                   </label>
@@ -478,22 +543,22 @@ class CareerProfile extends React.Component {
 
               {/* Save Button */}
               <div className="form-actions">
-                {this.state.saveError && (
+                {saveError && (
                   <div className="error-message">
                     <i className="fa fa-exclamation-circle" />
                     {' '}
-                    {this.state.saveError}
+                    {saveError}
                   </div>
                 )}
-                {this.state.saveSuccess && (
+                {saveSuccess && (
                   <div className="success-message">
                     <i className="fa fa-check-circle" />
                     {' '}
                     Profile saved successfully!
                   </div>
                 )}
-                <button type="submit" className="save-button" disabled={this.state.saving}>
-                  {this.state.saving ? 'Saving...' : 'Save Changes'}
+                <button type="submit" className="save-button" disabled={saving}>
+                  {saving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </form>
@@ -511,33 +576,33 @@ class CareerProfile extends React.Component {
                 % Complete
               </p>
               <ul className="completeness-checklist">
-                <li className={this.state.bio && this.state.bio.length >= 50 ? 'complete' : ''}>
-                  {this.state.bio && this.state.bio.length >= 50 ? '✓' : '○'}
+                <li className={bio && bio.length >= 50 ? 'complete' : ''}>
+                  {bio && bio.length >= 50 ? '✓' : '○'}
                   {' '}
                   Bio (50+ characters)
                 </li>
-                <li className={this.state.skills.length >= 3 ? 'complete' : ''}>
-                  {this.state.skills.length >= 3 ? '✓' : '○'}
+                <li className={skills.length >= 3 ? 'complete' : ''}>
+                  {skills.length >= 3 ? '✓' : '○'}
                   {' '}
                   At least 3 skills
                 </li>
-                <li className={this.state.careerInterests.length >= 2 ? 'complete' : ''}>
-                  {this.state.careerInterests.length >= 2 ? '✓' : '○'}
+                <li className={careerInterests.length >= 2 ? 'complete' : ''}>
+                  {careerInterests.length >= 2 ? '✓' : '○'}
                   {' '}
                   At least 2 career interests
                 </li>
-                <li className={this.state.linkedinUrl || this.state.githubUrl ? 'complete' : ''}>
-                  {this.state.linkedinUrl || this.state.githubUrl ? '✓' : '○'}
+                <li className={linkedinUrl || githubUrl ? 'complete' : ''}>
+                  {linkedinUrl || githubUrl ? '✓' : '○'}
                   {' '}
                   Professional link
                 </li>
-                <li className={this.state.portfolioUrl || this.state.personalWebsite ? 'complete' : ''}>
-                  {this.state.portfolioUrl || this.state.personalWebsite ? '✓' : '○'}
+                <li className={portfolioUrl || personalWebsite ? 'complete' : ''}>
+                  {portfolioUrl || personalWebsite ? '✓' : '○'}
                   {' '}
                   Portfolio/website
                 </li>
-                <li className={this.state.pronouns ? 'complete' : ''}>
-                  {this.state.pronouns ? '✓' : '○'}
+                <li className={pronouns ? 'complete' : ''}>
+                  {pronouns ? '✓' : '○'}
                   {' '}
                   Pronouns
                 </li>
@@ -545,7 +610,11 @@ class CareerProfile extends React.Component {
             </div>
 
             <div className="info-card">
-              <h3>📈 Profile Tips</h3>
+              <h3>
+                <span role="img" aria-label="chart increasing">📈</span>
+                {' '}
+                Profile Tips
+              </h3>
               <ul>
                 <li>Write a compelling bio that highlights your interests</li>
                 <li>Add specific, relevant skills</li>
@@ -563,7 +632,18 @@ class CareerProfile extends React.Component {
 export default withRouter(CareerProfile);
 
 CareerProfile.propTypes = {
-  profile: PropTypes.object,
+  profile: PropTypes.shape({
+    bio: PropTypes.string,
+    pronouns: PropTypes.string,
+    linkedinUrl: PropTypes.string,
+    githubUrl: PropTypes.string,
+    portfolioUrl: PropTypes.string,
+    personalWebsite: PropTypes.string,
+    resumeUrl: PropTypes.string,
+    skills: PropTypes.arrayOf(PropTypes.string),
+    careerInterests: PropTypes.arrayOf(PropTypes.string),
+    isProfilePublic: PropTypes.bool,
+  }),
   updateCareerProfile: PropTypes.func.isRequired,
 };
 
