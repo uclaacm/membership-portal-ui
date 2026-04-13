@@ -10,7 +10,6 @@ import logoutUser from '@/app/actions/auth/logoutUser';
 import fetchFutureEvents from '@/app/actions/events/fetchFutureEvents';
 import createEvent from '@/app/actions/events/createEvent';
 import updateEvent from '@/app/actions/events/updateEvent';
-import syncEventsAction from '@/app/actions/events/syncEvents';
 import fetchUserRSVPs from '@/app/actions/rsvp/fetchUserRSVPs';
 import checkInAction from '@/app/actions/attendance/checkIn';
 import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom, officerViewAtom } from '@/lib/atoms';
@@ -115,21 +114,6 @@ export default function EventsPage() {
     }
   };
 
-  const handleSyncEvents = async () => {
-    try {
-      await syncEventsAction();
-      const eventsArray = await fetchFutureEvents();
-      setEvents(eventsArray.map(e => ({
-        ...e,
-        startDate: moment(e.startDate),
-        endDate: moment(e.endDate),
-      })));
-    } catch (err) {
-      console.error('Failed to sync events:', err);
-      setError('Failed to sync events');
-    }
-  };
-
   if (!mounted) {
     return null;
   }
@@ -155,7 +139,6 @@ export default function EventsPage() {
           isOfficer={isOfficer}
           addEvent={handleAddEvent}
           updateEvent={handleUpdateEvent}
-          syncEvents={handleSyncEvents}
         />
       ) : (
         <UserEvents
