@@ -7,7 +7,7 @@ import Topbar from '@/components/Topbar';
 import UserEvents from './UserEvents';
 import AdminEvents from './AdminEvents';
 import logoutUser from '@/app/actions/auth/logoutUser';
-import fetchFutureEvents from '@/app/actions/events/fetchFutureEvents';
+import fetchAllEvents from '@/app/actions/events/fetchAllEvents';
 import createEvent from '@/app/actions/events/createEvent';
 import updateEvent from '@/app/actions/events/updateEvent';
 import fetchUserRSVPs from '@/app/actions/rsvp/fetchUserRSVPs';
@@ -36,7 +36,7 @@ export default function EventsPage() {
     const loadEvents = async () => {
       try {
         const [eventsArray, rsvpResult] = await Promise.all([
-          fetchFutureEvents(),
+          fetchAllEvents(),
           fetchUserRSVPs(),
         ]);
 
@@ -87,7 +87,7 @@ export default function EventsPage() {
     try {
       await createEvent(normalizeEventForServer(event));
       // Reload events after creation
-      const eventsArray = await fetchFutureEvents();
+      const eventsArray = await fetchAllEvents();
       setEvents(eventsArray.map(e => ({
         ...e,
         startDate: moment(e.startDate),
@@ -102,7 +102,7 @@ export default function EventsPage() {
   const handleUpdateEvent = async (event) => {
     try {
       await updateEvent(normalizeEventForServer(event));
-      const eventsArray = await fetchFutureEvents();
+      const eventsArray = await fetchAllEvents();
       setEvents(eventsArray.map(e => ({
         ...e,
         startDate: moment(e.startDate),
