@@ -16,6 +16,7 @@ jobs:
           port: 5903
           username: uclaacm
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          request_pty: true
           script: |
             set -euo pipefail
 
