@@ -1,0 +1,39 @@
+name: Staging Deployment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: gateway.uclaacm.com
+          port: 5903
+          username: uclaacm
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -euo pipefail
+
+            cd ~
+            cd membership-portal-deployment/prod
+            make pg_bkup
+
+            # Backend
+            cd ../../membership-portal
+            git pull
+            npm ci
+            make build
+            make push
+
+            # Frontend
+            cd ../membership-portal-ui
+            git pull
+            npm ci
+            make build
+            make push
+      
