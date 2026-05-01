@@ -513,15 +513,97 @@
     // ── Footer ────────────────────────────────────────────────
     .modal-footer {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       gap: 10px;
       padding: 14px 24px;
       border-top: 1px solid #ececec;
       flex-shrink: 0;
+      flex-wrap: wrap;
+
+      .modal-footer-left,
+      .modal-footer-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .modal-footer-right {
+        margin-left: auto;
+      }
 
       button {
         min-width: 110px;
+      }
+    }
+
+    .repeat-scope-section {
+      background: #f6f8fc;
+      border-radius: 10px;
+      padding: 12px 14px;
+      border: 1px solid #e8ecf4;
+    }
+
+    .series-count-hint {
+      font-size: 13px;
+      color: #555;
+      margin: 0 0 10px 0;
+    }
+
+    .repeat-scope-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      &.delete-scope-options {
+        margin-bottom: 12px;
+      }
+
+      .radio-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: #666;
+      margin: 0 0 8px 0;
+    }
+
+    .preview-repeat-hint {
+      font-style: italic;
+    }
+
+    .recurrence-frequency-select {
+      @include field-input;
+    }
+
+    .delete-confirm-panel {
+      border-top: 1px solid #ececec;
+      padding: 16px 24px;
+      background: #fff8f8;
+
+      .delete-confirm-title {
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        color: vars.$primaryblack;
+      }
+
+      .delete-confirm-body {
+        margin: 0 0 12px 0;
+        font-size: 14px;
+      }
+
+      .delete-confirm-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
       }
     }
   }
@@ -584,6 +666,19 @@
       .event-title,
       .event-committee {
         margin: 0px;
+      }
+
+      .event-series-badge {
+        display: inline-block;
+        margin-top: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: vars.$secondaryblue;
+        background: rgba(59, 89, 237, 0.12);
+        border-radius: 6px;
+        padding: 3px 8px;
       }
     }
   }

@@ -107,6 +107,9 @@ class AdminEventCard extends React.Component {
               <span className="event-title Headline-2Primary">{event.title}</span>
               <br />
               <span className="event-committee Title-2Secondary">{event.committee}</span>
+              {event.eventGroupId ? (
+                <span className="event-series-badge">Repeating</span>
+              ) : null}
             </div>
           </div>
           <div className="rsvp-section">
