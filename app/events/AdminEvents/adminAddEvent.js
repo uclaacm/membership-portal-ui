@@ -21,11 +21,12 @@ export default class AdminAddEvent extends React.Component {
       coverImageFile: null,
       coverMode: 'url', // 'url' | 'upload'
       isPreviewFlipped: false,
-      isPlatformsOpen: false,
-      platforms: this.props.event?.platforms || []
+      isPlatformsOpen: false
     };
     this.coverUploadRef = createRef();
+    this.multiSelectRef = createRef();
     this.resizeTextArea = this.resizeTextArea.bind(this);
+    this.handleClickOutsidePlatforms = this.handleClickOutsidePlatforms.bind(this);
     this.handleChangeCover = this.handleChangeCover.bind(this);
     this.handleChangeStartDate = this.handleChangeStartDate.bind(this);
     this.handleChangeEndDate = this.handleChangeEndDate.bind(this);
@@ -34,6 +35,20 @@ export default class AdminAddEvent extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePreviewFlip = this.handlePreviewFlip.bind(this);
     this.handleTogglePlatform = this.handleTogglePlatform.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutsidePlatforms);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutsidePlatforms);
+  }
+
+  handleClickOutsidePlatforms(e) {
+    if (this.state.isPlatformsOpen && !this.multiSelectRef.current?.contains(e.target)) {
+      this.setState({ isPlatformsOpen: false });
+    }
   }
 
   resizeTextArea(e) {
@@ -118,10 +133,11 @@ export default class AdminAddEvent extends React.Component {
 
   handleTogglePlatform(option) {
     this.setState((prev) => {
-      const next = prev.platforms.includes(option)
-        ? prev.platforms.filter(p => p !== option)
-        : [...prev.platforms, option];
-      return { platforms: next, event: { ...prev.event, marketing: next } };
+      const platforms = prev.event?.platforms || [];
+      const next = platforms.includes(option)
+        ? platforms.filter(p => p !== option)
+        : [...platforms, option];
+      return { event: { ...prev.event, platforms: next } };
     });
   }
 
@@ -162,7 +178,6 @@ export default class AdminAddEvent extends React.Component {
       if (newState.event) newState.event.attendanceCode = nextProps.event.attendanceCode || '';
       newState.startTimeStr = nextProps.event?.startDate ? nextProps.event.startDate.format('HH:mm') : '';
       newState.endTimeStr = nextProps.event?.endDate ? nextProps.event.endDate.format('HH:mm') : '';
-      newState.platforms = nextProps.event?.marketing || [];
       return newState;
     });
   }
@@ -226,6 +241,7 @@ export default class AdminAddEvent extends React.Component {
   render() {
     const committeeColorMap = Object.fromEntries(Config.committeeColors);
     const { coverMode } = this.state;
+    const platforms = this.state.event?.platforms || [];
 
     return (
       <div className={`add-event-overlay${this.props.showing ? ' showing' : ''}`} onClick={this.props.onClickCancel}>
@@ -412,22 +428,25 @@ export default class AdminAddEvent extends React.Component {
               <div className="form-section">
                 <p className="section-label">Marketing <span className="optional-mark">optional</span></p>
 
-                <div className="multi-select">
+                <div className="multi-select" ref={this.multiSelectRef}>
                   <div
-                    className={`multi-select-trigger${this.state.platforms.length === 0 ? ' is-placeholder' : ''}`}
+                    className={`multi-select-trigger${platforms.length === 0 ? ' is-placeholder' : ''}`}
                     onClick={() => this.setState(prev => ({ isPlatformsOpen: !prev.isPlatformsOpen }))}
                   >
                     {/* Chips */}
-                    {this.state.platforms.length === 0
+                    {platforms.length === 0
                       ? 'Select platforms...'
                       : Config.platforms
-                          .filter(opt => this.state.platforms.includes(opt))
+                          .filter(opt => platforms.includes(opt))
                           .map(opt => (
                             <span key={opt} className="multi-select-chip">
                               <span className="chip-label">{opt}</span>
                               <button
                                 type="button"
-                                onClick={(e) => { e.stopPropagation(); this.handleTogglePlatform(opt); }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  this.handleTogglePlatform(opt);
+                                }}
                               >✕</button>
                             </span>
                           ))
@@ -440,7 +459,7 @@ export default class AdminAddEvent extends React.Component {
                         <button
                           key={opt}
                           type="button"
-                          className={this.state.platforms.includes(opt) ? 'selected' : ''}
+                          className={platforms.includes(opt) ? 'selected' : ''}
                           onClick={() => this.handleTogglePlatform(opt)}
                         >
                           {opt}
