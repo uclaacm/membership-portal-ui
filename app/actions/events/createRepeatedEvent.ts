@@ -6,7 +6,11 @@ import Logger from "@/lib/logger";
 import { formatEventApiFailure, hasApiError } from "./parseEventApiResponse";
 
 export type RecurrenceInput = {
-  frequency: "daily" | "weekly" | "monthly";
+  /** Repeat every X weeks */
+  intervalWeeks: number;
+  /** ISO weekdays 1..7 (1=Mon, 7=Sun). Omit to use only the template start date weekday. */
+  daysOfWeek?: number[];
+  /** ISO-8601; server uses calendar date only. */
   seriesEndDate: string;
 };
 

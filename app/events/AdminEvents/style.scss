@@ -579,8 +579,38 @@
       font-style: italic;
     }
 
-    .recurrence-frequency-select {
+    .recurrence-interval-weeks {
       @include field-input;
+      max-width: 120px;
+    }
+
+    .recurrence-weekdays {
+      margin-top: 4px;
+
+      .recurrence-weekdays-label {
+        margin-bottom: 4px;
+      }
+    }
+
+    .recurrence-weekday-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .recurrence-day-chip {
+      padding: 6px 10px;
+      border: 1px solid #cfcfcf;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+
+      &.is-active {
+        border-color: vars.$secondaryblue;
+        background: rgba(59, 89, 237, 0.12);
+        font-weight: 600;
+      }
     }
 
     .delete-confirm-panel {

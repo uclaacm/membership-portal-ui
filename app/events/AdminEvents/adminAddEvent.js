@@ -11,6 +11,17 @@ import uploadImage from '@/app/actions/image/uploadImage';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
+/** ISO weekdays for recurrence API (`1`=Mon … `7`=Sun). */
+const RECURRENCE_ISO_WEEKDAYS = [
+  { iso: 1, label: 'Mon' },
+  { iso: 2, label: 'Tue' },
+  { iso: 3, label: 'Wed' },
+  { iso: 4, label: 'Thu' },
+  { iso: 5, label: 'Fri' },
+  { iso: 6, label: 'Sat' },
+  { iso: 7, label: 'Sun' },
+];
+
 function AdminAddEvent({
   event: eventProp,
   onClickAdd = null,
@@ -36,9 +47,9 @@ function AdminAddEvent({
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
 
   const [isRepeating, setIsRepeating] = useState(false);
-  const [recurrenceFrequency, setRecurrenceFrequency] = useState('weekly');
+  const [recurrenceIntervalWeeks, setRecurrenceIntervalWeeks] = useState(1);
+  const [recurrenceDaysOfWeek, setRecurrenceDaysOfWeek] = useState([]);
   const [seriesEndDate, setSeriesEndDate] = useState(null);
-  const [seriesEndTimeStr, setSeriesEndTimeStr] = useState('');
 
   const [editScope, setEditScope] = useState('instance');
   const [seriesInstanceCount, setSeriesInstanceCount] = useState(null);
@@ -63,7 +74,8 @@ function AdminAddEvent({
         setEditScope('instance');
         setSeriesInstanceCount(null);
         setSeriesEndDate(null);
-        setSeriesEndTimeStr('');
+        setRecurrenceIntervalWeeks(1);
+        setRecurrenceDaysOfWeek([]);
         setShowDeleteConfirm(false);
         setDeleteScope('single');
       } else {
@@ -117,19 +129,7 @@ function AdminAddEvent({
   }, []);
 
   const handleChangeSeriesEndDate = useCallback((date) => {
-    setSeriesEndDate(date ? moment(date) : null);
-  }, []);
-
-  const handleChangeSeriesTime = useCallback((e) => {
-    const raw = e.target.value;
-    setSeriesEndTimeStr(raw);
-    if (raw) {
-      const [hh, mm] = raw.split(':').map(n => parseInt(n, 10));
-      setSeriesEndDate((prev) => {
-        if (prev) return prev.clone().set({ hour: hh, minute: mm });
-        return moment({ hour: hh, minute: mm });
-      });
-    }
+    setSeriesEndDate(date ? moment(date).startOf('day') : null);
   }, []);
 
   const handleChange = useCallback((e) => {
@@ -139,15 +139,16 @@ function AdminAddEvent({
 
   const applyRepeatingDefaults = useCallback(() => {
     if (!event?.startDate) return;
-    const t = event.endDate
-      ? event.endDate.format('HH:mm')
-      : (endTimeStr || '12:00');
-    let nextSeriesEnd = event.startDate.clone().add(1, 'month');
-    const [hh, mm] = t.split(':').map(n => parseInt(n, 10));
-    nextSeriesEnd = nextSeriesEnd.clone().set({ hour: hh, minute: mm });
-    setSeriesEndTimeStr(t);
-    setSeriesEndDate(nextSeriesEnd);
-  }, [event, endTimeStr]);
+    setSeriesEndDate(event.startDate.clone().add(1, 'month').startOf('day'));
+  }, [event]);
+
+  const toggleRecurrenceWeekday = useCallback((iso) => {
+    setRecurrenceDaysOfWeek((prev) => (
+      prev.includes(iso)
+        ? prev.filter((d) => d !== iso).sort((a, b) => a - b)
+        : [...prev, iso].sort((a, b) => a - b)
+    ));
+  }, []);
 
   const setRepeatingMode = useCallback((next) => {
     setIsRepeating(next);
@@ -182,26 +183,30 @@ function AdminAddEvent({
     if (!event.title || !event.startDate || !event.endDate) return;
 
     if (!isEdit && isRepeating) {
-      if (!seriesEndDate || !seriesEndTimeStr) {
-        alert('Please set the series end date and time.');
+      if (!seriesEndDate) {
+        alert('Please set when the series ends (date).');
         return;
       }
-      let seriesEnd = seriesEndDate.clone();
-      const [hh, mm] = seriesEndTimeStr.split(':').map(n => parseInt(n, 10));
-      seriesEnd = seriesEnd.set({ hour: hh, minute: mm });
-      if (seriesEnd.isBefore(event.startDate)) {
-        alert('Series end must be on or after the first event start time.');
+      const startCalendarDay = event.startDate.clone().startOf('day');
+      const seriesLastCalendarDay = seriesEndDate.clone().startOf('day');
+      if (seriesLastCalendarDay.isBefore(startCalendarDay)) {
+        alert('Series end date must be on or after the first event start date.');
         return;
+      }
+      const parsedIw = Number.parseInt(String(recurrenceIntervalWeeks), 10);
+      const intervalWeeks = Number.isFinite(parsedIw) && parsedIw >= 1 ? parsedIw : 1;
+      const recurrence = {
+        intervalWeeks,
+        seriesEndDate: seriesLastCalendarDay.toISOString(),
+      };
+      if (recurrenceDaysOfWeek.length > 0) {
+        recurrence.daysOfWeek = [...recurrenceDaysOfWeek];
       }
       finalizeSubmit((ev) => {
         const payload = Object.assign({}, ev);
         delete payload.uuid;
         delete payload.eventGroupId;
-        delete payload.attendanceCode;
-        onCreateRepeated(payload, {
-          frequency: recurrenceFrequency,
-          seriesEndDate: seriesEnd.toISOString(),
-        });
+        onCreateRepeated(payload, recurrence);
       });
       return;
     }
@@ -212,6 +217,8 @@ function AdminAddEvent({
         delete payload.uuid;
         delete payload.eventGroupId;
         delete payload.attendanceCode;
+        delete payload.startDate;
+        delete payload.endDate;
         onUpdateRepeatedGroup(
           event.eventGroupId,
           editScope,
@@ -230,8 +237,8 @@ function AdminAddEvent({
     isEdit,
     isRepeating,
     seriesEndDate,
-    seriesEndTimeStr,
-    recurrenceFrequency,
+    recurrenceIntervalWeeks,
+    recurrenceDaysOfWeek,
     editScope,
     finalizeSubmit,
     onClickAdd,
@@ -361,8 +368,10 @@ function AdminAddEvent({
 
   const committeeColorMap = Object.fromEntries(Config.committeeColors);
   const isRepeatedGroup = !!(isEdit && event?.eventGroupId);
-  const showAttendanceCode = !(!isEdit && isRepeating)
-    && (!isRepeatedGroup || editScope === 'instance');
+  const showAttendanceCode = !isRepeatedGroup || editScope === 'instance';
+  /** Repeating create: codes are derived from optional user base + server suffix. */
+  const isRepeatingSeriesCreate = !isEdit && isRepeating;
+  const scheduleLockedForGroupEdit = isRepeatedGroup && editScope !== 'instance';
 
   return (
     <div className={`add-event-overlay${showing ? ' showing' : ''}`} onClick={onClickCancel}>
@@ -522,6 +531,11 @@ function AdminAddEvent({
 
             <div className="form-section">
               <p className="section-label">Schedule</p>
+              {scheduleLockedForGroupEdit && (
+                <p className="field-hint">
+                  This series cannot move start/end dates in bulk — use &quot;This instance only&quot; or edit dates one event at a time.
+                </p>
+              )}
               <div className="field-row">
                 <div className="field-group field-grow-3">
                   <label>Start Date <span className="required-mark">*</span></label>
@@ -529,6 +543,7 @@ function AdminAddEvent({
                     selected={event.startDate ? event.startDate.toDate() : null}
                     onChange={handleChangeStartDate}
                     className="date-picker"
+                    disabled={scheduleLockedForGroupEdit}
                   />
                 </div>
                 <div className="field-group field-grow-2">
@@ -538,6 +553,7 @@ function AdminAddEvent({
                     onChange={handleChangeTime}
                     name="startTime"
                     value={startTimeStr}
+                    disabled={scheduleLockedForGroupEdit}
                   />
                 </div>
               </div>
@@ -548,6 +564,7 @@ function AdminAddEvent({
                     selected={event.endDate ? event.endDate.toDate() : null}
                     onChange={handleChangeEndDate}
                     className="date-picker"
+                    disabled={scheduleLockedForGroupEdit}
                   />
                 </div>
                 <div className="field-group field-grow-2">
@@ -557,6 +574,7 @@ function AdminAddEvent({
                     onChange={handleChangeTime}
                     name="endTime"
                     value={endTimeStr}
+                    disabled={scheduleLockedForGroupEdit}
                   />
                 </div>
               </div>
@@ -564,17 +582,34 @@ function AdminAddEvent({
                 <>
                   <div className="field-row">
                     <div className="field-group field-grow-3">
-                      <label>Repeat <span className="required-mark">*</span></label>
-                      <select
-                        value={recurrenceFrequency}
-                        name="recurrenceFrequency"
-                        onChange={e => setRecurrenceFrequency(e.target.value)}
-                        className="recurrence-frequency-select"
-                      >
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                      </select>
+                      <label>Repeat every <span className="required-mark">*</span></label>
+                      <input
+                        type="number"
+                        min={1}
+                        className="recurrence-interval-weeks"
+                        value={recurrenceIntervalWeeks}
+                        onChange={(e) => {
+                          const v = Number.parseInt(e.target.value, 10);
+                          setRecurrenceIntervalWeeks(Number.isFinite(v) && v >= 1 ? v : 1);
+                        }}
+                      />
+                      <p className="field-hint">Weeks between pattern repeats (1 = every week).</p>
+                    </div>
+                  </div>
+                  <div className="field-group recurrence-weekdays">
+                    <p className="section-label recurrence-weekdays-label">On weekdays</p>
+                    <p className="field-hint">Leave all unchecked to repeat only on the first event&apos;s weekday.</p>
+                    <div className="recurrence-weekday-chips">
+                      {RECURRENCE_ISO_WEEKDAYS.map(({ iso, label }) => (
+                        <button
+                          key={iso}
+                          type="button"
+                          className={`recurrence-day-chip${recurrenceDaysOfWeek.includes(iso) ? ' is-active' : ''}`}
+                          onClick={() => toggleRecurrenceWeekday(iso)}
+                        >
+                          {label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                   <div className="field-row">
@@ -586,17 +621,8 @@ function AdminAddEvent({
                         className="date-picker"
                       />
                     </div>
-                    <div className="field-group field-grow-2">
-                      <label>Series ends (time) <span className="required-mark">*</span></label>
-                      <input
-                        type="time"
-                        onChange={handleChangeSeriesTime}
-                        name="seriesEndTime"
-                        value={seriesEndTimeStr}
-                      />
-                    </div>
                   </div>
-                  <p className="field-hint">The first occurrence uses the schedule above. Series end must be on or after the start of the first event.</p>
+                  <p className="field-hint">Instances are generated through this calendar date. Only the date is used—the first occurrence still uses the start/end schedule above.</p>
                 </>
               )}
               <div className="field-group">
@@ -607,8 +633,10 @@ function AdminAddEvent({
 
             <div className="form-section">
               <p className="section-label">Attendance</p>
-              {!isEdit && isRepeating && (
-                <p className="field-hint">Check-in codes are generated for each occurrence automatically.</p>
+              {isRepeatingSeriesCreate && (
+                <p className="field-hint">
+                  Optionally set a check-in code prefix. The server generates a unique suffix for each occurrence (e.g. YOURCODE-aB3z). Leave blank to use server defaults.
+                </p>
               )}
               {isRepeatedGroup && !showAttendanceCode && (
                 <p className="field-hint">Check-in codes are per occurrence. Switch to &quot;This instance only&quot; to edit the code for this date.</p>
@@ -618,7 +646,15 @@ function AdminAddEvent({
                   <label>
                     Check-in Code
                     {' '}
-                    {showAttendanceCode ? <span className="required-mark">*</span> : <span className="optional-mark">— set per instance</span>}
+                    {showAttendanceCode && !isRepeatingSeriesCreate ? (
+                      <span className="required-mark">*</span>
+                    ) : null}
+                    {showAttendanceCode && isRepeatingSeriesCreate ? (
+                      <span className="optional-mark">optional prefix for generated codes</span>
+                    ) : null}
+                    {!showAttendanceCode ? (
+                      <span className="optional-mark">— set per instance</span>
+                    ) : null}
                   </label>
                   <input
                     type="text"

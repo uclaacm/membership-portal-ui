@@ -130,7 +130,14 @@ export default function EventsPage() {
     const payload = normalizeEventForServer({ ...event });
     delete payload.uuid;
     delete payload.eventGroupId;
-    delete payload.attendanceCode;
+    const trimmedCode = typeof payload.attendanceCode === 'string'
+      ? payload.attendanceCode.trim()
+      : payload.attendanceCode;
+    if (trimmedCode) {
+      payload.attendanceCode = trimmedCode;
+    } else {
+      delete payload.attendanceCode;
+    }
     if (payload.attendancePoints === '' || payload.attendancePoints == null) {
       payload.attendancePoints = 1;
     } else {
@@ -174,6 +181,8 @@ export default function EventsPage() {
     delete body.uuid;
     delete body.eventGroupId;
     delete body.attendanceCode;
+    delete body.startDate;
+    delete body.endDate;
 
     const result = await updateRepeatedEventGroup(eventGroupId, {
       scope,
