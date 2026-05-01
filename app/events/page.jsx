@@ -173,6 +173,7 @@ export default function EventsPage() {
     const body = normalizeEventForServer({ ...eventFields });
     delete body.uuid;
     delete body.eventGroupId;
+    delete body.attendanceCode;
 
     const result = await updateRepeatedEventGroup(eventGroupId, {
       scope,
