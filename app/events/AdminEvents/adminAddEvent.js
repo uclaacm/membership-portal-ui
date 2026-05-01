@@ -21,6 +21,8 @@ export default class AdminAddEvent extends React.Component {
       coverImageFile: null,
       coverMode: 'url', // 'url' | 'upload'
       isPreviewFlipped: false,
+      isPlatformsOpen: false,
+      platforms: this.props.event?.platforms || []
     };
     this.coverUploadRef = createRef();
     this.resizeTextArea = this.resizeTextArea.bind(this);
@@ -31,6 +33,7 @@ export default class AdminAddEvent extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePreviewFlip = this.handlePreviewFlip.bind(this);
+    this.handleTogglePlatform = this.handleTogglePlatform.bind(this);
   }
 
   resizeTextArea(e) {
@@ -113,6 +116,15 @@ export default class AdminAddEvent extends React.Component {
     this.setState(prev => ({ isPreviewFlipped: !prev.isPreviewFlipped }));
   }
 
+  handleTogglePlatform(option) {
+    this.setState((prev) => {
+      const next = prev.platforms.includes(option)
+        ? prev.platforms.filter(p => p !== option)
+        : [...prev.platforms, option];
+      return { platforms: next, event: { ...prev.event, marketing: next } };
+    });
+  }
+
   handleChangeCover(e) {
     e.persist();
     const file = e.target.files?.[0];
@@ -150,6 +162,7 @@ export default class AdminAddEvent extends React.Component {
       if (newState.event) newState.event.attendanceCode = nextProps.event.attendanceCode || '';
       newState.startTimeStr = nextProps.event?.startDate ? nextProps.event.startDate.format('HH:mm') : '';
       newState.endTimeStr = nextProps.event?.endDate ? nextProps.event.endDate.format('HH:mm') : '';
+      newState.platforms = nextProps.event?.marketing || [];
       return newState;
     });
   }
@@ -395,6 +408,48 @@ export default class AdminAddEvent extends React.Component {
                 </div>
               </div>
 
+              {/* Marketing */}
+              <div className="form-section">
+                <p className="section-label">Marketing <span className="optional-mark">optional</span></p>
+
+                <div className="multi-select">
+                  <div
+                    className={`multi-select-trigger${this.state.platforms.length === 0 ? ' is-placeholder' : ''}`}
+                    onClick={() => this.setState(prev => ({ isPlatformsOpen: !prev.isPlatformsOpen }))}
+                  >
+                    {/* Chips */}
+                    {this.state.platforms.length === 0
+                      ? 'Select platforms...'
+                      : Config.platforms
+                          .filter(opt => this.state.platforms.includes(opt))
+                          .map(opt => (
+                            <span key={opt} className="multi-select-chip">
+                              <span className="chip-label">{opt}</span>
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); this.handleTogglePlatform(opt); }}
+                              >✕</button>
+                            </span>
+                          ))
+                    }
+                    <i className={`fa fa-chevron-${this.state.isPlatformsOpen ? 'up' : 'down'}`} />
+                  </div>
+                  {this.state.isPlatformsOpen && (
+                    <div className="multi-select-menu">
+                      {Config.platforms.map(opt => (
+                        <button
+                          key={opt}
+                          type="button"
+                          className={this.state.platforms.includes(opt) ? 'selected' : ''}
+                          onClick={() => this.handleTogglePlatform(opt)}
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Right: live preview */}
