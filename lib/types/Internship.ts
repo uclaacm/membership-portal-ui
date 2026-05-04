@@ -8,6 +8,7 @@ export interface InternshipApplication {
   uuid: string;
   applicant: string;
   status: string;
+  submissionStatus: "draft" | "submitted";
   responses: InternshipQuestionResponse[];
   createdAt: string;
   updatedAt: string;
