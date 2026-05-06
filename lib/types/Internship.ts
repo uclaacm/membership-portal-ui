@@ -14,6 +14,10 @@ export interface InternshipApplication {
   updatedAt: string;
 }
 
+export type InternshipApplicationsResult =
+  | { success: true; data: InternshipApplication[] }
+  | { success: false; error: string };
+
 export type FetchApplicationByIdResult =
   | { success: true; data: InternshipApplication }
   | { success: false; error: string };
