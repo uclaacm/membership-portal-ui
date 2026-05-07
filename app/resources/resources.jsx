@@ -18,9 +18,9 @@ export default function Resources() {
         ))}
       </div>
       {[
-        { title: 'Founding Team', key: 'foundingTeam' },
-        { title: 'Dev Team Directors', key: 'devTeamDirectors' },
         { title: 'Current Dev Team', key: 'currentDevTeam' },
+        { title: 'Dev Team Directors', key: 'devTeamDirectors' },
+        { title: 'Founding Team', key: 'foundingTeam' },
       ].map(({ title, key }) =>
         Config.organization[key]?.length > 0 ? (
           <div key={key}>
