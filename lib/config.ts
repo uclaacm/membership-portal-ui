@@ -62,27 +62,27 @@ const config = {
       {
         name: "Kevin Wang",
         position: "Dev Team Website Founder",
-        picture: "/officers/KevinWang.jpg",
+        picture: "",
       },
       {
         name: "Ram Goli",
         position: "Dev Team Website Founder",
-        picture: "/officers/RamGoli.jpg",
+        picture: "",
       },
       {
         name: "Brandon Liu",
         position: "Dev Team Website Founder",
-        picture: "/officers/BrandonLiu.jpg",
+        picture: "",
       },
       {
         name: "Nikhil Kansal",
         position: "Dev Team Website Founder",
-        picture: "/officers/NikhilKansal.jpg",
+        picture: "",
       },
       {
         name: "Justin Liu",
         position: "Dev Team Website Founder",
-        picture: "/officers/JustinLiu.jpg",
+        picture: "",
       },
     ],
     devTeamDirectors: [
@@ -94,32 +94,32 @@ const config = {
       {
         name: "Snigdha Kansal",
         position: "Dev Team Director, 24-25",
-        picture: "/officers/SnigdhaKansal.jpg",
+        picture: "",
       },
       {
         name: "Arsh Malik",
         position: "Dev Team Director, 23-24",
-        picture: "/officers/ArshMalik.jpg",
+        picture: "",
       },
       {
         name: "Matthew Nieva",
         position: "Dev Team Director, 22-23",
-        picture: "/officers/MatthewNieva.jpg",
+        picture: "",
       },
       {
         name: "Advaith Gowrishetty",
         position: "Dev Team Director, 21-22",
-        picture: "/officers/AdvaithGowrishetty.jpg",
+        picture: "",
       },
       {
         name: "Austin Keil",
         position: "Dev Team Director, 20-21",
-        picture: "/officers/AustinKeil.jpg",
+        picture: "",
       },
       {
         name: "Nhi Van",
         position: "Dev Team Director, 20-21",
-        picture: "/officers/NhiVan.jpg",
+        picture: "",
       },
     ],
     currentDevTeam: [
@@ -141,7 +141,7 @@ const config = {
       {
         name: "Jason Tran",
         position: "Dev Team Officer",
-        picture: "/officers/JasonTran.jpg",
+        picture: "",
       },
       {
         name: "Najm Hoda",
@@ -151,7 +151,7 @@ const config = {
       {
         name: "Daphne Feng",
         position: "Dev Team Officer",
-        picture: "/officers/DaphneFeng.jpg",
+        picture: "",
       },
       {
         name: "Samuel Lo",
@@ -171,7 +171,7 @@ const config = {
       {
         name: "Daniil Malakhov",
         position: "Dev Team Officer",
-        picture: "/officers/DaniilMalakhov.jpg",
+        picture: "",
       },
       {
         name: "Spandan Patel",
@@ -181,7 +181,7 @@ const config = {
       {
         name: "Siddhant Patil",
         position: "Dev Team Officer",
-        picture: "/officers/SiddhantPatil.jpg",
+        picture: "",
       },
       {
         name: "Ryan Dewey",
@@ -191,7 +191,7 @@ const config = {
       {
         name: "Marc Jowell Bagaoisan",
         position: "Dev Team Officer",
-        picture: "/officers/MarcBagaoisan.jpg",
+        picture: "",
       },
       {
         name: "Lily Wu",

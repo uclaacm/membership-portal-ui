@@ -149,9 +149,8 @@
     border: 3px solid #dadada;
     display: inline-block;
     vertical-align: middle;
-    background-position: center center;
-    background-attachment: fixed;
-    background-size: cover;
+    object-fit: cover;
+    object-position: center;
   }
 
   .content {
