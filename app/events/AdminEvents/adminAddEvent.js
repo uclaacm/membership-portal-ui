@@ -15,8 +15,7 @@ export default class AdminAddEvent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      event: this.props.event,
-      platforms: this.props.event?.platforms || [],
+      event: { ...this.props.event },
       startTimeStr: this.props.event?.startDate ? this.props.event.startDate.format('HH:mm') : '',
       endTimeStr: this.props.event?.endDate ? this.props.event.endDate.format('HH:mm') : '',
       coverImageFile: null,
@@ -38,6 +37,7 @@ export default class AdminAddEvent extends React.Component {
     this.handleTogglePlatform = this.handleTogglePlatform.bind(this);
   }
 
+  // handle platforms dropdown behavior based on mouse clicks
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutsidePlatforms);
   }
@@ -134,8 +134,10 @@ export default class AdminAddEvent extends React.Component {
 
   handleTogglePlatform(option) {
     this.setState((prev) => {
-      const platforms = prev.platforms || [];
+      const newState = Object.assign({}, prev);
+      const platforms = prev.event.platforms || [];
 
+      // add or remove option depending on whether it's already selected
       let next;
       if (platforms.includes(option)) {
         next = platforms.filter(p => p !== option);
@@ -143,10 +145,10 @@ export default class AdminAddEvent extends React.Component {
         next = [...platforms, option];
       }
 
-      // Also mutate event.platforms for persistence (like other fields)
-      prev.event.platforms = next;
+      // create new event object for React to detect change
+      newState.event = { ...prev.event, platforms: next };
 
-      return { platforms: next };
+      return newState;
     });
   }
 
@@ -181,15 +183,16 @@ export default class AdminAddEvent extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState((prev) => {
-      const newState = Object.assign({}, prev);
-      newState.event = nextProps.event;
-      newState.platforms = nextProps.event?.platforms || [];
-      if (newState.event) newState.event.attendanceCode = nextProps.event.attendanceCode || '';
-      newState.startTimeStr = nextProps.event?.startDate ? nextProps.event.startDate.format('HH:mm') : '';
-      newState.endTimeStr = nextProps.event?.endDate ? nextProps.event.endDate.format('HH:mm') : '';
-      return newState;
-    });
+    // reset state when switching to a different event (compare by UUID)
+    const nextUuid = nextProps.event?.uuid;
+    const currentUuid = this.props.event?.uuid;
+    if (nextUuid !== currentUuid) {
+      this.setState({
+        event: { ...nextProps.event },
+        startTimeStr: nextProps.event?.startDate ? nextProps.event.startDate.format('HH:mm') : '',
+        endTimeStr: nextProps.event?.endDate ? nextProps.event.endDate.format('HH:mm') : '',
+      });
+    }
   }
 
   renderPreviewCard() {
@@ -251,7 +254,7 @@ export default class AdminAddEvent extends React.Component {
   render() {
     const committeeColorMap = Object.fromEntries(Config.committeeColors);
     const { coverMode } = this.state;
-    const platforms = this.state.platforms || [];
+    const platforms = this.state.event.platforms || [];
 
     return (
       <div className={`add-event-overlay${this.props.showing ? ' showing' : ''}`} onClick={this.props.onClickCancel}>
