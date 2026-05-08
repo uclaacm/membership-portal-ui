@@ -32,7 +32,7 @@ export default function ApplyPage() {
 
   useEffect(() => {
     if (!mounted) return;
-    if (myApplication?.submissionStatus === "submitted") {
+    if (myApplication?.submittedAt) {
       router.replace("/internship");
     }
   }, [mounted, myApplication, router]);
@@ -41,7 +41,7 @@ export default function ApplyPage() {
 
   if (isAdmin || isOfficer) return <OfficerIneligibilityMessage />;
 
-  if (myApplication?.submissionStatus === "submitted") return null;
+  if (myApplication?.submittedAt) return null;
 
   return (
     <div>
