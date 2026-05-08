@@ -5,7 +5,6 @@ export interface InternshipQuestionResponse {
 }
 
 export interface InternshipApplication {
-<<<<<<< HEAD
   _id: string;
   userId: string;
   firstName: string;
