@@ -16,6 +16,7 @@ export default class AdminAddEvent extends React.Component {
     super(props);
     this.state = {
       event: this.props.event,
+      platforms: this.props.event?.platforms || [],
       startTimeStr: this.props.event?.startDate ? this.props.event.startDate.format('HH:mm') : '',
       endTimeStr: this.props.event?.endDate ? this.props.event.endDate.format('HH:mm') : '',
       coverImageFile: null,
@@ -133,11 +134,19 @@ export default class AdminAddEvent extends React.Component {
 
   handleTogglePlatform(option) {
     this.setState((prev) => {
-      const platforms = prev.event?.platforms || [];
-      const next = platforms.includes(option)
-        ? platforms.filter(p => p !== option)
-        : [...platforms, option];
-      return { event: { ...prev.event, platforms: next } };
+      const platforms = prev.platforms || [];
+
+      let next;
+      if (platforms.includes(option)) {
+        next = platforms.filter(p => p !== option);
+      } else {
+        next = [...platforms, option];
+      }
+
+      // Also mutate event.platforms for persistence (like other fields)
+      prev.event.platforms = next;
+
+      return { platforms: next };
     });
   }
 
@@ -175,6 +184,7 @@ export default class AdminAddEvent extends React.Component {
     this.setState((prev) => {
       const newState = Object.assign({}, prev);
       newState.event = nextProps.event;
+      newState.platforms = nextProps.event?.platforms || [];
       if (newState.event) newState.event.attendanceCode = nextProps.event.attendanceCode || '';
       newState.startTimeStr = nextProps.event?.startDate ? nextProps.event.startDate.format('HH:mm') : '';
       newState.endTimeStr = nextProps.event?.endDate ? nextProps.event.endDate.format('HH:mm') : '';
@@ -241,7 +251,7 @@ export default class AdminAddEvent extends React.Component {
   render() {
     const committeeColorMap = Object.fromEntries(Config.committeeColors);
     const { coverMode } = this.state;
-    const platforms = this.state.event?.platforms || [];
+    const platforms = this.state.platforms || [];
 
     return (
       <div className={`add-event-overlay${this.props.showing ? ' showing' : ''}`} onClick={this.props.onClickCancel}>
