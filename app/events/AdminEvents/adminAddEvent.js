@@ -676,6 +676,52 @@ function AdminAddEvent({
                   />
                 </div>
               </div>
+
+              {/* Marketing */}
+              <div className="form-section">
+                <p className="section-label">Marketing <span className="optional-mark">optional</span></p>
+
+                <div className="multi-select" ref={this.multiSelectRef}>
+                  <div
+                    className={`multi-select-trigger${platforms.length === 0 ? ' is-placeholder' : ''}`}
+                    onClick={() => this.setState(prev => ({ isPlatformsOpen: !prev.isPlatformsOpen }))}
+                  >
+                    {/* Chips */}
+                    {platforms.length === 0
+                      ? 'Select platforms...'
+                      : Config.platforms
+                          .filter(opt => platforms.includes(opt))
+                          .map(opt => (
+                            <span key={opt} className="multi-select-chip">
+                              <span className="chip-label">{opt}</span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  this.handleTogglePlatform(opt);
+                                }}
+                              >✕</button>
+                            </span>
+                          ))
+                    }
+                    <i className={`fa fa-chevron-${this.state.isPlatformsOpen ? 'up' : 'down'}`} />
+                  </div>
+                  {this.state.isPlatformsOpen && (
+                    <div className="multi-select-menu">
+                      {Config.platforms.map(opt => (
+                        <button
+                          key={opt}
+                          type="button"
+                          className={platforms.includes(opt) ? 'selected' : ''}
+                          onClick={() => this.handleTogglePlatform(opt)}
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="form-section">
