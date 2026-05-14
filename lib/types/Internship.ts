@@ -17,6 +17,58 @@ export type FetchApplicationByIdResult =
   | { success: true; data: InternshipApplication }
   | { success: false; error: string };
 
+export interface InternshipChoiceResponse {
+  questionKey: string;
+  question: string;
+  answer: string;
+}
+
+export type InternshipChoiceStatus =
+  | "pending"
+  | "reviewing"
+  | "interview_scheduled"
+  | "accepted"
+  | "rejected";
+
+export interface MyInternshipApplication {
+  _id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  university: string;
+  major?: string;
+  graduationYear?: number;
+  resumeUrl?: string;
+  coverLetter?: string;
+  // Committee IDs are Mongo ObjectIds serialized as 24-char hex strings.
+  firstChoiceCommittee?: string;
+  secondChoiceCommittee?: string;
+  thirdChoiceCommittee?: string;
+  firstChoiceResponses: InternshipChoiceResponse[];
+  secondChoiceResponses: InternshipChoiceResponse[];
+  thirdChoiceResponses: InternshipChoiceResponse[];
+  // Officer-side review status (default 'pending'). Read-only for the wizard.
+  firstChoiceStatus: InternshipChoiceStatus;
+  secondChoiceStatus: InternshipChoiceStatus;
+  thirdChoiceStatus: InternshipChoiceStatus;
+  applicationCycle: string; // "YYYY-(YYYY+1)" e.g. "2026-2027"
+  submissionStatus: "draft" | "submitted";
+  // Soft-delete fields. Drafts the wizard sees should always have deletedAt: null.
+  deletedAt: string | null;
+  deletedBy: string | null;
+  submittedAt: string;
+  lastModifiedAt: string;
+  // createdAt/updatedAt come from Mongoose `timestamps: true`.
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type FetchOwnApplicationResult =
+  | { success: true; data: MyInternshipApplication | null }
+  | { success: false; error: string };
+
 export interface InternshipCommitteeQuestion {
   questionKey: string;
   questionText: string;
