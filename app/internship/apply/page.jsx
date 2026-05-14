@@ -1,24 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useRouter } from "next/navigation";
 
+import fetchOwnApplication from "@/app/actions/internship/fetchOwnApplication";
 import ApplicationWizard from "@/components/Internship/ApplicationWizard";
 import OfficerIneligibilityMessage from "@/components/Internship/OfficerIneligibilityMessage";
-import { isAdminAtom, isOfficerAtom } from "@/lib/atoms";
+import { isAdminAtom, isOfficerAtom, myApplicationAtom } from "@/lib/atoms";
 
 export default function ApplyPage() {
   const isAdmin = useAtomValue(isAdminAtom);
   const isOfficer = useAtomValue(isOfficerAtom);
+  const myApplication = useAtomValue(myApplicationAtom);
+  const setMyApplication = useSetAtom(myApplicationAtom);
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Hydration gate: flips after client mount so role atoms hydrate from AuthSync before the role check.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
+    Promise.resolve().then(() => setMounted(true));
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    if (isAdmin || isOfficer) return;
+
+    fetchOwnApplication().then(result => {
+      if (result.success) {
+        setMyApplication(result.data);
+      }
+    });
+  }, [mounted, isAdmin, isOfficer, setMyApplication]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    if (myApplication?.submittedAt) {
+      router.replace("/internship");
+    }
+  }, [mounted, myApplication, router]);
 
   if (!mounted) return null;
   if (isAdmin || isOfficer) return <OfficerIneligibilityMessage />;
+  if (myApplication?.submittedAt) return null;
+
   return <ApplicationWizard />;
 }
