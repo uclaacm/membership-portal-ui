@@ -25,6 +25,7 @@ export default class AdminEvents extends React.Component {
       startDate: '',
       title: '',
       startTime: '',
+      platforms: [],
     };
 
     this.state = {

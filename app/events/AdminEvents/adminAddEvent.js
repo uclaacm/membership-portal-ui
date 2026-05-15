@@ -45,6 +45,7 @@ function AdminAddEvent({
   const [coverMode, setCoverMode] = useState('url');
 
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
+  const [isPlatformsOpen, setIsPlatformsOpen] = useState(false);
 
   const [isRepeating, setIsRepeating] = useState(false);
   const [recurrenceIntervalWeeks, setRecurrenceIntervalWeeks] = useState(1);
@@ -59,6 +60,7 @@ function AdminAddEvent({
 
   const coverUploadRef = useRef(null);
   const loadedGroupKeyRef = useRef(null);
+  const multiSelectRef = useRef(null);
 
   useEffect(() => {
     const syncFromProps = () => {
@@ -109,10 +111,36 @@ function AdminAddEvent({
     }
   }, [showing, isEdit, eventProp, onLoadRepeatedGroup]);
 
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsidePlatforms);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsidePlatforms);
+    };
+  }, [isPlatformsOpen]);
+
+  const handleClickOutsidePlatforms = (e) => {
+    if (isPlatformsOpen && !multiSelectRef.current?.contains(e.target)) {
+      setIsPlatformsOpen(false);
+    }
+  };
+
   const resizeTextArea = useCallback((e) => {
     e.target.style.height = '5px';
     e.target.style.height = `${e.target.scrollHeight}px`;
   }, []);
+
+  const handleTogglePlatform = useCallback((option) => {
+    setEvent(prev => {
+      const platforms = prev.platforms ?? [];
+      const newPlatforms = platforms.includes(option) ? platforms.filter(p => p !== option) : [...platforms, option];
+
+      return {
+        ...prev,
+        platforms: newPlatforms,
+      };
+    });
+  });
 
   const handleChangeStartDate = useCallback((date) => {
     setEvent((prev) => ({
@@ -374,34 +402,31 @@ function AdminAddEvent({
   const scheduleLockedForGroupEdit = isRepeatedGroup && editScope !== 'instance';
 
   return (
-    <div className={`add-event-overlay${showing ? ' showing' : ''}`} onClick={onClickCancel}>
+    <div className={`add-event-overlay${showing ? " showing" : ""}`} onClick={onClickCancel}>
       <div className="event-modal" onClick={e => e.stopPropagation()}>
-
         <div className="modal-header">
-          <h2 className="modal-title">{isEdit ? 'Edit Event' : 'Create Event'}</h2>
-          <button type="button" className="modal-close-btn" onClick={onClickCancel} aria-label="Close">✕</button>
+          <h2 className="modal-title">{isEdit ? "Edit Event" : "Create Event"}</h2>
+          <button type="button" className="modal-close-btn" onClick={onClickCancel} aria-label="Close">
+            ✕
+          </button>
         </div>
 
         <div className="modal-content">
-
           <div className="modal-form">
-
             {!isEdit && (
               <div className="form-section">
                 <p className="section-label">Event type</p>
                 <div className="cover-mode-toggle">
                   <button
                     type="button"
-                    className={`mode-btn${!isRepeating ? ' active' : ''}`}
-                    onClick={() => setRepeatingMode(false)}
-                  >
+                    className={`mode-btn${!isRepeating ? " active" : ""}`}
+                    onClick={() => setRepeatingMode(false)}>
                     One-time
                   </button>
                   <button
                     type="button"
-                    className={`mode-btn${isRepeating ? ' active' : ''}`}
-                    onClick={() => setRepeatingMode(true)}
-                  >
+                    className={`mode-btn${isRepeating ? " active" : ""}`}
+                    onClick={() => setRepeatingMode(true)}>
                     Repeating series
                   </button>
                 </div>
@@ -413,13 +438,8 @@ function AdminAddEvent({
                 <p className="section-label">Apply changes to</p>
                 {seriesInstanceCount != null && (
                   <p className="series-count-hint">
-                    This series has
-                    {' '}
-                    {seriesInstanceCount}
-                    {' '}
-                    scheduled occurrence
-                    {seriesInstanceCount === 1 ? '' : 's'}
-                    .
+                    This series has {seriesInstanceCount} scheduled occurrence
+                    {seriesInstanceCount === 1 ? "" : "s"}.
                   </p>
                 )}
                 <div className="repeat-scope-options">
@@ -427,8 +447,8 @@ function AdminAddEvent({
                     <input
                       type="radio"
                       name="editScope"
-                      checked={editScope === 'instance'}
-                      onChange={() => setEditScope('instance')}
+                      checked={editScope === "instance"}
+                      onChange={() => setEditScope("instance")}
                     />
                     <span>This instance only</span>
                   </label>
@@ -436,8 +456,8 @@ function AdminAddEvent({
                     <input
                       type="radio"
                       name="editScope"
-                      checked={editScope === 'all'}
-                      onChange={() => setEditScope('all')}
+                      checked={editScope === "all"}
+                      onChange={() => setEditScope("all")}
                     />
                     <span>All events in this series</span>
                   </label>
@@ -445,8 +465,8 @@ function AdminAddEvent({
                     <input
                       type="radio"
                       name="editScope"
-                      checked={editScope === 'fromInstance'}
-                      onChange={() => setEditScope('fromInstance')}
+                      checked={editScope === "fromInstance"}
+                      onChange={() => setEditScope("fromInstance")}
                     />
                     <span>This instance and future</span>
                   </label>
@@ -455,27 +475,27 @@ function AdminAddEvent({
             )}
 
             <div className="form-section">
-              <p className="section-label">Cover Image <span className="optional-mark">optional</span></p>
+              <p className="section-label">
+                Cover Image <span className="optional-mark">optional</span>
+              </p>
               <div className="cover-mode-toggle">
                 <button
                   type="button"
-                  className={`mode-btn${coverMode === 'url' ? ' active' : ''}`}
-                  onClick={() => setCoverMode('url')}
-                >
+                  className={`mode-btn${coverMode === "url" ? " active" : ""}`}
+                  onClick={() => setCoverMode("url")}>
                   URL
                 </button>
                 <button
                   type="button"
-                  className={`mode-btn${coverMode === 'upload' ? ' active' : ''}`}
-                  onClick={() => setCoverMode('upload')}
-                >
+                  className={`mode-btn${coverMode === "upload" ? " active" : ""}`}
+                  onClick={() => setCoverMode("upload")}>
                   Upload
                 </button>
               </div>
-              {coverMode === 'url' ? (
+              {coverMode === "url" ? (
                 <input
                   type="text"
-                  value={event.cover && !coverImageFile ? event.cover : ''}
+                  value={event.cover && !coverImageFile ? event.cover : ""}
                   name="cover"
                   placeholder="https://..."
                   onChange={handleChangeCover}
@@ -484,13 +504,15 @@ function AdminAddEvent({
                 <div className="upload-zone" onClick={() => coverUploadRef.current?.click()}>
                   <input
                     type="file"
-                    value={''}
+                    value={""}
                     name="cover"
                     ref={coverUploadRef}
                     id="coverInput"
                     accept="image/*"
                     onChange={handleChangeCover}
-                    onClick={(e) => { e.target.value = null; }}
+                    onClick={e => {
+                      e.target.value = null;
+                    }}
                   />
                   {coverImageFile ? (
                     <span className="upload-zone-label chosen">✓ {coverImageFile.name}</span>
@@ -504,27 +526,48 @@ function AdminAddEvent({
             <div className="form-section">
               <p className="section-label">Basic Info</p>
               <div className="field-group">
-                <label>Title <span className="required-mark">*</span></label>
-                <input type="text" value={event.title} name="title" onChange={handleChange} placeholder="My Awesome Event" />
+                <label>
+                  Title <span className="required-mark">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={event.title}
+                  name="title"
+                  onChange={handleChange}
+                  placeholder="My Awesome Event"
+                />
               </div>
               <div className="field-row">
                 <div className="field-group">
-                  <label>Committee <span className="required-mark">*</span></label>
+                  <label>
+                    Committee <span className="required-mark">*</span>
+                  </label>
                   <select
                     value={event.committee}
                     name="committee"
                     onChange={handleChange}
-                    style={{ color: committeeColorMap[event.committee] }}
-                  >
-                    <option value="ACM" style={{ color: committeeColorMap['ACM'] }}>ACM</option>
+                    style={{ color: committeeColorMap[event.committee] }}>
+                    <option value="ACM" style={{ color: committeeColorMap["ACM"] }}>
+                      ACM
+                    </option>
                     {Config.committees.map((committee, index) => (
-                      <option key={index} value={committee} style={{ color: committeeColorMap[committee] }}>{committee}</option>
+                      <option key={index} value={committee} style={{ color: committeeColorMap[committee] }}>
+                        {committee}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div className="field-group">
-                  <label>External RSVP Link <span className="optional-mark">optional — overrides built-in RSVP</span></label>
-                  <input type="text" value={event.eventLink ?? ''} name="eventLink" onChange={handleChange} placeholder="https://forms.google.com/..." />
+                  <label>
+                    External RSVP Link <span className="optional-mark">optional — overrides built-in RSVP</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={event.eventLink ?? ""}
+                    name="eventLink"
+                    onChange={handleChange}
+                    placeholder="https://forms.google.com/..."
+                  />
                 </div>
               </div>
             </div>
@@ -533,12 +576,15 @@ function AdminAddEvent({
               <p className="section-label">Schedule</p>
               {scheduleLockedForGroupEdit && (
                 <p className="field-hint">
-                  This series cannot move start/end dates in bulk — use &quot;This instance only&quot; or edit dates one event at a time.
+                  This series cannot move start/end dates in bulk — use &quot;This instance only&quot; or edit dates one
+                  event at a time.
                 </p>
               )}
               <div className="field-row">
                 <div className="field-group field-grow-3">
-                  <label>Start Date <span className="required-mark">*</span></label>
+                  <label>
+                    Start Date <span className="required-mark">*</span>
+                  </label>
                   <DatePicker
                     selected={event.startDate ? event.startDate.toDate() : null}
                     onChange={handleChangeStartDate}
@@ -547,7 +593,9 @@ function AdminAddEvent({
                   />
                 </div>
                 <div className="field-group field-grow-2">
-                  <label>Start Time <span className="required-mark">*</span></label>
+                  <label>
+                    Start Time <span className="required-mark">*</span>
+                  </label>
                   <input
                     type="time"
                     onChange={handleChangeTime}
@@ -559,7 +607,9 @@ function AdminAddEvent({
               </div>
               <div className="field-row">
                 <div className="field-group field-grow-3">
-                  <label>End Date <span className="required-mark">*</span></label>
+                  <label>
+                    End Date <span className="required-mark">*</span>
+                  </label>
                   <DatePicker
                     selected={event.endDate ? event.endDate.toDate() : null}
                     onChange={handleChangeEndDate}
@@ -568,7 +618,9 @@ function AdminAddEvent({
                   />
                 </div>
                 <div className="field-group field-grow-2">
-                  <label>End Time <span className="required-mark">*</span></label>
+                  <label>
+                    End Time <span className="required-mark">*</span>
+                  </label>
                   <input
                     type="time"
                     onChange={handleChangeTime}
@@ -582,13 +634,15 @@ function AdminAddEvent({
                 <>
                   <div className="field-row">
                     <div className="field-group field-grow-3">
-                      <label>Repeat every <span className="required-mark">*</span></label>
+                      <label>
+                        Repeat every <span className="required-mark">*</span>
+                      </label>
                       <input
                         type="number"
                         min={1}
                         className="recurrence-interval-weeks"
                         value={recurrenceIntervalWeeks}
-                        onChange={(e) => {
+                        onChange={e => {
                           const v = Number.parseInt(e.target.value, 10);
                           setRecurrenceIntervalWeeks(Number.isFinite(v) && v >= 1 ? v : 1);
                         }}
@@ -604,9 +658,8 @@ function AdminAddEvent({
                         <button
                           key={iso}
                           type="button"
-                          className={`recurrence-day-chip${recurrenceDaysOfWeek.includes(iso) ? ' is-active' : ''}`}
-                          onClick={() => toggleRecurrenceWeekday(iso)}
-                        >
+                          className={`recurrence-day-chip${recurrenceDaysOfWeek.includes(iso) ? " is-active" : ""}`}
+                          onClick={() => toggleRecurrenceWeekday(iso)}>
                           {label}
                         </button>
                       ))}
@@ -614,7 +667,9 @@ function AdminAddEvent({
                   </div>
                   <div className="field-row">
                     <div className="field-group field-grow-3">
-                      <label>Series ends (date) <span className="required-mark">*</span></label>
+                      <label>
+                        Series ends (date) <span className="required-mark">*</span>
+                      </label>
                       <DatePicker
                         selected={seriesEndDate ? seriesEndDate.toDate() : null}
                         onChange={handleChangeSeriesEndDate}
@@ -622,12 +677,23 @@ function AdminAddEvent({
                       />
                     </div>
                   </div>
-                  <p className="field-hint">Instances are generated through this calendar date. Only the date is used—the first occurrence still uses the start/end schedule above.</p>
+                  <p className="field-hint">
+                    Instances are generated through this calendar date. Only the date is used—the first occurrence still
+                    uses the start/end schedule above.
+                  </p>
                 </>
               )}
               <div className="field-group">
-                <label>Location <span className="required-mark">*</span></label>
-                <input type="text" value={event.location} name="location" onChange={handleChange} placeholder="EBU3B B250" />
+                <label>
+                  Location <span className="required-mark">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={event.location}
+                  name="location"
+                  onChange={handleChange}
+                  placeholder="EBU3B B250"
+                />
               </div>
             </div>
 
@@ -635,26 +701,25 @@ function AdminAddEvent({
               <p className="section-label">Attendance</p>
               {isRepeatingSeriesCreate && (
                 <p className="field-hint">
-                  Optionally set a check-in code prefix. The server generates a unique suffix for each occurrence (e.g. YOURCODE-aB3z). Leave blank to use server defaults.
+                  Optionally set a check-in code prefix. The server generates a unique suffix for each occurrence (e.g.
+                  YOURCODE-aB3z). Leave blank to use server defaults.
                 </p>
               )}
               {isRepeatedGroup && !showAttendanceCode && (
-                <p className="field-hint">Check-in codes are per occurrence. Switch to &quot;This instance only&quot; to edit the code for this date.</p>
+                <p className="field-hint">
+                  Check-in codes are per occurrence. Switch to &quot;This instance only&quot; to edit the code for this
+                  date.
+                </p>
               )}
               <div className="field-row">
                 <div className="field-group">
                   <label>
-                    Check-in Code
-                    {' '}
-                    {showAttendanceCode && !isRepeatingSeriesCreate ? (
-                      <span className="required-mark">*</span>
-                    ) : null}
+                    Check-in Code{" "}
+                    {showAttendanceCode && !isRepeatingSeriesCreate ? <span className="required-mark">*</span> : null}
                     {showAttendanceCode && isRepeatingSeriesCreate ? (
                       <span className="optional-mark">optional prefix for generated codes</span>
                     ) : null}
-                    {!showAttendanceCode ? (
-                      <span className="optional-mark">— set per instance</span>
-                    ) : null}
+                    {!showAttendanceCode ? <span className="optional-mark">— set per instance</span> : null}
                   </label>
                   <input
                     type="text"
@@ -666,7 +731,9 @@ function AdminAddEvent({
                   />
                 </div>
                 <div className="field-group">
-                  <label>Points <span className="required-mark">*</span></label>
+                  <label>
+                    Points <span className="required-mark">*</span>
+                  </label>
                   <input
                     type="text"
                     value={event.attendancePoints}
@@ -676,59 +743,15 @@ function AdminAddEvent({
                   />
                 </div>
               </div>
-
-              {/* Marketing */}
-              <div className="form-section">
-                <p className="section-label">Marketing <span className="optional-mark">optional</span></p>
-
-                <div className="multi-select" ref={this.multiSelectRef}>
-                  <div
-                    className={`multi-select-trigger${platforms.length === 0 ? ' is-placeholder' : ''}`}
-                    onClick={() => this.setState(prev => ({ isPlatformsOpen: !prev.isPlatformsOpen }))}
-                  >
-                    {/* Chips */}
-                    {platforms.length === 0
-                      ? 'Select platforms...'
-                      : Config.platforms
-                          .filter(opt => platforms.includes(opt))
-                          .map(opt => (
-                            <span key={opt} className="multi-select-chip">
-                              <span className="chip-label">{opt}</span>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  this.handleTogglePlatform(opt);
-                                }}
-                              >✕</button>
-                            </span>
-                          ))
-                    }
-                    <i className={`fa fa-chevron-${this.state.isPlatformsOpen ? 'up' : 'down'}`} />
-                  </div>
-                  {this.state.isPlatformsOpen && (
-                    <div className="multi-select-menu">
-                      {Config.platforms.map(opt => (
-                        <button
-                          key={opt}
-                          type="button"
-                          className={platforms.includes(opt) ? 'selected' : ''}
-                          onClick={() => this.handleTogglePlatform(opt)}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
 
             <div className="form-section">
-              <p className="section-label">Description <span className="optional-mark">optional</span></p>
+              <p className="section-label">
+                Description <span className="optional-mark">optional</span>
+              </p>
               <div className="field-group">
                 <textarea
-                  value={event.description ?? ''}
+                  value={event.description ?? ""}
                   name="description"
                   onChange={handleChange}
                   onKeyUp={resizeTextArea}
@@ -737,6 +760,51 @@ function AdminAddEvent({
               </div>
             </div>
 
+            {/* Marketing */}
+            <div className="form-section">
+              <p className="section-label">
+                Marketing <span className="optional-mark">optional</span>
+              </p>
+
+              <div className="multi-select" ref={multiSelectRef}>
+                <div
+                  className={`multi-select-trigger${event.platforms.length === 0 ? " is-placeholder" : ""}`}
+                  onClick={() => setIsPlatformsOpen(!isPlatformsOpen)}>
+                  {/* Chips */}
+                  {event.platforms.length === 0
+                    ? "Select platforms..."
+                    : Config.platforms
+                        .filter(opt => event.platforms.includes(opt))
+                        .map(opt => (
+                          <span key={opt} className="multi-select-chip">
+                            <span className="chip-label">{opt}</span>
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleTogglePlatform(opt);
+                              }}>
+                              ✕
+                            </button>
+                          </span>
+                        ))}
+                  <i className={`fa fa-chevron-${isPlatformsOpen ? "up" : "down"}`} />
+                </div>
+                {isPlatformsOpen && (
+                  <div className="multi-select-menu">
+                    {Config.platforms.map(opt => (
+                      <button
+                        key={opt}
+                        type="button"
+                        className={event.platforms.includes(opt) ? "selected" : ""}
+                        onClick={() => handleTogglePlatform(opt)}>
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="modal-preview">
@@ -744,7 +812,6 @@ function AdminAddEvent({
             {renderPreviewCard()}
             <p className="preview-hint">Updates as you type</p>
           </div>
-
         </div>
 
         {showDeleteConfirm && isEdit && (
@@ -756,8 +823,8 @@ function AdminAddEvent({
                   <input
                     type="radio"
                     name="deleteScope"
-                    checked={deleteScope === 'single'}
-                    onChange={() => setDeleteScope('single')}
+                    checked={deleteScope === "single"}
+                    onChange={() => setDeleteScope("single")}
                   />
                   <span>This instance only</span>
                 </label>
@@ -765,8 +832,8 @@ function AdminAddEvent({
                   <input
                     type="radio"
                     name="deleteScope"
-                    checked={deleteScope === 'all'}
-                    onChange={() => setDeleteScope('all')}
+                    checked={deleteScope === "all"}
+                    onChange={() => setDeleteScope("all")}
                   />
                   <span>Entire series</span>
                 </label>
@@ -774,8 +841,8 @@ function AdminAddEvent({
                   <input
                     type="radio"
                     name="deleteScope"
-                    checked={deleteScope === 'fromInstance'}
-                    onChange={() => setDeleteScope('fromInstance')}
+                    checked={deleteScope === "fromInstance"}
+                    onChange={() => setDeleteScope("fromInstance")}
                   />
                   <span>This instance and future</span>
                 </label>
@@ -784,12 +851,7 @@ function AdminAddEvent({
               <p className="delete-confirm-body">This cannot be undone.</p>
             )}
             <div className="delete-confirm-actions">
-              <Button
-                onClick={() => setShowDeleteConfirm(false)}
-                style="red"
-                text="Cancel"
-                icon=""
-              />
+              <Button onClick={() => setShowDeleteConfirm(false)} style="red" text="Cancel" icon="" />
               <Button onClick={confirmDelete} style="green" text="Confirm delete" icon="" />
             </div>
           </div>
@@ -798,25 +860,14 @@ function AdminAddEvent({
         <div className="modal-footer">
           <div className="modal-footer-left">
             {isEdit && onDeleteEvent && (
-              <Button
-                onClick={() => setShowDeleteConfirm(true)}
-                style="red"
-                text="Delete"
-                icon=""
-              />
+              <Button onClick={() => setShowDeleteConfirm(true)} style="red" text="Delete" icon="" />
             )}
           </div>
           <div className="modal-footer-right">
             <Button onClick={onClickCancel} style="red" text="Cancel" icon="" />
-            <Button
-              onClick={handleSubmit}
-              style="green"
-              text={isEdit ? 'Update Event' : 'Create Event'}
-              icon=""
-            />
+            <Button onClick={handleSubmit} style="green" text={isEdit ? "Update Event" : "Create Event"} icon="" />
           </div>
         </div>
-
       </div>
     </div>
   );
