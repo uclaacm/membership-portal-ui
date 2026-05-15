@@ -24,6 +24,7 @@ const config = {
       event: "/api/v1/event",
       past: "/api/v1/event/past",
       future: "/api/v1/event/future",
+      repeated: "/api/v1/event/repeated",
     },
     attendance: {
       fetch: "/api/v1/attendance",

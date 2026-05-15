@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 
@@ -11,158 +11,317 @@ import uploadImage from '@/app/actions/image/uploadImage';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-export default class AdminAddEvent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      event: { ...this.props.event },
-      startTimeStr: this.props.event?.startDate ? this.props.event.startDate.format('HH:mm') : '',
-      endTimeStr: this.props.event?.endDate ? this.props.event.endDate.format('HH:mm') : '',
-      coverImageFile: null,
-      coverMode: 'url', // 'url' | 'upload'
-      isPreviewFlipped: false,
-      isPlatformsOpen: false
+/** ISO weekdays for recurrence API (`1`=Mon … `7`=Sun). */
+const RECURRENCE_ISO_WEEKDAYS = [
+  { iso: 1, label: 'Mon' },
+  { iso: 2, label: 'Tue' },
+  { iso: 3, label: 'Wed' },
+  { iso: 4, label: 'Thu' },
+  { iso: 5, label: 'Fri' },
+  { iso: 6, label: 'Sat' },
+  { iso: 7, label: 'Sun' },
+];
+
+function AdminAddEvent({
+  event: eventProp,
+  onClickAdd = null,
+  onClickCancel = null,
+  onCreateRepeated = null,
+  onUpdateRepeatedGroup = null,
+  onDeleteEvent = null,
+  onLoadRepeatedGroup = null,
+  isEdit = false,
+  showing = false,
+}) {
+  const [event, setEvent] = useState(eventProp);
+  const [startTimeStr, setStartTimeStr] = useState(() =>
+    (eventProp?.startDate ? eventProp.startDate.format('HH:mm') : ''),
+  );
+  const [endTimeStr, setEndTimeStr] = useState(() =>
+    (eventProp?.endDate ? eventProp.endDate.format('HH:mm') : ''),
+  );
+
+  const [coverImageFile, setCoverImageFile] = useState(null);
+  const [coverMode, setCoverMode] = useState('url');
+
+  const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
+  const [isPlatformsOpen, setIsPlatformsOpen] = useState(false);
+
+  const [isRepeating, setIsRepeating] = useState(false);
+  const [recurrenceIntervalWeeks, setRecurrenceIntervalWeeks] = useState(1);
+  const [recurrenceDaysOfWeek, setRecurrenceDaysOfWeek] = useState([]);
+  const [seriesEndDate, setSeriesEndDate] = useState(null);
+
+  const [editScope, setEditScope] = useState('instance');
+  const [seriesInstanceCount, setSeriesInstanceCount] = useState(null);
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteScope, setDeleteScope] = useState('single');
+
+  const coverUploadRef = useRef(null);
+  const loadedGroupKeyRef = useRef(null);
+  const multiSelectRef = useRef(null);
+
+  useEffect(() => {
+    const syncFromProps = () => {
+      if (eventProp) {
+        setEvent({ ...eventProp, attendanceCode: eventProp.attendanceCode || '' });
+      } else {
+        setEvent(eventProp);
+      }
+      setStartTimeStr(eventProp?.startDate ? eventProp.startDate.format('HH:mm') : '');
+      setEndTimeStr(eventProp?.endDate ? eventProp.endDate.format('HH:mm') : '');
+      if (!isEdit) {
+        setIsRepeating(false);
+        setEditScope('instance');
+        setSeriesInstanceCount(null);
+        setSeriesEndDate(null);
+        setRecurrenceIntervalWeeks(1);
+        setRecurrenceDaysOfWeek([]);
+        setShowDeleteConfirm(false);
+        setDeleteScope('single');
+      } else {
+        setEditScope('instance');
+        setShowDeleteConfirm(false);
+        setDeleteScope('single');
+      }
+      if (!showing) {
+        setShowDeleteConfirm(false);
+      }
     };
-    this.coverUploadRef = createRef();
-    this.multiSelectRef = createRef();
-    this.resizeTextArea = this.resizeTextArea.bind(this);
-    this.handleClickOutsidePlatforms = this.handleClickOutsidePlatforms.bind(this);
-    this.handleChangeCover = this.handleChangeCover.bind(this);
-    this.handleChangeStartDate = this.handleChangeStartDate.bind(this);
-    this.handleChangeEndDate = this.handleChangeEndDate.bind(this);
-    this.handleChangeTime = this.handleChangeTime.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handlePreviewFlip = this.handlePreviewFlip.bind(this);
-    this.handleTogglePlatform = this.handleTogglePlatform.bind(this);
-  }
+    queueMicrotask(syncFromProps);
+  }, [eventProp, isEdit, showing]);
 
-  // handle platforms dropdown behavior based on mouse clicks
-  componentDidMount() {
-    document.addEventListener('mousedown', this.handleClickOutsidePlatforms);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutsidePlatforms);
-  }
-
-  handleClickOutsidePlatforms(e) {
-    if (this.state.isPlatformsOpen && !this.multiSelectRef.current?.contains(e.target)) {
-      this.setState({ isPlatformsOpen: false });
+  useEffect(() => {
+    if (!showing) {
+      loadedGroupKeyRef.current = null;
     }
-  }
+  }, [showing]);
 
-  resizeTextArea(e) {
+  useEffect(() => {
+    if (showing && isEdit && eventProp?.eventGroupId && onLoadRepeatedGroup) {
+      const key = `${eventProp.uuid}-${eventProp.eventGroupId}`;
+      if (loadedGroupKeyRef.current !== key) {
+        loadedGroupKeyRef.current = key;
+        Promise.resolve(onLoadRepeatedGroup(eventProp.eventGroupId)).then((r) => {
+          if (r?.success) setSeriesInstanceCount(r.events?.length ?? 0);
+          else setSeriesInstanceCount(null);
+        });
+      }
+    }
+  }, [showing, isEdit, eventProp, onLoadRepeatedGroup]);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsidePlatforms);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsidePlatforms);
+    };
+  }, [isPlatformsOpen]);
+
+  const handleClickOutsidePlatforms = (e) => {
+    if (isPlatformsOpen && !multiSelectRef.current?.contains(e.target)) {
+      setIsPlatformsOpen(false);
+    }
+  };
+
+  const resizeTextArea = useCallback((e) => {
     e.target.style.height = '5px';
     e.target.style.height = `${e.target.scrollHeight}px`;
-  }
+  }, []);
 
-  handleChangeStartDate(date) {
-    this.setState((prev) => {
-      const newState = Object.assign({}, prev);
-      newState.event.startDate = date ? moment(date) : null;
-      return newState;
+  const handleTogglePlatform = useCallback((option) => {
+    setEvent(prev => {
+      const platforms = prev.platforms ?? [];
+      const newPlatforms = platforms.includes(option) ? platforms.filter(p => p !== option) : [...platforms, option];
+
+      return {
+        ...prev,
+        platforms: newPlatforms,
+      };
     });
-  }
+  });
 
-  handleChangeEndDate(date) {
-    this.setState((prev) => {
-      const newState = Object.assign({}, prev);
-      newState.event.endDate = date ? moment(date) : null;
-      return newState;
-    });
-  }
+  const handleChangeStartDate = useCallback((date) => {
+    setEvent((prev) => ({
+      ...prev,
+      startDate: date ? moment(date) : null,
+    }));
+  }, []);
 
-  handleChange(e) {
+  const handleChangeEndDate = useCallback((date) => {
+    setEvent((prev) => ({
+      ...prev,
+      endDate: date ? moment(date) : null,
+    }));
+  }, []);
+
+  const handleChangeSeriesEndDate = useCallback((date) => {
+    setSeriesEndDate(date ? moment(date).startOf('day') : null);
+  }, []);
+
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    this.setState((prev) => {
-      const newState = Object.assign({}, prev);
-      newState.event[name] = value;
-      return newState;
-    });
-  }
+    setEvent((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-  handleSubmit() {
-    if (!this.state.event.title || !this.state.event.startDate || !this.state.event.endDate) return;
+  const applyRepeatingDefaults = useCallback(() => {
+    if (!event?.startDate) return;
+    setSeriesEndDate(event.startDate.clone().add(1, 'month').startOf('day'));
+  }, [event]);
 
-    const callback = () => { if (this.props.onClickAdd) this.props.onClickAdd(this.state.event); };
+  const toggleRecurrenceWeekday = useCallback((iso) => {
+    setRecurrenceDaysOfWeek((prev) => (
+      prev.includes(iso)
+        ? prev.filter((d) => d !== iso).sort((a, b) => a - b)
+        : [...prev, iso].sort((a, b) => a - b)
+    ));
+  }, []);
 
-    if (this.state.coverImageFile) {
+  const setRepeatingMode = useCallback((next) => {
+    setIsRepeating(next);
+    if (next) {
+      applyRepeatingDefaults();
+    }
+  }, [applyRepeatingDefaults]);
+
+  const finalizeSubmit = useCallback((onReady) => {
+    if (coverImageFile) {
       const formData = new FormData();
-      formData.append('image', this.state.coverImageFile);
+      formData.append('image', coverImageFile);
 
       uploadImage(formData).then((result) => {
         if (result.success && result.uuid) {
-          this.setState((prev) => {
-            const newState = Object.assign({}, prev);
-            newState.event.cover = `${Config.API_URL + Config.routes.image.specific}/${result.uuid}`;
-            return newState;
-          }, callback);
+          const merged = {
+            ...event,
+            cover: `${Config.API_URL + Config.routes.image.specific}/${result.uuid}`,
+          };
+          setEvent(merged);
+          onReady(merged);
         } else {
-          callback();
+          onReady(event);
         }
       });
     } else {
-      callback();
+      onReady(event);
     }
-  }
+  }, [coverImageFile, event]);
 
-  handleChangeTime(e) {
+  const handleSubmit = useCallback(() => {
+    if (!event.title || !event.startDate || !event.endDate) return;
+
+    if (!isEdit && isRepeating) {
+      if (!seriesEndDate) {
+        alert('Please set when the series ends (date).');
+        return;
+      }
+      const startCalendarDay = event.startDate.clone().startOf('day');
+      const seriesLastCalendarDay = seriesEndDate.clone().startOf('day');
+      if (seriesLastCalendarDay.isBefore(startCalendarDay)) {
+        alert('Series end date must be on or after the first event start date.');
+        return;
+      }
+      const parsedIw = Number.parseInt(String(recurrenceIntervalWeeks), 10);
+      const intervalWeeks = Number.isFinite(parsedIw) && parsedIw >= 1 ? parsedIw : 1;
+      const recurrence = {
+        intervalWeeks,
+        seriesEndDate: seriesLastCalendarDay.toISOString(),
+      };
+      if (recurrenceDaysOfWeek.length > 0) {
+        recurrence.daysOfWeek = [...recurrenceDaysOfWeek];
+      }
+      finalizeSubmit((ev) => {
+        const payload = Object.assign({}, ev);
+        delete payload.uuid;
+        delete payload.eventGroupId;
+        onCreateRepeated(payload, recurrence);
+      });
+      return;
+    }
+
+    if (isEdit && event.eventGroupId && editScope !== 'instance') {
+      finalizeSubmit((ev) => {
+        const payload = Object.assign({}, ev);
+        delete payload.uuid;
+        delete payload.eventGroupId;
+        delete payload.attendanceCode;
+        delete payload.startDate;
+        delete payload.endDate;
+        onUpdateRepeatedGroup(
+          event.eventGroupId,
+          editScope,
+          editScope === 'fromInstance' ? event.uuid : undefined,
+          payload,
+        );
+      });
+      return;
+    }
+
+    finalizeSubmit((ev) => {
+      if (onClickAdd) onClickAdd(ev);
+    });
+  }, [
+    event,
+    isEdit,
+    isRepeating,
+    seriesEndDate,
+    recurrenceIntervalWeeks,
+    recurrenceDaysOfWeek,
+    editScope,
+    finalizeSubmit,
+    onClickAdd,
+    onCreateRepeated,
+    onUpdateRepeatedGroup,
+  ]);
+
+  const confirmDelete = useCallback(() => {
+    if (!onDeleteEvent || !event?.uuid) return;
+
+    if (!event.eventGroupId) {
+      onDeleteEvent({ kind: 'single', uuid: event.uuid });
+    } else if (deleteScope === 'single') {
+      onDeleteEvent({ kind: 'single', uuid: event.uuid });
+    } else {
+      onDeleteEvent({
+        kind: 'group',
+        eventGroupId: event.eventGroupId,
+        scope: deleteScope === 'all' ? 'all' : 'fromInstance',
+        fromUuid: deleteScope === 'fromInstance' ? event.uuid : undefined,
+      });
+    }
+    setShowDeleteConfirm(false);
+  }, [event, deleteScope, onDeleteEvent]);
+
+  const handleChangeTime = useCallback((e) => {
     const isStart = e.target.name === 'startTime';
-    const strKey = isStart ? 'startTimeStr' : 'endTimeStr';
+    const strKey = isStart ? 'start' : 'end';
     const dateKey = isStart ? 'startDate' : 'endDate';
-    const raw = e.target.value; // "HH:MM" from native time input, or ""
+    const raw = e.target.value;
 
-    this.setState((prev) => {
-      const newState = Object.assign({}, prev);
-      newState[strKey] = raw;
-      if (raw) {
-        const [hh, mm] = raw.split(':').map(n => parseInt(n, 10));
-        if (newState.event[dateKey]) {
-          newState.event[dateKey] = newState.event[dateKey].clone().set({ hour: hh, minute: mm });
-        } else {
-          newState.event[dateKey] = moment({ hour: hh, minute: mm });
+    if (strKey === 'start') setStartTimeStr(raw);
+    else setEndTimeStr(raw);
+
+    if (raw) {
+      const [hh, mm] = raw.split(':').map(n => parseInt(n, 10));
+      setEvent((prev) => {
+        if (prev[dateKey]) {
+          return { ...prev, [dateKey]: prev[dateKey].clone().set({ hour: hh, minute: mm }) };
         }
-      }
-      return newState;
-    });
-  }
+        return { ...prev, [dateKey]: moment({ hour: hh, minute: mm }) };
+      });
+    }
+  }, []);
 
-  handlePreviewFlip() {
-    this.setState(prev => ({ isPreviewFlipped: !prev.isPreviewFlipped }));
-  }
+  const handlePreviewFlip = useCallback(() => {
+    setIsPreviewFlipped(prev => !prev);
+  }, []);
 
-  handleTogglePlatform(option) {
-    this.setState((prev) => {
-      const newState = Object.assign({}, prev);
-      const platforms = prev.event.platforms || [];
-
-      // add or remove option depending on whether it's already selected
-      let next;
-      if (platforms.includes(option)) {
-        next = platforms.filter(p => p !== option);
-      } else {
-        next = [...platforms, option];
-      }
-
-      // create new event object for React to detect change
-      newState.event = { ...prev.event, platforms: next };
-
-      return newState;
-    });
-  }
-
-  handleChangeCover(e) {
-    e.persist();
+  const handleChangeCover = useCallback((e) => {
     const file = e.target.files?.[0];
 
     if (!file) {
-      this.setState((prev) => {
-        const newState = Object.assign({}, prev);
-        newState.event.cover = e.target.value;
-        newState.coverImageFile = null;
-        return newState;
-      });
+      setEvent((prev) => ({ ...prev, cover: e.target.value }));
+      setCoverImageFile(null);
     } else {
       if (file.size > 3 * 1024 * 1024) {
         alert('File size exceeds 3 MB');
@@ -171,32 +330,14 @@ export default class AdminAddEvent extends React.Component {
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        this.setState((prev) => {
-          const newState = Object.assign({}, prev);
-          newState.event.cover = reader.result;
-          newState.coverImageFile = file;
-          return newState;
-        });
+        setEvent((prev) => ({ ...prev, cover: reader.result }));
+        setCoverImageFile(file);
       };
       reader.readAsDataURL(file);
     }
-  }
+  }, []);
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // reset state when switching to a different event (compare by UUID)
-    const nextUuid = nextProps.event?.uuid;
-    const currentUuid = this.props.event?.uuid;
-    if (nextUuid !== currentUuid) {
-      this.setState({
-        event: { ...nextProps.event },
-        startTimeStr: nextProps.event?.startDate ? nextProps.event.startDate.format('HH:mm') : '',
-        endTimeStr: nextProps.event?.endDate ? nextProps.event.endDate.format('HH:mm') : '',
-      });
-    }
-  }
-
-  renderPreviewCard() {
-    const { event, isPreviewFlipped } = this.state;
+  const renderPreviewCard = () => {
     const committeeColorMap = Object.fromEntries(Config.committeeColors);
 
     const title = event.title || 'Event Title';
@@ -212,12 +353,14 @@ export default class AdminAddEvent extends React.Component {
     }
 
     const committeeColor = committeeColorMap[committee] || '#1E6CFF';
+    const repeatHint = !isEdit && isRepeating && seriesEndDate
+      ? `Repeats through ${seriesEndDate.format('MMM D, YYYY')}`
+      : null;
 
     return (
       <div className={`preview-card-container${isPreviewFlipped ? ' is-flipped' : ''}`}>
         <div className="preview-card-flipper">
-          {/* Front */}
-          <div className="preview-card preview-card-front" onClick={this.handlePreviewFlip} style={{ cursor: 'pointer' }} title="Click to see description">
+          <div className="preview-card preview-card-front" onClick={handlePreviewFlip} style={{ cursor: 'pointer' }} title="Click to see description">
             <div className="preview-image-container">
               <div
                 className="preview-cover"
@@ -228,16 +371,16 @@ export default class AdminAddEvent extends React.Component {
             <div className="preview-text-container">
               <p className="preview-title">{title}</p>
               <p className="preview-meta">🗓️ {dateStr}</p>
+              {repeatHint && <p className="preview-meta preview-repeat-hint">{repeatHint}</p>}
               <p className="preview-meta">📍 {location}</p>
               <p className="preview-meta" style={{ color: committeeColor }}>{committee}</p>
               <div className="preview-rsvp-pill">RSVP</div>
             </div>
           </div>
 
-          {/* Back */}
           <div className="preview-card preview-card-back">
             <div className="preview-back-content">
-              <button className="preview-flip-back-btn" onClick={this.handlePreviewFlip}>
+              <button type="button" className="preview-flip-back-btn" onClick={handlePreviewFlip}>
                 ← Back
               </button>
               <h3>{title}</h3>
@@ -249,273 +392,497 @@ export default class AdminAddEvent extends React.Component {
         </div>
       </div>
     );
-  }
+  };
 
-  render() {
-    const committeeColorMap = Object.fromEntries(Config.committeeColors);
-    const { coverMode } = this.state;
-    const platforms = this.state.event.platforms || [];
+  const committeeColorMap = Object.fromEntries(Config.committeeColors);
+  const isRepeatedGroup = !!(isEdit && event?.eventGroupId);
+  const showAttendanceCode = !isRepeatedGroup || editScope === 'instance';
+  /** Repeating create: codes are derived from optional user base + server suffix. */
+  const isRepeatingSeriesCreate = !isEdit && isRepeating;
+  const scheduleLockedForGroupEdit = isRepeatedGroup && editScope !== 'instance';
 
-    return (
-      <div className={`add-event-overlay${this.props.showing ? ' showing' : ''}`} onClick={this.props.onClickCancel}>
-        <div className="event-modal" onClick={e => e.stopPropagation()}>
+  return (
+    <div className={`add-event-overlay${showing ? " showing" : ""}`} onClick={onClickCancel}>
+      <div className="event-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2 className="modal-title">{isEdit ? "Edit Event" : "Create Event"}</h2>
+          <button type="button" className="modal-close-btn" onClick={onClickCancel} aria-label="Close">
+            ✕
+          </button>
+        </div>
 
-          {/* Header */}
-          <div className="modal-header">
-            <h2 className="modal-title">{this.props.isEdit ? 'Edit Event' : 'Create Event'}</h2>
-            <button className="modal-close-btn" onClick={this.props.onClickCancel} aria-label="Close">✕</button>
-          </div>
-
-          {/* Two-column content */}
-          <div className="modal-content">
-
-            {/* Left: form */}
-            <div className="modal-form">
-
-              {/* Cover */}
+        <div className="modal-content">
+          <div className="modal-form">
+            {!isEdit && (
               <div className="form-section">
-                <p className="section-label">Cover Image <span className="optional-mark">optional</span></p>
+                <p className="section-label">Event type</p>
                 <div className="cover-mode-toggle">
                   <button
                     type="button"
-                    className={`mode-btn${coverMode === 'url' ? ' active' : ''}`}
-                    onClick={() => this.setState({ coverMode: 'url' })}
-                  >
-                    URL
+                    className={`mode-btn${!isRepeating ? " active" : ""}`}
+                    onClick={() => setRepeatingMode(false)}>
+                    One-time
                   </button>
                   <button
                     type="button"
-                    className={`mode-btn${coverMode === 'upload' ? ' active' : ''}`}
-                    onClick={() => this.setState({ coverMode: 'upload' })}
-                  >
-                    Upload
+                    className={`mode-btn${isRepeating ? " active" : ""}`}
+                    onClick={() => setRepeatingMode(true)}>
+                    Repeating series
                   </button>
                 </div>
-                {coverMode === 'url' ? (
+              </div>
+            )}
+
+            {isRepeatedGroup && (
+              <div className="form-section repeat-scope-section">
+                <p className="section-label">Apply changes to</p>
+                {seriesInstanceCount != null && (
+                  <p className="series-count-hint">
+                    This series has {seriesInstanceCount} scheduled occurrence
+                    {seriesInstanceCount === 1 ? "" : "s"}.
+                  </p>
+                )}
+                <div className="repeat-scope-options">
+                  <label className="radio-row">
+                    <input
+                      type="radio"
+                      name="editScope"
+                      checked={editScope === "instance"}
+                      onChange={() => setEditScope("instance")}
+                    />
+                    <span>This instance only</span>
+                  </label>
+                  <label className="radio-row">
+                    <input
+                      type="radio"
+                      name="editScope"
+                      checked={editScope === "all"}
+                      onChange={() => setEditScope("all")}
+                    />
+                    <span>All events in this series</span>
+                  </label>
+                  <label className="radio-row">
+                    <input
+                      type="radio"
+                      name="editScope"
+                      checked={editScope === "fromInstance"}
+                      onChange={() => setEditScope("fromInstance")}
+                    />
+                    <span>This instance and future</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            <div className="form-section">
+              <p className="section-label">
+                Cover Image <span className="optional-mark">optional</span>
+              </p>
+              <div className="cover-mode-toggle">
+                <button
+                  type="button"
+                  className={`mode-btn${coverMode === "url" ? " active" : ""}`}
+                  onClick={() => setCoverMode("url")}>
+                  URL
+                </button>
+                <button
+                  type="button"
+                  className={`mode-btn${coverMode === "upload" ? " active" : ""}`}
+                  onClick={() => setCoverMode("upload")}>
+                  Upload
+                </button>
+              </div>
+              {coverMode === "url" ? (
+                <input
+                  type="text"
+                  value={event.cover && !coverImageFile ? event.cover : ""}
+                  name="cover"
+                  placeholder="https://..."
+                  onChange={handleChangeCover}
+                />
+              ) : (
+                <div className="upload-zone" onClick={() => coverUploadRef.current?.click()}>
+                  <input
+                    type="file"
+                    value={""}
+                    name="cover"
+                    ref={coverUploadRef}
+                    id="coverInput"
+                    accept="image/*"
+                    onChange={handleChangeCover}
+                    onClick={e => {
+                      e.target.value = null;
+                    }}
+                  />
+                  {coverImageFile ? (
+                    <span className="upload-zone-label chosen">✓ {coverImageFile.name}</span>
+                  ) : (
+                    <span className="upload-zone-label">Click to choose an image</span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="form-section">
+              <p className="section-label">Basic Info</p>
+              <div className="field-group">
+                <label>
+                  Title <span className="required-mark">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={event.title}
+                  name="title"
+                  onChange={handleChange}
+                  placeholder="My Awesome Event"
+                />
+              </div>
+              <div className="field-row">
+                <div className="field-group">
+                  <label>
+                    Committee <span className="required-mark">*</span>
+                  </label>
+                  <select
+                    value={event.committee}
+                    name="committee"
+                    onChange={handleChange}
+                    style={{ color: committeeColorMap[event.committee] }}>
+                    <option value="ACM" style={{ color: committeeColorMap["ACM"] }}>
+                      ACM
+                    </option>
+                    {Config.committees.map((committee, index) => (
+                      <option key={index} value={committee} style={{ color: committeeColorMap[committee] }}>
+                        {committee}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="field-group">
+                  <label>
+                    External RSVP Link <span className="optional-mark">optional — overrides built-in RSVP</span>
+                  </label>
                   <input
                     type="text"
-                    value={this.state.event.cover && !this.state.coverImageFile ? this.state.event.cover : ''}
-                    name="cover"
-                    placeholder="https://..."
-                    onChange={this.handleChangeCover}
-                  />
-                ) : (
-                  <div className="upload-zone" onClick={() => this.coverUploadRef.current?.click()}>
-                    <input
-                      type="file"
-                      value={''}
-                      name="cover"
-                      ref={this.coverUploadRef}
-                      id="coverInput"
-                      accept="image/*"
-                      onChange={this.handleChangeCover}
-                      onClick={(e) => { e.target.value = null; }}
-                    />
-                    {this.state.coverImageFile ? (
-                      <span className="upload-zone-label chosen">✓ {this.state.coverImageFile.name}</span>
-                    ) : (
-                      <span className="upload-zone-label">Click to choose an image</span>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Basic info */}
-              <div className="form-section">
-                <p className="section-label">Basic Info</p>
-                <div className="field-group">
-                  <label>Title <span className="required-mark">*</span></label>
-                  <input type="text" value={this.state.event.title} name="title" onChange={this.handleChange} placeholder="My Awesome Event" />
-                </div>
-                <div className="field-row">
-                  <div className="field-group">
-                    <label>Committee <span className="required-mark">*</span></label>
-                    <select
-                      value={this.state.event.committee}
-                      name="committee"
-                      onChange={this.handleChange}
-                      style={{ color: committeeColorMap[this.state.event.committee] }}
-                    >
-                      <option value="ACM" style={{ color: committeeColorMap['ACM'] }}>ACM</option>
-                      {Config.committees.map((committee, index) => (
-                        <option key={index} value={committee} style={{ color: committeeColorMap[committee] }}>{committee}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="field-group">
-                    <label>External RSVP Link <span className="optional-mark">optional — overrides built-in RSVP</span></label>
-                    <input type="text" value={this.state.event.eventLink} name="eventLink" onChange={this.handleChange} placeholder="https://forms.google.com/..." />
-                  </div>
-                </div>
-              </div>
-
-              {/* Schedule */}
-              <div className="form-section">
-                <p className="section-label">Schedule</p>
-                <div className="field-row">
-                  <div className="field-group field-grow-3">
-                    <label>Start Date <span className="required-mark">*</span></label>
-                    <DatePicker
-                      selected={this.state.event.startDate ? this.state.event.startDate.toDate() : null}
-                      onChange={this.handleChangeStartDate}
-                      className="date-picker"
-                    />
-                  </div>
-                  <div className="field-group field-grow-2">
-                    <label>Start Time <span className="required-mark">*</span></label>
-                    <input
-                      type="time"
-                      onChange={this.handleChangeTime}
-                      name="startTime"
-                      value={this.state.startTimeStr}
-                    />
-                  </div>
-                </div>
-                <div className="field-row">
-                  <div className="field-group field-grow-3">
-                    <label>End Date <span className="required-mark">*</span></label>
-                    <DatePicker
-                      selected={this.state.event.endDate ? this.state.event.endDate.toDate() : null}
-                      onChange={this.handleChangeEndDate}
-                      className="date-picker"
-                    />
-                  </div>
-                  <div className="field-group field-grow-2">
-                    <label>End Time <span className="required-mark">*</span></label>
-                    <input
-                      type="time"
-                      onChange={this.handleChangeTime}
-                      name="endTime"
-                      value={this.state.endTimeStr}
-                    />
-                  </div>
-                </div>
-                <div className="field-group">
-                  <label>Location <span className="required-mark">*</span></label>
-                  <input type="text" value={this.state.event.location} name="location" onChange={this.handleChange} placeholder="EBU3B B250" />
-                </div>
-              </div>
-
-              {/* Attendance */}
-              <div className="form-section">
-                <p className="section-label">Attendance</p>
-                <div className="field-row">
-                  <div className="field-group">
-                    <label>Check-in Code <span className="required-mark">*</span></label>
-                    <input
-                      type="text"
-                      value={this.state.event.attendanceCode}
-                      name="attendanceCode"
-                      onChange={this.handleChange}
-                      placeholder="e.g. HACK2025"
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label>Points <span className="required-mark">*</span></label>
-                    <input
-                      type="text"
-                      value={this.state.event.attendancePoints}
-                      name="attendancePoints"
-                      onChange={this.handleChange}
-                      placeholder="10"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="form-section">
-                <p className="section-label">Description <span className="optional-mark">optional</span></p>
-                <div className="field-group">
-                  <textarea
-                    value={this.state.event.description}
-                    name="description"
-                    onChange={this.handleChange}
-                    onKeyUp={this.resizeTextArea}
-                    placeholder="Tell people what this event is about..."
+                    value={event.eventLink ?? ""}
+                    name="eventLink"
+                    onChange={handleChange}
+                    placeholder="https://forms.google.com/..."
                   />
                 </div>
               </div>
+            </div>
 
-              {/* Marketing */}
-              <div className="form-section">
-                <p className="section-label">Marketing <span className="optional-mark">optional</span></p>
-
-                <div className="multi-select" ref={this.multiSelectRef}>
-                  <div
-                    className={`multi-select-trigger${platforms.length === 0 ? ' is-placeholder' : ''}`}
-                    onClick={() => this.setState(prev => ({ isPlatformsOpen: !prev.isPlatformsOpen }))}
-                  >
-                    {/* Chips */}
-                    {platforms.length === 0
-                      ? 'Select platforms...'
-                      : Config.platforms
-                          .filter(opt => platforms.includes(opt))
-                          .map(opt => (
-                            <span key={opt} className="multi-select-chip">
-                              <span className="chip-label">{opt}</span>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  this.handleTogglePlatform(opt);
-                                }}
-                              >✕</button>
-                            </span>
-                          ))
-                    }
-                    <i className={`fa fa-chevron-${this.state.isPlatformsOpen ? 'up' : 'down'}`} />
+            <div className="form-section">
+              <p className="section-label">Schedule</p>
+              {scheduleLockedForGroupEdit && (
+                <p className="field-hint">
+                  This series cannot move start/end dates in bulk — use &quot;This instance only&quot; or edit dates one
+                  event at a time.
+                </p>
+              )}
+              <div className="field-row">
+                <div className="field-group field-grow-3">
+                  <label>
+                    Start Date <span className="required-mark">*</span>
+                  </label>
+                  <DatePicker
+                    selected={event.startDate ? event.startDate.toDate() : null}
+                    onChange={handleChangeStartDate}
+                    className="date-picker"
+                    disabled={scheduleLockedForGroupEdit}
+                  />
+                </div>
+                <div className="field-group field-grow-2">
+                  <label>
+                    Start Time <span className="required-mark">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    onChange={handleChangeTime}
+                    name="startTime"
+                    value={startTimeStr}
+                    disabled={scheduleLockedForGroupEdit}
+                  />
+                </div>
+              </div>
+              <div className="field-row">
+                <div className="field-group field-grow-3">
+                  <label>
+                    End Date <span className="required-mark">*</span>
+                  </label>
+                  <DatePicker
+                    selected={event.endDate ? event.endDate.toDate() : null}
+                    onChange={handleChangeEndDate}
+                    className="date-picker"
+                    disabled={scheduleLockedForGroupEdit}
+                  />
+                </div>
+                <div className="field-group field-grow-2">
+                  <label>
+                    End Time <span className="required-mark">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    onChange={handleChangeTime}
+                    name="endTime"
+                    value={endTimeStr}
+                    disabled={scheduleLockedForGroupEdit}
+                  />
+                </div>
+              </div>
+              {!isEdit && isRepeating && (
+                <>
+                  <div className="field-row">
+                    <div className="field-group field-grow-3">
+                      <label>
+                        Repeat every <span className="required-mark">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        min={1}
+                        className="recurrence-interval-weeks"
+                        value={recurrenceIntervalWeeks}
+                        onChange={e => {
+                          const v = Number.parseInt(e.target.value, 10);
+                          setRecurrenceIntervalWeeks(Number.isFinite(v) && v >= 1 ? v : 1);
+                        }}
+                      />
+                      <p className="field-hint">Weeks between pattern repeats (1 = every week).</p>
+                    </div>
                   </div>
-                  {this.state.isPlatformsOpen && (
-                    <div className="multi-select-menu">
-                      {Config.platforms.map(opt => (
+                  <div className="field-group recurrence-weekdays">
+                    <p className="section-label recurrence-weekdays-label">On weekdays</p>
+                    <p className="field-hint">Leave all unchecked to repeat only on the first event&apos;s weekday.</p>
+                    <div className="recurrence-weekday-chips">
+                      {RECURRENCE_ISO_WEEKDAYS.map(({ iso, label }) => (
                         <button
-                          key={opt}
+                          key={iso}
                           type="button"
-                          className={platforms.includes(opt) ? 'selected' : ''}
-                          onClick={() => this.handleTogglePlatform(opt)}
-                        >
-                          {opt}
+                          className={`recurrence-day-chip${recurrenceDaysOfWeek.includes(iso) ? " is-active" : ""}`}
+                          onClick={() => toggleRecurrenceWeekday(iso)}>
+                          {label}
                         </button>
                       ))}
                     </div>
-                  )}
+                  </div>
+                  <div className="field-row">
+                    <div className="field-group field-grow-3">
+                      <label>
+                        Series ends (date) <span className="required-mark">*</span>
+                      </label>
+                      <DatePicker
+                        selected={seriesEndDate ? seriesEndDate.toDate() : null}
+                        onChange={handleChangeSeriesEndDate}
+                        className="date-picker"
+                      />
+                    </div>
+                  </div>
+                  <p className="field-hint">
+                    Instances are generated through this calendar date. Only the date is used—the first occurrence still
+                    uses the start/end schedule above.
+                  </p>
+                </>
+              )}
+              <div className="field-group">
+                <label>
+                  Location <span className="required-mark">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={event.location}
+                  name="location"
+                  onChange={handleChange}
+                  placeholder="EBU3B B250"
+                />
+              </div>
+            </div>
+
+            <div className="form-section">
+              <p className="section-label">Attendance</p>
+              {isRepeatingSeriesCreate && (
+                <p className="field-hint">
+                  Optionally set a check-in code prefix. The server generates a unique suffix for each occurrence (e.g.
+                  YOURCODE-aB3z). Leave blank to use server defaults.
+                </p>
+              )}
+              {isRepeatedGroup && !showAttendanceCode && (
+                <p className="field-hint">
+                  Check-in codes are per occurrence. Switch to &quot;This instance only&quot; to edit the code for this
+                  date.
+                </p>
+              )}
+              <div className="field-row">
+                <div className="field-group">
+                  <label>
+                    Check-in Code{" "}
+                    {showAttendanceCode && !isRepeatingSeriesCreate ? <span className="required-mark">*</span> : null}
+                    {showAttendanceCode && isRepeatingSeriesCreate ? (
+                      <span className="optional-mark">optional prefix for generated codes</span>
+                    ) : null}
+                    {!showAttendanceCode ? <span className="optional-mark">— set per instance</span> : null}
+                  </label>
+                  <input
+                    type="text"
+                    value={event.attendanceCode}
+                    name="attendanceCode"
+                    onChange={handleChange}
+                    placeholder="e.g. HACK2025"
+                    disabled={!showAttendanceCode}
+                  />
+                </div>
+                <div className="field-group">
+                  <label>
+                    Points <span className="required-mark">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={event.attendancePoints}
+                    name="attendancePoints"
+                    onChange={handleChange}
+                    placeholder="10"
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Right: live preview */}
-            <div className="modal-preview">
-              <p className="preview-label">Preview</p>
-              {this.renderPreviewCard()}
-              <p className="preview-hint">Updates as you type</p>
+            <div className="form-section">
+              <p className="section-label">
+                Description <span className="optional-mark">optional</span>
+              </p>
+              <div className="field-group">
+                <textarea
+                  value={event.description ?? ""}
+                  name="description"
+                  onChange={handleChange}
+                  onKeyUp={resizeTextArea}
+                  placeholder="Tell people what this event is about..."
+                />
+              </div>
             </div>
 
+            {/* Marketing */}
+            <div className="form-section">
+              <p className="section-label">
+                Marketing <span className="optional-mark">optional</span>
+              </p>
+
+              <div className="multi-select" ref={multiSelectRef}>
+                <div
+                  className={`multi-select-trigger${event.platforms.length === 0 ? " is-placeholder" : ""}`}
+                  onClick={() => setIsPlatformsOpen(!isPlatformsOpen)}>
+                  {/* Chips */}
+                  {event.platforms.length === 0
+                    ? "Select platforms..."
+                    : Config.platforms
+                        .filter(opt => event.platforms.includes(opt))
+                        .map(opt => (
+                          <span key={opt} className="multi-select-chip">
+                            <span className="chip-label">{opt}</span>
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleTogglePlatform(opt);
+                              }}>
+                              ✕
+                            </button>
+                          </span>
+                        ))}
+                  <i className={`fa fa-chevron-${isPlatformsOpen ? "up" : "down"}`} />
+                </div>
+                {isPlatformsOpen && (
+                  <div className="multi-select-menu">
+                    {Config.platforms.map(opt => (
+                      <button
+                        key={opt}
+                        type="button"
+                        className={event.platforms.includes(opt) ? "selected" : ""}
+                        onClick={() => handleTogglePlatform(opt)}>
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Footer */}
-          <div className="modal-footer">
-            <Button onClick={this.props.onClickCancel} style="red" text="Cancel" icon="" />
-            <Button onClick={this.handleSubmit} style="green" text={this.props.isEdit ? 'Update Event' : 'Create Event'} icon="" />
+          <div className="modal-preview">
+            <p className="preview-label">Preview</p>
+            {renderPreviewCard()}
+            <p className="preview-hint">Updates as you type</p>
           </div>
+        </div>
 
+        {showDeleteConfirm && isEdit && (
+          <div className="delete-confirm-panel">
+            <p className="delete-confirm-title">Delete event?</p>
+            {event.eventGroupId ? (
+              <div className="repeat-scope-options delete-scope-options">
+                <label className="radio-row">
+                  <input
+                    type="radio"
+                    name="deleteScope"
+                    checked={deleteScope === "single"}
+                    onChange={() => setDeleteScope("single")}
+                  />
+                  <span>This instance only</span>
+                </label>
+                <label className="radio-row">
+                  <input
+                    type="radio"
+                    name="deleteScope"
+                    checked={deleteScope === "all"}
+                    onChange={() => setDeleteScope("all")}
+                  />
+                  <span>Entire series</span>
+                </label>
+                <label className="radio-row">
+                  <input
+                    type="radio"
+                    name="deleteScope"
+                    checked={deleteScope === "fromInstance"}
+                    onChange={() => setDeleteScope("fromInstance")}
+                  />
+                  <span>This instance and future</span>
+                </label>
+              </div>
+            ) : (
+              <p className="delete-confirm-body">This cannot be undone.</p>
+            )}
+            <div className="delete-confirm-actions">
+              <Button onClick={() => setShowDeleteConfirm(false)} style="red" text="Cancel" icon="" />
+              <Button onClick={confirmDelete} style="green" text="Confirm delete" icon="" />
+            </div>
+          </div>
+        )}
+
+        <div className="modal-footer">
+          <div className="modal-footer-left">
+            {isEdit && onDeleteEvent && (
+              <Button onClick={() => setShowDeleteConfirm(true)} style="red" text="Delete" icon="" />
+            )}
+          </div>
+          <div className="modal-footer-right">
+            <Button onClick={onClickCancel} style="red" text="Cancel" icon="" />
+            <Button onClick={handleSubmit} style="green" text={isEdit ? "Update Event" : "Create Event"} icon="" />
+          </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
+
+export default AdminAddEvent;
 
 AdminAddEvent.propTypes = {
   event: PropTypes.object,
   onClickAdd: PropTypes.func,
   onClickCancel: PropTypes.func,
+  onCreateRepeated: PropTypes.func,
+  onUpdateRepeatedGroup: PropTypes.func,
+  onDeleteEvent: PropTypes.func,
+  onLoadRepeatedGroup: PropTypes.func,
   isEdit: PropTypes.bool,
   showing: PropTypes.bool,
-};
-
-AdminAddEvent.defaultProps = {
-  onClickAdd: null,
-  onClickCancel: null,
-  isEdit: false,
-  showing: false,
 };

@@ -25,6 +25,7 @@ export default class AdminEvents extends React.Component {
       startDate: '',
       title: '',
       startTime: '',
+      platforms: [],
     };
 
     this.state = {
@@ -41,7 +42,6 @@ export default class AdminEvents extends React.Component {
     this.handleEditClick = this.handleEditClick.bind(this);
   }
 
-  // Shows the add event sidebar
   showAddEvent(e) {
     this.setState(prev => ({
       showAddEvent: true,
@@ -67,9 +67,7 @@ export default class AdminEvents extends React.Component {
     });
   }
 
-  // Handles when update/add event
   addEvent(event) {
-    // call either this.props.addEvent(event) or this.props.updateEvent(event)
     if (event.uuid) {
       this.props.updateEvent(event);
     } else {
@@ -77,14 +75,12 @@ export default class AdminEvents extends React.Component {
     }
   }
 
-  // Handles cancel add event
   cancelAddEventParent(e) {
     this.setState(prev => ({
       showAddEvent: false,
     }));
   }
 
-  // This function is passed down to child so when edit button is clicked, can bring up the add/edit sidebar
   handleEditClick(param) {
     this.setState(prev => ({
       showAddEvent: true,
@@ -97,8 +93,9 @@ export default class AdminEvents extends React.Component {
     const isUpdateComplete = nextProps.updated && nextProps.updateSuccess;
     const isCreateComplete = nextProps.created && nextProps.createSuccess;
     const isSyncComplete = nextProps.synced && nextProps.syncSuccess;
+    const isDeleteComplete = nextProps.deleted && nextProps.deleteSuccess;
 
-    if (isUpdateComplete || isCreateComplete || isSyncComplete) {
+    if (isUpdateComplete || isCreateComplete || isSyncComplete || isDeleteComplete) {
       this.setState(prev => ({
         showAddEvent: false,
         isEditEvent: false,
@@ -127,25 +124,56 @@ export default class AdminEvents extends React.Component {
     const pastMonths = months.filter(month => month.date < thisMonth);
     const futureMonths = months.filter(month => month.date >= thisMonth);
 
-    const bannerMessage = this.props.updateSuccess
-      ? 'Event updated successfully'
-      : this.props.createSuccess
-        ? 'Event created successfully'
-        : this.props.syncSuccess
-          ? this.props.syncMessage || 'Events synced successfully from Google Sheets'
-          : this.props.error;
+    const {
+      deleted,
+      deleteSuccess,
+      deleteWasSeries,
+      updated,
+      updateSuccess,
+      repeatedSeriesUpdate,
+      created,
+      createSuccess,
+      repeatedSeriesCreate,
+      synced,
+      syncSuccess,
+      syncMessage,
+      error,
+    } = this.props;
+
+    let bannerMessage = error;
+    if (deleted) {
+      bannerMessage = deleteSuccess
+        ? (deleteWasSeries ? 'Events deleted successfully' : 'Event deleted successfully')
+        : error;
+    } else if (updated) {
+      bannerMessage = updateSuccess
+        ? (repeatedSeriesUpdate ? 'Events updated successfully' : 'Event updated successfully')
+        : error;
+    } else if (created) {
+      bannerMessage = createSuccess
+        ? (repeatedSeriesCreate ? 'Repeated events created successfully' : 'Event created successfully')
+        : error;
+    } else if (synced) {
+      bannerMessage = syncSuccess
+        ? (syncMessage || 'Events synced successfully from Google Sheets')
+        : error;
+    }
 
     return (
       <div className="events-dashboard admin-dashboard">
         <Toast
-          showing={this.props.updated || this.props.created || this.props.synced}
-          success={this.props.updateSuccess || this.props.createSuccess || this.props.syncSuccess}
+          showing={!!updated || !!created || !!synced || !!deleted}
+          success={!!(updateSuccess || createSuccess || syncSuccess || deleteSuccess)}
           message={bannerMessage}
         />
         <AdminAddEvent
           event={this.state.eventPlaceholder}
           onClickAdd={this.addEvent}
           onClickCancel={this.cancelAddEventParent}
+          onCreateRepeated={this.props.addRepeatedEvent}
+          onUpdateRepeatedGroup={this.props.updateRepeatedGroup}
+          onDeleteEvent={this.props.deleteAdminEvent}
+          onLoadRepeatedGroup={this.props.loadRepeatedGroup}
           isEdit={this.state.isEditEvent}
           showing={this.state.showAddEvent}
         />
@@ -168,11 +196,11 @@ export default class AdminEvents extends React.Component {
           />
         )}
         {this.state.showEarlierEvents
-          && pastMonths.map((month, i) => (
+          && pastMonths.map((month, idx) => (
             <EventMonth month={month} key={month.date.toString()} handleEditClick={this.handleEditClick} />
           ))}
 
-        {futureMonths.map((month, i) => (
+        {futureMonths.map((month, idx) => (
           <EventMonth month={month} key={month.date.toString()} handleEditClick={this.handleEditClick} />
         ))}
       </div>
@@ -182,11 +210,33 @@ export default class AdminEvents extends React.Component {
 
 AdminEvents.propTypes = {
   events: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isAdmin: PropTypes.bool,
+  isOfficer: PropTypes.bool,
   error: PropTypes.string,
   created: PropTypes.bool,
   createSuccess: PropTypes.bool,
+  repeatedSeriesCreate: PropTypes.bool,
   updated: PropTypes.bool,
   updateSuccess: PropTypes.bool,
+  repeatedSeriesUpdate: PropTypes.bool,
+  deleted: PropTypes.bool,
+  deleteSuccess: PropTypes.bool,
+  deleteWasSeries: PropTypes.bool,
+  synced: PropTypes.bool,
+  syncSuccess: PropTypes.bool,
+  syncMessage: PropTypes.string,
   addEvent: PropTypes.func.isRequired,
+  addRepeatedEvent: PropTypes.func.isRequired,
   updateEvent: PropTypes.func.isRequired,
+  updateRepeatedGroup: PropTypes.func.isRequired,
+  deleteAdminEvent: PropTypes.func.isRequired,
+  loadRepeatedGroup: PropTypes.func.isRequired,
+};
+
+AdminEvents.defaultProps = {
+  repeatedSeriesCreate: false,
+  repeatedSeriesUpdate: false,
+  deleted: false,
+  deleteSuccess: false,
+  deleteWasSeries: false,
 };

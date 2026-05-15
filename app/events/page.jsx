@@ -9,7 +9,12 @@ import AdminEvents from './AdminEvents';
 import logoutUser from '@/app/actions/auth/logoutUser';
 import fetchAllEvents from '@/app/actions/events/fetchAllEvents';
 import createEvent from '@/app/actions/events/createEvent';
+import createRepeatedEvent from '@/app/actions/events/createRepeatedEvent';
 import updateEvent from '@/app/actions/events/updateEvent';
+import updateRepeatedEventGroup from '@/app/actions/events/updateRepeatedEventGroup';
+import deleteEvent from '@/app/actions/events/deleteEvent';
+import deleteRepeatedEventGroup from '@/app/actions/events/deleteRepeatedEventGroup';
+import fetchRepeatedEventGroup from '@/app/actions/events/fetchRepeatedEventGroup';
 import fetchUserRSVPs from '@/app/actions/rsvp/fetchUserRSVPs';
 import checkInAction from '@/app/actions/attendance/checkIn';
 import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom, officerViewAtom } from '@/lib/atoms';
@@ -29,6 +34,11 @@ export default function EventsPage() {
   const [createSuccess, setCreateSuccess] = useState(false);
   const [eventUpdated, setEventUpdated] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [repeatedSeriesCreate, setRepeatedSeriesCreate] = useState(false);
+  const [repeatedSeriesUpdate, setRepeatedSeriesUpdate] = useState(false);
+  const [eventDeleted, setEventDeleted] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [deleteWasSeries, setDeleteWasSeries] = useState(false);
   const [checkInSubmitted, setCheckInSubmitted] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(false);
   const [checkInPoints, setCheckInPoints] = useState(0);
@@ -86,9 +96,19 @@ export default function EventsPage() {
     endDate: event.endDate ? event.endDate.toISOString?.() ?? event.endDate : null,
   });
 
+  const refreshEvents = async () => {
+    const eventsArray = await fetchAllEvents();
+    setEvents(eventsArray.map(e => ({
+      ...e,
+      startDate: moment(e.startDate),
+      endDate: moment(e.endDate),
+    })));
+  };
+
   const handleAddEvent = async (event) => {
     setEventCreated(false);
     setCreateSuccess(false);
+    setRepeatedSeriesCreate(false);
     setError(null);
 
     const result = await createEvent(normalizeEventForServer(event));
@@ -97,18 +117,48 @@ export default function EventsPage() {
     if (!result.success) {
       setError(result.error ?? 'Failed to create event');
     } else {
-      const eventsArray = await fetchAllEvents();
-      setEvents(eventsArray.map(e => ({
-        ...e,
-        startDate: moment(e.startDate),
-        endDate: moment(e.endDate),
-      })));
+      await refreshEvents();
+    }
+  };
+
+  const handleAddRepeatedEvent = async (event, recurrence) => {
+    setEventCreated(false);
+    setCreateSuccess(false);
+    setRepeatedSeriesCreate(false);
+    setError(null);
+
+    const payload = normalizeEventForServer({ ...event });
+    delete payload.uuid;
+    delete payload.eventGroupId;
+    const trimmedCode = typeof payload.attendanceCode === 'string'
+      ? payload.attendanceCode.trim()
+      : payload.attendanceCode;
+    if (trimmedCode) {
+      payload.attendanceCode = trimmedCode;
+    } else {
+      delete payload.attendanceCode;
+    }
+    if (payload.attendancePoints === '' || payload.attendancePoints == null) {
+      payload.attendancePoints = 1;
+    } else {
+      payload.attendancePoints = Number(payload.attendancePoints);
+    }
+
+    const result = await createRepeatedEvent(payload, recurrence);
+    setEventCreated(true);
+    setCreateSuccess(result.success);
+    setRepeatedSeriesCreate(!!result.success);
+    if (!result.success) {
+      setError(result.error ?? 'Failed to create repeated events');
+    } else {
+      await refreshEvents();
     }
   };
 
   const handleUpdateEvent = async (event) => {
     setEventUpdated(false);
     setUpdateSuccess(false);
+    setRepeatedSeriesUpdate(false);
     setError(null);
 
     const result = await updateEvent(normalizeEventForServer(event));
@@ -117,12 +167,61 @@ export default function EventsPage() {
     if (!result.success) {
       setError(result.error ?? 'Failed to update event');
     } else {
-      const eventsArray = await fetchAllEvents();
-      setEvents(eventsArray.map(e => ({
-        ...e,
-        startDate: moment(e.startDate),
-        endDate: moment(e.endDate),
-      })));
+      await refreshEvents();
+    }
+  };
+
+  const handleUpdateRepeatedGroup = async (eventGroupId, scope, fromUuid, eventFields) => {
+    setEventUpdated(false);
+    setUpdateSuccess(false);
+    setRepeatedSeriesUpdate(false);
+    setError(null);
+
+    const body = normalizeEventForServer({ ...eventFields });
+    delete body.uuid;
+    delete body.eventGroupId;
+    delete body.attendanceCode;
+    delete body.startDate;
+    delete body.endDate;
+
+    const result = await updateRepeatedEventGroup(eventGroupId, {
+      scope,
+      fromUuid: scope === 'fromInstance' ? fromUuid : undefined,
+      event: body,
+    });
+    setEventUpdated(true);
+    setUpdateSuccess(result.success);
+    setRepeatedSeriesUpdate(!!result.success);
+    if (!result.success) {
+      setError(result.error ?? 'Failed to update repeated events');
+    } else {
+      await refreshEvents();
+    }
+  };
+
+  const handleDeleteAdminEvent = async (payload) => {
+    setEventDeleted(false);
+    setDeleteSuccess(false);
+    setDeleteWasSeries(false);
+    setError(null);
+
+    let result;
+    if (payload.kind === 'single') {
+      result = await deleteEvent(payload.uuid);
+    } else {
+      result = await deleteRepeatedEventGroup(payload.eventGroupId, {
+        scope: payload.scope,
+        fromUuid: payload.scope === 'fromInstance' ? payload.fromUuid : undefined,
+      });
+    }
+
+    setEventDeleted(true);
+    setDeleteSuccess(result.success);
+    setDeleteWasSeries(payload.kind === 'group' && result.success);
+    if (!result.success) {
+      setError(result.error ?? 'Failed to delete event');
+    } else {
+      await refreshEvents();
     }
   };
 
@@ -150,11 +249,20 @@ export default function EventsPage() {
           isAdmin={isAdmin}
           isOfficer={isOfficer}
           addEvent={handleAddEvent}
+          addRepeatedEvent={handleAddRepeatedEvent}
           updateEvent={handleUpdateEvent}
+          updateRepeatedGroup={handleUpdateRepeatedGroup}
+          deleteAdminEvent={handleDeleteAdminEvent}
+          loadRepeatedGroup={fetchRepeatedEventGroup}
           created={eventCreated}
           createSuccess={createSuccess}
+          repeatedSeriesCreate={repeatedSeriesCreate}
           updated={eventUpdated}
           updateSuccess={updateSuccess}
+          repeatedSeriesUpdate={repeatedSeriesUpdate}
+          deleted={eventDeleted}
+          deleteSuccess={deleteSuccess}
+          deleteWasSeries={deleteWasSeries}
         />
       ) : (
         <UserEvents
