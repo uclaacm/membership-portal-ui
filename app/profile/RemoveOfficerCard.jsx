@@ -11,19 +11,19 @@ const COMMITTEES = Config.committees;
 const RemoveOfficerCard = () => {
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState('');
-  const [committees, setCommittees] = useState([]);
+  const [committee, setCommittee] = useState('');
   const [message, setMessage] = useState({ text: '', success: false });
   const [loading, setLoading] = useState(false);
 
   const openModal = () => {
     setShowModal(true);
     setEmail('');
-    setCommittees([]);
+    setCommittee('');
     setMessage({ text: '', success: false });
   };
 
-  const toggleCommittee = (c) => {
-    setCommittees(prev => (prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]));
+  const selectCommittee = (c) => {
+    setCommittee(c);
   };
 
   const removeOfficerFromCommittee = async () => {
@@ -34,7 +34,7 @@ const RemoveOfficerCard = () => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ email, committees }),
+      body: JSON.stringify({ email, committees: [committee] }),
     });
     const data = await response.json();
     return { ok: response.ok, data };
@@ -45,8 +45,8 @@ const RemoveOfficerCard = () => {
       setMessage({ text: 'Email is required.', success: false });
       return;
     }
-    if (committees.length === 0) {
-      setMessage({ text: 'Select at least one committee.', success: false });
+    if (!committee) {
+      setMessage({ text: 'Select the committee to remove them from.', success: false });
       return;
     }
     setLoading(true);
@@ -54,7 +54,7 @@ const RemoveOfficerCard = () => {
       const { ok, data } = await removeOfficerFromCommittee();
       if (ok) {
         setMessage({ text: data.message, success: true });
-        setCommittees([]);
+        setCommittee('');
       } else {
         setMessage({ text: data.error || 'Something went wrong.', success: false });
       }
@@ -86,21 +86,21 @@ const RemoveOfficerCard = () => {
             </div>
 
             <div className="ro-field">
-              <label className="ro-label">Committees</label>
+              <label className="ro-label">Committee</label>
               <div className="ro-committee-grid">
                 {COMMITTEES.map(c => (
                   <button
                     key={c}
                     type="button"
-                    className={`ro-chip ${committees.includes(c) ? 'selected' : ''}`}
-                    onClick={() => toggleCommittee(c)}
+                    className={`ro-chip ${committee === c ? 'selected' : ''}`}
+                    onClick={() => selectCommittee(c)}
                   >
                     {c}
                   </button>
                 ))}
               </div>
               <p className="ro-help">
-                If all committees are removed, the officer is demoted to standard member.
+                Officers belong to one committee. Select the committee they are on to remove them; they will be demoted to standard member.
               </p>
             </div>
 
