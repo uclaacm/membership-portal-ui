@@ -38,6 +38,8 @@ const config = {
       applications: "/api/v1/internship/applications",
       ownApplication: "/api/v1/internship/applications/me",
       committees: "/api/v1/internship/committees",
+      committeesAdmin: "/api/v1/internship/committees/admin",
+      committeesBulkStatus: "/api/v1/internship/committees/bulk-status",
     },
     leaderboard: "/api/v1/leaderboard",
     admin: {
@@ -352,6 +354,7 @@ const config = {
     ["W", "#01d4cb"],
     ["Cloud", "#9f97ff"],
   ],
+  platforms: ["Instagram Story", "Instagram Post", "Discord", "LinkTree", "Medium Article", "LinkedIn", "CS Newsletter"],
 };
 
 export default config;
