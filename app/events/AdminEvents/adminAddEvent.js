@@ -398,13 +398,13 @@ export default class AdminAddEvent extends React.Component {
                 <p className="section-label">Basic Info</p>
                 <div className="field-group">
                   <label>Title <span className="required-mark">*</span></label>
-                  <input type="text" value={this.state.event.title} name="title" onChange={this.handleChange} placeholder="My Awesome Event" />
+                  <input type="text" value={this.state.event.title || ''} name="title" onChange={this.handleChange} placeholder="My Awesome Event" />
                 </div>
                 <div className="field-row">
                   <div className="field-group">
                     <label>Committee <span className="required-mark">*</span></label>
                     <select
-                      value={this.state.event.committee}
+                      value={this.state.event.committee || 'ACM'}
                       name="committee"
                       onChange={this.handleCommiteeChange}
                       style={{ color: committeeColorMap[this.state.event.committee] }}
@@ -417,7 +417,7 @@ export default class AdminAddEvent extends React.Component {
                   </div>
                   <div className="field-group">
                     <label>External RSVP Link <span className="optional-mark">optional — overrides built-in RSVP</span></label>
-                    <input type="text" value={this.state.event.eventLink} name="eventLink" onChange={this.handleChange} placeholder="https://forms.google.com/..." />
+                    <input type="text" value={this.state.event.eventLink || ''} name="eventLink" onChange={this.handleChange} placeholder="https://forms.google.com/..." />
                   </div>
                 </div>
               </div>
@@ -465,7 +465,7 @@ export default class AdminAddEvent extends React.Component {
                 </div>
                 <div className="field-group">
                   <label>Location <span className="required-mark">*</span></label>
-                  <input type="text" value={this.state.event.location} name="location" onChange={this.handleChange} placeholder="EBU3B B250" />
+                  <input type="text" value={this.state.event.location || ''} name="location" onChange={this.handleChange} placeholder="EBU3B B250" />
                 </div>
               </div>
 
@@ -477,7 +477,7 @@ export default class AdminAddEvent extends React.Component {
                     <label>Check-in Code <span className="required-mark">*</span></label>
                     <input
                       type="text"
-                      value={this.state.event.attendanceCode}
+                      value={this.state.event.attendanceCode || ''}
                       name="attendanceCode"
                       onChange={this.handleChange}
                       placeholder="e.g. HACK2025"
@@ -487,7 +487,7 @@ export default class AdminAddEvent extends React.Component {
                     <label>Points <span className="required-mark">*</span></label>
                     <input
                       type="text"
-                      value={this.state.event.attendancePoints}
+                      value={this.state.event.attendancePoints || ''}
                       name="attendancePoints"
                       onChange={this.handleChange}
                       placeholder="10"
