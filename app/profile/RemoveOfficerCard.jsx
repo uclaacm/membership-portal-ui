@@ -8,6 +8,15 @@ import './RemoveOfficerCard.scss';
 
 const COMMITTEES = Config.committees;
 
+const getResponseMessage = (data, fallback) => {
+  const value = data?.message || data?.error;
+
+  if (typeof value === 'string') return value;
+  if (value && typeof value.message === 'string') return value.message;
+
+  return fallback;
+};
+
 const RemoveOfficerCard = () => {
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState('');
@@ -53,10 +62,10 @@ const RemoveOfficerCard = () => {
     try {
       const { ok, data } = await removeOfficerFromCommittee();
       if (ok) {
-        setMessage({ text: data.message, success: true });
+        setMessage({ text: getResponseMessage(data, 'Officer assignment removed.'), success: true });
         setCommittee('');
       } else {
-        setMessage({ text: data.error || 'Something went wrong.', success: false });
+        setMessage({ text: getResponseMessage(data, 'Something went wrong.'), success: false });
       }
     } catch {
       setMessage({ text: 'Network error. Please try again.', success: false });
