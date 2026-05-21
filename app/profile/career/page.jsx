@@ -36,7 +36,6 @@ export default function CareerPage() {
   }, [userProfile]);
 
   useEffect(() => {
-    if (activeCommittees !== null) return;
     fetchAllCommittees().then(result => {
       if (result.success) {
         setActiveCommittees(result.data.filter(c => c.isActive));
