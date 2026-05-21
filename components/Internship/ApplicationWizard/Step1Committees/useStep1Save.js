@@ -69,6 +69,8 @@ export default function useStep1Save(selectedCommitteeIds, profileData) {
     setErrorKind(null);
 
     try {
+      const payload = buildBody(ids);
+      //console.log("Step1 committees payload:", payload);
       if (!app || !app._id) {
         const pd = profileDataRef.current;
         if (!pd || !pd.university || !pd.major || typeof pd.graduationYear !== "number") {
@@ -113,7 +115,7 @@ export default function useStep1Save(selectedCommitteeIds, profileData) {
           appRef.current = r2.data;
         }
       } else {
-        const result = await updateApplication(app._id, buildBody(ids));
+        const result = await updateApplication(app._id, payload);
         if (!result.success) {
           if (result.notFound) {
             setError("Application not found");
