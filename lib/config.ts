@@ -38,6 +38,8 @@ const config = {
       applications: "/api/v1/internship/applications",
       ownApplication: "/api/v1/internship/applications/me",
       committees: "/api/v1/internship/committees",
+      committeesAdmin: "/api/v1/internship/committees/admin",
+      committeesBulkStatus: "/api/v1/internship/committees/bulk-status",
     },
     leaderboard: "/api/v1/leaderboard",
     admin: {
@@ -352,6 +354,17 @@ const config = {
     ["W", "#01d4cb"],
     ["Cloud", "#9f97ff"],
   ],
+  committeeBanners: {
+    "AI" : "/logo.png",
+    "Cyber" : "/logo.png",
+    "Design" : "/event_banners/acm_design_banner.webp",
+    "Hack" : "/event_banners/acm_hack_banner.webp",
+    "ICPC" : "/event_banners/acm_icpc_banner.webp",
+    "Studio" : "/event_banners/acm_studio_banner.webp",
+    "TeachLA" : "/event_banners/acm_teachla_banner.webp",
+    "W" : "/event_banners/acm_w_banner.webp",
+    "Cloud" : "/event_banners/acm_cloud_banner.webp",
+  },
   platforms: ["Instagram Story", "Instagram Post", "Discord", "LinkTree", "Medium Article", "LinkedIn", "CS Newsletter"],
 };
 

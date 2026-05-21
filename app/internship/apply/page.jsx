@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
-import { isAdminAtom, isOfficerAtom, myApplicationAtom } from "@/lib/atoms";
+
 import fetchOwnApplication from "@/app/actions/internship/fetchOwnApplication";
+import ApplicationWizard from "@/components/Internship/ApplicationWizard";
 import OfficerIneligibilityMessage from "@/components/Internship/OfficerIneligibilityMessage";
+import { isAdminAtom, isOfficerAtom, myApplicationAtom } from "@/lib/atoms";
 
 export default function ApplyPage() {
   const isAdmin = useAtomValue(isAdminAtom);
@@ -32,21 +34,14 @@ export default function ApplyPage() {
 
   useEffect(() => {
     if (!mounted) return;
-    if (myApplication?.submittedAt) {
+    if (myApplication?.submissionStatus === "submitted") {
       router.replace("/internship");
     }
   }, [mounted, myApplication, router]);
 
   if (!mounted) return null;
-
   if (isAdmin || isOfficer) return <OfficerIneligibilityMessage />;
+  if (myApplication?.submissionStatus === "submitted") return null;
 
-  if (myApplication?.submittedAt) return null;
-
-  return (
-    <div>
-      <h1>Apply for Internship</h1>
-      <p>Application wizard coming in Phase 2.</p>
-    </div>
-  );
+  return <ApplicationWizard />;
 }
