@@ -62,5 +62,3 @@ build/
 *.pem
 .env*
 certificates
-
-./public/event_banners/*
