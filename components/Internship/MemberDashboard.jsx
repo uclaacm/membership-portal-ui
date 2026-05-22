@@ -38,7 +38,7 @@ export default function MemberDashboard() {
       }
 
       if (committeesResult.success) {
-        const active = committeesResult.data.filter((c) => c.isActive);
+        const active = committeesResult.data;
         setActiveCommittees(active);
       } else {
         setActiveCommittees([]);
