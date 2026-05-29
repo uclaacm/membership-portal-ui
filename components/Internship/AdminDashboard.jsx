@@ -18,9 +18,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [applications, setApplications] = useState([]);
-  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [applicationsStatus, setApplicationsStatus] = useState("idle");
   const [applicationsError, setApplicationsError] = useState(null);
-  const [applicationsLoaded, setApplicationsLoaded] = useState(false);
 
   const loadCommittees = useCallback(async () => {
     setLoading(true);
@@ -35,16 +34,16 @@ export default function AdminDashboard() {
   }, []);
 
   const loadApplications = useCallback(async () => {
-    setApplicationsLoading(true);
+    setApplicationsStatus("loading");
     const result = await fetchAllApplications();
     if (result.success) {
       setApplications(result.data);
       setApplicationsError(null);
+      setApplicationsStatus("success");
     } else {
       setApplicationsError(result.error);
+      setApplicationsStatus("error");
     }
-    setApplicationsLoading(false);
-    setApplicationsLoaded(true);
   }, []);
 
   useEffect(() => {
@@ -52,10 +51,10 @@ export default function AdminDashboard() {
   }, [loadCommittees]);
 
   useEffect(() => {
-    if (activeTab === "applications" && !applicationsLoaded && !applicationsLoading) {
+    if (activeTab === "applications" && applicationsStatus === "idle") {
       Promise.resolve().then(loadApplications);
     }
-  }, [activeTab, applicationsLoaded, applicationsLoading, loadApplications]);
+  }, [activeTab, applicationsStatus, loadApplications]);
 
   return (
     <div className="admin-dashboard">
@@ -91,13 +90,21 @@ export default function AdminDashboard() {
         )}
         {activeTab === "applications" && (
           <>
-            {applicationsLoading && (
+            {applicationsStatus === "loading" && (
               <div className="admin-dashboard__placeholder">Loading applications…</div>
             )}
-            {!applicationsLoading && applicationsError && (
-              <div className="committee-table-wrapper__error">{applicationsError}</div>
+            {applicationsStatus === "error" && (
+              <div className="committee-table-wrapper__error">
+                {applicationsError}
+                <button
+                  type="button"
+                  onClick={() => setApplicationsStatus("idle")}
+                >
+                  Retry
+                </button>
+              </div>
             )}
-            {!applicationsLoading && !applicationsError && (
+            {applicationsStatus === "success" && (
               <ApplicationTable applications={applications} committees={committees} />
             )}
           </>
