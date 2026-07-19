@@ -18,6 +18,12 @@ export default function ApplicationStatusCard() {
   const myApplication = useAtomValue(myApplicationAtom);
   const activeCommittees = useAtomValue(activeCommitteesAtom);
 
+  const applicationWizardLink = (
+    <Link href="/internship/apply" className="application-status-card__button">
+      Start/Continue application
+    </Link>
+  );
+
   // Branch 0: Loading
   if (activeCommittees === null) {
     return (
@@ -42,9 +48,7 @@ export default function ApplicationStatusCard() {
             Applications are open
           </div>
           <div className="application-status-card__cta">
-            <Link href="/internship/apply" className="application-status-card__button">
-              Start Application
-            </Link>
+            {applicationWizardLink}
           </div>
         </div>
       </div>
@@ -67,9 +71,7 @@ export default function ApplicationStatusCard() {
             {thirdName && <span className="committee-chip">{thirdName}</span>}
           </div>
           <div className="application-status-card__cta">
-            <Link href="/internship/apply" className="application-status-card__button">
-              Continue Application
-            </Link>
+            {applicationWizardLink}
           </div>
           {myApplication.lastModifiedAt && (
             <p className="application-status-card__timestamp">
