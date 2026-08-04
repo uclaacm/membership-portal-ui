@@ -7,6 +7,7 @@ import WizardProgressBar from "@/components/Internship/WizardProgressBar";
 import Step1Committees from "@/components/Internship/ApplicationWizard/Step1Committees";
 import Step2Questions from "@/components/Internship/ApplicationWizard/Step2Questions";
 import Step3Resume from "@/components/Internship/ApplicationWizard/Step3Resume";
+import Step4Review from "@/components/Internship/ApplicationWizard/Step4Review";
 import { myApplicationAtom } from "@/lib/atoms";
 
 const TOTAL_STEPS = 4;
@@ -17,20 +18,24 @@ export default function ApplicationWizard() {
   const [step1Valid, setStep1Valid] = useState(false);
   const [step2Valid, setStep2Valid] = useState(false);
   const [step3Valid, setStep3Valid] = useState(false);
+  const [step4Valid, setStep4Valid] = useState(false);
   const [advancing, setAdvancing] = useState(false);
   const flushPendingStep1Ref = useRef(null);
   const flushPendingStep2Ref = useRef(null);
   const flushPendingStep3Ref = useRef(null);
+  const flushPendingStep4Ref = useRef(null);
   const advancingRef = useRef(false);
   const handleStep1ValidityChange = useCallback((valid) => setStep1Valid(valid), []);
   const handleStep2ValidityChange = useCallback((valid) => setStep2Valid(valid), []);
   const handleStep3ValidityChange = useCallback((valid) => setStep3Valid(valid), []);
+  const handleStep4ValidityChange = useCallback((valid) => setStep4Valid(valid), []);
 
   const nextDisabled =
     currentStep === TOTAL_STEPS ||
     (currentStep === 1 && !step1Valid) ||
     (currentStep === 2 && !step2Valid) ||
     (currentStep === 3 && !step3Valid) ||
+    (currentStep === 4 && !step4Valid) ||
     advancing;
 
   const handleNext = async () => {
@@ -46,6 +51,9 @@ export default function ApplicationWizard() {
       }
       if (currentStep === 3 && flushPendingStep3Ref.current) {
         try { await flushPendingStep3Ref.current(); } catch { return; }
+      }
+      if (currentStep === 4 && flushPendingStep4Ref.current) {
+        try { await flushPendingStep4Ref.current(); } catch { return; }
       }
       setCurrentStep((s) => Math.min(TOTAL_STEPS, s + 1));
     } finally {
@@ -82,8 +90,11 @@ export default function ApplicationWizard() {
             flushPendingRef={flushPendingStep3Ref}
           />
         )}
-        {currentStep > 3 && (
-          <div className="text-slate-500">Step {currentStep} content (coming in a later phase)</div>
+        {currentStep === 4 && (
+          <Step4Review
+            onValidityChange={handleStep4ValidityChange}
+            flushPendingRef={flushPendingStep4Ref}
+          />
         )}
       </div>
       <div className="mt-6 flex gap-2">
