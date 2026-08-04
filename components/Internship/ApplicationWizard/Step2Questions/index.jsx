@@ -81,6 +81,8 @@ export default function Step2Questions({ onValidityChange, flushPendingRef }) {
     };
   }), [selectedCommitteeIds, committeeById, isTabIncomplete]);
 
+  const incompleteTabs = useMemo(() => tabs.filter((tab) => tab.incomplete), [tabs]);
+
   const step2Valid = useMemo(() => {
     if (selectedCommitteeIds.length === 0) return false;
     return selectedCommitteeIds.every((id) => !isTabIncomplete(id));
@@ -135,10 +137,18 @@ export default function Step2Questions({ onValidityChange, flushPendingRef }) {
     <section className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-slate-900">Application questions</h2>
-        <p className="text-sm text-slate-600">Required questions are marked with a red asterisk.</p>
+        <p className="text-sm text-slate-600">
+          Complete the required questions for each selected committee before moving on.
+        </p>
       </div>
 
       <CommitteeTabBar tabs={tabs} activeIndex={safeActiveTabIndex} onChange={setActiveTabIndex} />
+
+      {incompleteTabs.length > 0 && (
+        <div className="rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          Still needed: {incompleteTabs.map((tab) => tab.displayName).join(", ")}
+        </div>
+      )}
 
       {activeCommittee && (
         <QuestionForm
