@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
 
 import CommitteeTabBar from "./CommitteeTabBar";
@@ -25,43 +25,50 @@ function isAnswered(value) {
   return typeof value === "string" && value.trim() !== "";
 }
 
+function getValidResponsesForCommittee(committee, responses) {
+  if (!committee || !Array.isArray(committee.customQuestions) || !Array.isArray(responses)) return [];
+  const validQuestionKeys = new Set(committee.customQuestions.map((q) => q.questionKey));
+  return responses.filter((response) => validQuestionKeys.has(response.questionKey));
+}
+
 export default function Step2Questions({ onValidityChange, flushPendingRef }) {
   const myApplication = useAtomValue(myApplicationAtom);
   const committees = useAtomValue(committeesAtom);
   const [responsesByCommittee, setResponsesByCommittee] = useAtom(responsesByCommitteeAtom);
 
   const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const hydratedRef = useRef(false);
 
   const selectedCommitteeIds = useMemo(() => getSelectedCommitteeIds(myApplication), [myApplication]);
-
-  useEffect(() => {
-    if (hydratedRef.current) return;
-    if (!myApplication) return;
-    const ids = getSelectedCommitteeIds(myApplication);
-    if (ids.length === 0) return;
-    setResponsesByCommittee((prev) => {
-      const next = { ...prev };
-      ids.forEach((id, slot) => {
-        if (!next[id] || next[id].length === 0) {
-          next[id] = getSlotResponses(myApplication, slot);
-        }
-      });
-      return next;
-    });
-    hydratedRef.current = true;
-  }, [myApplication, setResponsesByCommittee]);
-
-  const safeActiveTabIndex =
-    activeTabIndex >= selectedCommitteeIds.length && selectedCommitteeIds.length > 0
-      ? 0
-      : activeTabIndex;
 
   const committeeById = useMemo(() => {
     const map = new Map();
     committees.forEach((c) => { map.set(c.id, c); });
     return map;
   }, [committees]);
+
+  useEffect(() => {
+    if (!myApplication) return;
+    const ids = getSelectedCommitteeIds(myApplication);
+    if (ids.length === 0) return;
+    setResponsesByCommittee((prev) => {
+      const next = { ...prev };
+      ids.forEach((id, slot) => {
+        const slotResponses = getValidResponsesForCommittee(
+          committeeById.get(id),
+          getSlotResponses(myApplication, slot),
+        );
+        if ((!next[id] || next[id].length === 0) && slotResponses.length > 0) {
+          next[id] = slotResponses;
+        }
+      });
+      return next;
+    });
+  }, [committeeById, myApplication, setResponsesByCommittee]);
+
+  const safeActiveTabIndex =
+    activeTabIndex >= selectedCommitteeIds.length && selectedCommitteeIds.length > 0
+      ? 0
+      : activeTabIndex;
 
   const isTabIncomplete = useCallback((committeeId) => {
     const committee = committeeById.get(committeeId);

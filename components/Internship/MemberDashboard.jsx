@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSetAtom, useAtomValue } from "jotai";
 import { myApplicationAtom, activeCommitteesAtom } from "@/lib/atoms";
 import fetchOwnApplication from "@/app/actions/internship/fetchOwnApplication";
@@ -15,6 +15,7 @@ export default function MemberDashboard() {
   const activeCommittees = useAtomValue(activeCommitteesAtom);
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const hasRequestedRef = useRef(false);
 
   useEffect(() => {
     Promise.resolve().then(() => setMounted(true));
@@ -22,14 +23,21 @@ export default function MemberDashboard() {
 
   useEffect(() => {
     if (!mounted) return;
+    if (hasRequestedRef.current) return;
+    hasRequestedRef.current = true;
 
     const loadData = async () => {
-      setIsLoading(true);
+      setIsLoading(activeCommittees === null);
 
       try {
+        const applicationPromise = fetchOwnApplication();
+        const committeesPromise = activeCommittees === null
+          ? fetchAllCommittees()
+          : Promise.resolve({ success: true, data: activeCommittees });
+
         const [applicationResult, committeesResult] = await Promise.all([
-          fetchOwnApplication(),
-          fetchAllCommittees(),
+          applicationPromise,
+          committeesPromise,
         ]);
 
         if (applicationResult.success) {
@@ -39,7 +47,7 @@ export default function MemberDashboard() {
         }
 
         if (committeesResult.success) {
-          const active = committeesResult.data;
+          const active = committeesResult.data.filter((committee) => committee.isActive);
           setActiveCommittees(active);
         } else {
           setActiveCommittees([]);
@@ -52,7 +60,7 @@ export default function MemberDashboard() {
     };
 
     loadData();
-  }, [mounted, setMyApplication, setActiveCommittees]);
+  }, [activeCommittees, mounted, setMyApplication, setActiveCommittees]);
 
   if (!mounted) return null;
 

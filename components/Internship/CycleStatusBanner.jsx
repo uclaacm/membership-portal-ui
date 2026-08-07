@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { activeCommitteesAtom } from "@/lib/atoms";
 import fetchAllCommittees from "@/app/actions/internship/fetchAllCommittees";
@@ -9,16 +9,31 @@ import "./CycleStatusBanner.scss";
 export default function CycleStatusBanner() {
   const activeCommittees = useAtomValue(activeCommitteesAtom);
   const setActiveCommittees = useSetAtom(activeCommitteesAtom);
+  const hasRequestedRef = useRef(false);
 
   useEffect(() => {
     if (activeCommittees !== null) return;
-    fetchAllCommittees().then(result => {
-      if (result.success) {
-        setActiveCommittees(result.data.filter(c => c.isActive));
-      } else {
+    if (hasRequestedRef.current) return;
+    hasRequestedRef.current = true;
+
+    let cancelled = false;
+    fetchAllCommittees()
+      .then(result => {
+        if (cancelled) return;
+        if (result.success) {
+          setActiveCommittees(result.data.filter(c => c.isActive));
+        } else {
+          setActiveCommittees([]);
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
         setActiveCommittees([]);
-      }
-    });
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [activeCommittees, setActiveCommittees]);
 
   if (activeCommittees === null) return null;
