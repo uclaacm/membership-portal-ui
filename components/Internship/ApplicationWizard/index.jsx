@@ -38,24 +38,48 @@ export default function ApplicationWizard() {
     (currentStep === 4 && !step4Valid) ||
     advancing;
 
+  const flushCurrentStep = async () => {
+    if (currentStep === 1 && flushPendingStep1Ref.current) {
+      await flushPendingStep1Ref.current();
+    }
+    if (currentStep === 2 && flushPendingStep2Ref.current) {
+      await flushPendingStep2Ref.current();
+    }
+    if (currentStep === 3 && flushPendingStep3Ref.current) {
+      await flushPendingStep3Ref.current();
+    }
+    if (currentStep === 4 && flushPendingStep4Ref.current) {
+      await flushPendingStep4Ref.current();
+    }
+  };
+
+  const resetNextStepValidity = () => {
+    if (currentStep === 1) setStep2Valid(false);
+    if (currentStep === 2) setStep3Valid(false);
+    if (currentStep === 3) setStep4Valid(false);
+  };
+
   const handleNext = async () => {
     if (advancingRef.current) return;
     advancingRef.current = true;
     setAdvancing(true);
     try {
-      if (currentStep === 1 && flushPendingStep1Ref.current) {
-        try { await flushPendingStep1Ref.current(); } catch { return; }
-      }
-      if (currentStep === 2 && flushPendingStep2Ref.current) {
-        try { await flushPendingStep2Ref.current(); } catch { return; }
-      }
-      if (currentStep === 3 && flushPendingStep3Ref.current) {
-        try { await flushPendingStep3Ref.current(); } catch { return; }
-      }
-      if (currentStep === 4 && flushPendingStep4Ref.current) {
-        try { await flushPendingStep4Ref.current(); } catch { return; }
-      }
+      try { await flushCurrentStep(); } catch { return; }
+      resetNextStepValidity();
       setCurrentStep((s) => Math.min(TOTAL_STEPS, s + 1));
+    } finally {
+      advancingRef.current = false;
+      setAdvancing(false);
+    }
+  };
+
+  const handleBack = async () => {
+    if (advancingRef.current) return;
+    advancingRef.current = true;
+    setAdvancing(true);
+    try {
+      try { await flushCurrentStep(); } catch { return; }
+      setCurrentStep((s) => Math.max(1, s - 1));
     } finally {
       advancingRef.current = false;
       setAdvancing(false);
@@ -101,8 +125,8 @@ export default function ApplicationWizard() {
         <button
           type="button"
           className="rounded border border-gray-300 px-4 py-2 disabled:opacity-50"
-          onClick={() => setCurrentStep((s) => Math.max(1, s - 1))}
-          disabled={currentStep === 1}
+          onClick={handleBack}
+          disabled={currentStep === 1 || advancing}
         >
           Back
         </button>

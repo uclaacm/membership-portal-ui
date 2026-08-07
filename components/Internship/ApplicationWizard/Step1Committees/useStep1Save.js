@@ -9,27 +9,52 @@ import { myApplicationAtom, responsesByCommitteeAtom } from "@/lib/atoms";
 
 const DEBOUNCE_MS = 500;
 
-function buildBody(ids, responsesMap) {
+function getSelectedCommitteeIds(app) {
+  if (!app) return [];
+  return [app.firstChoiceCommittee, app.secondChoiceCommittee, app.thirdChoiceCommittee].filter(Boolean);
+}
+
+function getSlotResponses(app, slot) {
+  if (!app) return [];
+  if (slot === 0) return Array.isArray(app.firstChoiceResponses) ? app.firstChoiceResponses : [];
+  if (slot === 1) return Array.isArray(app.secondChoiceResponses) ? app.secondChoiceResponses : [];
+  if (slot === 2) return Array.isArray(app.thirdChoiceResponses) ? app.thirdChoiceResponses : [];
+  return [];
+}
+
+function cleanResponses(responses) {
+  if (!Array.isArray(responses)) return [];
+  return responses
+    .filter((r) => r && typeof r.answer === "string" && r.answer.trim() !== "")
+    .map((r) => ({ questionKey: r.questionKey, question: r.question, answer: r.answer }));
+}
+
+function buildResponsesByCommittee(app, responsesMap) {
+  const merged = {};
+  getSelectedCommitteeIds(app).forEach((committeeId, slot) => {
+    merged[committeeId] = cleanResponses(getSlotResponses(app, slot));
+  });
+
+  Object.entries(responsesMap || {}).forEach(([committeeId, responses]) => {
+    merged[committeeId] = cleanResponses(responses);
+  });
+
+  return merged;
+}
+
+function buildBody(ids, responsesMap, app = null) {
   const [first, second, third] = ids;
+  const responsesByCommittee = buildResponsesByCommittee(app, responsesMap);
+
   const body = {
     firstChoiceCommittee: first,
     secondChoiceCommittee: second ?? null,
     thirdChoiceCommittee: third ?? null,
+    firstChoiceResponses: first ? (responsesByCommittee[first] || []) : [],
+    secondChoiceResponses: second ? (responsesByCommittee[second] || []) : [],
+    thirdChoiceResponses: third ? (responsesByCommittee[third] || []) : [],
   };
-  const hasMapEntries = responsesMap && Object.keys(responsesMap).length > 0;
-  if (hasMapEntries) {
-    const cleanResponses = (committeeId) => {
-      if (!committeeId) return [];
-      const arr = responsesMap[committeeId];
-      if (!Array.isArray(arr)) return [];
-      return arr
-        .filter((r) => r && typeof r.answer === "string" && r.answer.trim() !== "")
-        .map((r) => ({ questionKey: r.questionKey, question: r.question, answer: r.answer }));
-    };
-    body.firstChoiceResponses = cleanResponses(first);
-    body.secondChoiceResponses = cleanResponses(second);
-    body.thirdChoiceResponses = cleanResponses(third);
-  }
+
   return body;
 }
 
@@ -90,7 +115,7 @@ export default function useStep1Save(selectedCommitteeIds, profileData) {
     setErrorKind(null);
 
     try {
-      const payload = buildBody(ids, responsesByCommitteeRef.current);
+      const payload = buildBody(ids, responsesByCommitteeRef.current, app);
       if (!app || !app._id) {
         const pd = profileDataRef.current;
         if (!pd || !pd.university || !pd.major || typeof pd.graduationYear !== "number") {
@@ -116,7 +141,10 @@ export default function useStep1Save(selectedCommitteeIds, profileData) {
 
         const freshIds = latestIdsRef.current;
         if (freshIds.length > 1) {
-          const r2 = await updateApplication(result.data._id, buildBody(freshIds, responsesByCommitteeRef.current));
+          const r2 = await updateApplication(
+            result.data._id,
+            buildBody(freshIds, responsesByCommitteeRef.current, result.data),
+          );
           if (!r2.success) {
             if (r2.notFound) {
               setError("Application not found");

@@ -7,6 +7,7 @@ import { committeesAtom } from "@/lib/atoms";
 
 export default function CommitteeGrid({ selectedCommitteeIds, onToggle }) {
   const committees = useAtomValue(committeesAtom);
+  const activeCommittees = committees.filter((committee) => committee.isActive);
 
   if (!committees || committees.length === 0) {
     return (
@@ -22,7 +23,7 @@ export default function CommitteeGrid({ selectedCommitteeIds, onToggle }) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {committees.map(committee => {
+      {activeCommittees.map((committee) => {
         const idx = selectedCommitteeIds.indexOf(committee.id);
         const rank = idx === -1 ? null : idx + 1;
         return (
