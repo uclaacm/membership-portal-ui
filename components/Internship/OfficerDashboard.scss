@@ -36,7 +36,37 @@
   &__count {
     color: vars.$gray3;
     font-size: 0.85rem;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     margin-bottom: 0.75rem;
+  }
+}
+
+.copy-emails-button {
+  appearance: none;
+  background: vars.$white;
+  color: vars.$primary-color;
+  border: 1px solid vars.$primary-color;
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: vars.$primary-color;
+    color: vars.$white;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
@@ -178,6 +208,114 @@
 
   tr:hover td {
     background: rgba(0, 0, 0, 0.02);
+  }
+
+  &__row {
+    cursor: pointer;
+  }
+}
+
+.application-detail-drawer {
+  width: min(960px, 92vw);
+  max-height: 85vh;
+  background: vars.$white;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  padding: 2rem;
+  overflow-y: auto;
+  z-index: 1000;
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  &__close {
+    appearance: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: vars.$gray3;
+
+    &:hover {
+      color: vars.$primaryblack;
+    }
+  }
+
+  &__section {
+    margin-bottom: 1.5rem;
+
+    h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.95rem;
+    }
+  }
+
+  &__profile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1rem;
+    margin: 0;
+
+    dt {
+      font-size: 0.75rem;
+      color: vars.$gray3;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  }
+
+  &__status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  &__responses {
+    margin: 0;
+
+    dt {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    dd {
+      margin: 0 0 1rem;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
+  }
+
+  &__empty {
+    color: vars.$gray3;
+    font-size: 0.85rem;
   }
 }
 

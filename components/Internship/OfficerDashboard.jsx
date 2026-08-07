@@ -1,21 +1,39 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import fetchAllApplications from "@/app/actions/internship/fetchAllApplications";
 import fetchAllCommittees from "@/app/actions/internship/fetchAllCommittees";
+import ApplicationDetailDrawer from "@/app/internship/components/ApplicationDetailDrawer";
 import ApplicationTable from "@/app/internship/components/ApplicationTable";
+import CopyEmailsButton from "@/app/internship/components/CopyEmailsButton";
 import OfficerFilterBar from "@/app/internship/components/OfficerFilterBar";
 import OfficerStatsBar from "@/app/internship/components/OfficerStatsBar";
+import Toast from "@/components/Toast";
 import useDebouncedValue from "@/lib/hooks/useDebouncedValue";
-import { authUserProfileAtom } from "@/lib/atoms";
+import { authUserProfileAtom, officerApplicationsAtom } from "@/lib/atoms";
 import "./OfficerDashboard.scss";
 
 const CHOICE_FIELDS = [
-  { rank: 1, committeeField: "firstChoiceCommittee", statusField: "firstChoiceStatus" },
-  { rank: 2, committeeField: "secondChoiceCommittee", statusField: "secondChoiceStatus" },
-  { rank: 3, committeeField: "thirdChoiceCommittee", statusField: "thirdChoiceStatus" },
+  {
+    rank: 1,
+    committeeField: "firstChoiceCommittee",
+    statusField: "firstChoiceStatus",
+    responsesField: "firstChoiceResponses",
+  },
+  {
+    rank: 2,
+    committeeField: "secondChoiceCommittee",
+    statusField: "secondChoiceStatus",
+    responsesField: "secondChoiceResponses",
+  },
+  {
+    rank: 3,
+    committeeField: "thirdChoiceCommittee",
+    statusField: "thirdChoiceStatus",
+    responsesField: "thirdChoiceResponses",
+  },
 ];
 
 const EMPTY_STATUS_COUNTS = {
@@ -36,7 +54,9 @@ function normalizeCommitteeName(name) {
 }
 
 // Each application can list up to 3 committee choices; an officer only cares
-// about the single slot (if any) that matches their own committee.
+// about the single slot (if any) that matches their own committee. The API
+// already strips response arrays for the other slots — this just picks out
+// the one slot that's actually theirs to look at.
 function enrichForCommittee(application, committeeId) {
   const match = CHOICE_FIELDS.find((choice) => application[choice.committeeField] === committeeId);
   if (!match) return null;
@@ -45,6 +65,7 @@ function enrichForCommittee(application, committeeId) {
     myChoiceRank: match.rank,
     myStatusField: match.statusField,
     myStatus: application[match.statusField],
+    myResponses: Array.isArray(application[match.responsesField]) ? application[match.responsesField] : [],
   };
 }
 
@@ -55,7 +76,7 @@ export default function OfficerDashboard() {
   );
 
   const [committees, setCommittees] = useState([]);
-  const [applications, setApplications] = useState([]);
+  const [applications, setApplications] = useAtom(officerApplicationsAtom);
   const [loadStatus, setLoadStatus] = useState("loading");
   const [loadError, setLoadError] = useState(null);
 
@@ -63,6 +84,24 @@ export default function OfficerDashboard() {
   const [choiceFilter, setChoiceFilter] = useState("all");
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearch = useDebouncedValue(searchInput, 300);
+
+  const [selectedApplicationId, setSelectedApplicationId] = useState(null);
+  const [toast, setToast] = useState({ key: 0, message: "", success: true, visible: false });
+
+  const showToast = useCallback((message, success) => {
+    setToast((prev) => ({ key: prev.key + 1, message, success, visible: true }));
+  }, []);
+
+  // The Toast component re-arms its hide timer on every prop update where
+  // `showing` is true (not just on a false->true transition), so it must be
+  // flipped back to false explicitly here rather than left permanently true —
+  // otherwise unrelated re-renders (e.g. typing in the search box) would keep
+  // resetting its internal timer and it would never disappear.
+  useEffect(() => {
+    if (!toast.visible) return undefined;
+    const timer = setTimeout(() => setToast((prev) => ({ ...prev, visible: false })), 3000);
+    return () => clearTimeout(timer);
+  }, [toast.key, toast.visible]);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,7 +137,7 @@ export default function OfficerDashboard() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [setApplications]);
 
   const myCommittee = useMemo(() => committees.find((committee) => (
     normalizeCommitteeName(committee.displayName) === officerCommitteeName
@@ -109,7 +148,7 @@ export default function OfficerDashboard() {
 
   // Recomputed only when the raw application list or the officer's committee
   // changes — filtering below runs against this instead of re-deriving
-  // rank/status on every keystroke or filter change.
+  // rank/status/responses on every keystroke or filter change.
   const enrichedApplications = useMemo(() => {
     if (!myCommittee) return [];
     return applications
@@ -138,13 +177,27 @@ export default function OfficerDashboard() {
     });
   }, [enrichedApplications, statusFilter, choiceFilter, debouncedSearch]);
 
-  // Replace only the one application that changed so unrelated table rows
-  // keep the same object reference and skip re-rendering.
+  const selectedApplication = useMemo(
+    () => enrichedApplications.find((application) => application._id === selectedApplicationId) ?? null,
+    [enrichedApplications, selectedApplicationId],
+  );
+
+  // Writes through the shared atom, so the table and the drawer — both
+  // reading from the same atom — reflect a status change immediately,
+  // regardless of which one triggered it.
   const handleStatusChanged = useCallback((applicationId, updatedApplication) => {
     setApplications((prev) => prev.map((application) => (
       application._id === applicationId ? { ...application, ...updatedApplication } : application
     )));
-  }, []);
+  }, [setApplications]);
+
+  const handleCopied = useCallback((count) => {
+    showToast(`Copied ${count} email address${count === 1 ? "" : "es"}`, true);
+  }, [showToast]);
+
+  const handleCopyError = useCallback((message) => {
+    showToast(message, false);
+  }, [showToast]);
 
   if (loadStatus === "loading") {
     return <div className="officer-dashboard officer-dashboard__placeholder">Loading applications…</div>;
@@ -188,11 +241,30 @@ export default function OfficerDashboard() {
         onSearchInputChange={setSearchInput}
       />
 
-      <div className="officer-dashboard__count">
-        {filteredApplications.length} of {enrichedApplications.length} applications
+      <div className="officer-dashboard__toolbar">
+        <div className="officer-dashboard__count">
+          {filteredApplications.length} of {enrichedApplications.length} applications
+        </div>
+        <CopyEmailsButton
+          applications={filteredApplications}
+          onCopied={handleCopied}
+          onError={handleCopyError}
+        />
       </div>
 
-      <ApplicationTable applications={filteredApplications} onStatusChanged={handleStatusChanged} />
+      <ApplicationTable
+        applications={filteredApplications}
+        onStatusChanged={handleStatusChanged}
+        onRowClick={setSelectedApplicationId}
+      />
+
+      <ApplicationDetailDrawer
+        application={selectedApplication}
+        onClose={() => setSelectedApplicationId(null)}
+        onStatusChanged={handleStatusChanged}
+      />
+
+      <Toast key={toast.key} showing={toast.visible} message={toast.message} success={toast.success} />
     </div>
   );
 }
