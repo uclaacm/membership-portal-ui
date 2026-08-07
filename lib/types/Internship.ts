@@ -25,6 +25,15 @@ export interface InternshipApplication {
   firstChoiceStatus: string;
   secondChoiceStatus: string;
   thirdChoiceStatus: string;
+  firstChoiceOfficer1Rating?: "yes" | "no" | "maybe" | null;
+  secondChoiceOfficer1Rating?: "yes" | "no" | "maybe" | null;
+  thirdChoiceOfficer1Rating?: "yes" | "no" | "maybe" | null;
+  firstChoiceOfficer2Rating?: "yes" | "no" | "maybe" | null;
+  secondChoiceOfficer2Rating?: "yes" | "no" | "maybe" | null;
+  thirdChoiceOfficer2Rating?: "yes" | "no" | "maybe" | null;
+  firstChoiceNotes?: string;
+  secondChoiceNotes?: string;
+  thirdChoiceNotes?: string;
   applicationCycle: string;
   submittedAt: string;
   lastModifiedAt: string;

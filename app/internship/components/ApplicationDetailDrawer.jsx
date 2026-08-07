@@ -4,7 +4,7 @@ import StatusUpdateDropdown from "./StatusUpdateDropdown";
 
 const CHOICE_RANK_LABELS = { 1: "1st Choice", 2: "2nd Choice", 3: "3rd Choice" };
 
-export default function ApplicationDetailDrawer({ application, onClose, onStatusChanged }) {
+export default function ApplicationDetailDrawer({ application, onClose, onApplicationChanged }) {
   if (!application) return null;
 
   return (
@@ -69,7 +69,7 @@ export default function ApplicationDetailDrawer({ application, onClose, onStatus
               applicationId={application._id}
               statusField={application.myStatusField}
               status={application.myStatus}
-              onChanged={onStatusChanged}
+              onChanged={onApplicationChanged}
             />
           </div>
         </section>

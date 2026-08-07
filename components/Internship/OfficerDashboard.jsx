@@ -21,18 +21,27 @@ const CHOICE_FIELDS = [
     committeeField: "firstChoiceCommittee",
     statusField: "firstChoiceStatus",
     responsesField: "firstChoiceResponses",
+    officer1RatingField: "firstChoiceOfficer1Rating",
+    officer2RatingField: "firstChoiceOfficer2Rating",
+    notesField: "firstChoiceNotes",
   },
   {
     rank: 2,
     committeeField: "secondChoiceCommittee",
     statusField: "secondChoiceStatus",
     responsesField: "secondChoiceResponses",
+    officer1RatingField: "secondChoiceOfficer1Rating",
+    officer2RatingField: "secondChoiceOfficer2Rating",
+    notesField: "secondChoiceNotes",
   },
   {
     rank: 3,
     committeeField: "thirdChoiceCommittee",
     statusField: "thirdChoiceStatus",
     responsesField: "thirdChoiceResponses",
+    officer1RatingField: "thirdChoiceOfficer1Rating",
+    officer2RatingField: "thirdChoiceOfficer2Rating",
+    notesField: "thirdChoiceNotes",
   },
 ];
 
@@ -66,6 +75,12 @@ function enrichForCommittee(application, committeeId) {
     myStatusField: match.statusField,
     myStatus: application[match.statusField],
     myResponses: Array.isArray(application[match.responsesField]) ? application[match.responsesField] : [],
+    myOfficer1RatingField: match.officer1RatingField,
+    myOfficer1Rating: application[match.officer1RatingField] ?? null,
+    myOfficer2RatingField: match.officer2RatingField,
+    myOfficer2Rating: application[match.officer2RatingField] ?? null,
+    myNotesField: match.notesField,
+    myNotes: application[match.notesField] ?? "",
   };
 }
 
@@ -183,9 +198,9 @@ export default function OfficerDashboard() {
   );
 
   // Writes through the shared atom, so the table and the drawer — both
-  // reading from the same atom — reflect a status change immediately,
-  // regardless of which one triggered it.
-  const handleStatusChanged = useCallback((applicationId, updatedApplication) => {
+  // reading from the same atom — reflect a status/rating/notes change
+  // immediately, regardless of which one triggered it.
+  const handleApplicationChanged = useCallback((applicationId, updatedApplication) => {
     setApplications((prev) => prev.map((application) => (
       application._id === applicationId ? { ...application, ...updatedApplication } : application
     )));
@@ -254,14 +269,14 @@ export default function OfficerDashboard() {
 
       <ApplicationTable
         applications={filteredApplications}
-        onStatusChanged={handleStatusChanged}
+        onApplicationChanged={handleApplicationChanged}
         onRowClick={setSelectedApplicationId}
       />
 
       <ApplicationDetailDrawer
         application={selectedApplication}
         onClose={() => setSelectedApplicationId(null)}
-        onStatusChanged={handleStatusChanged}
+        onApplicationChanged={handleApplicationChanged}
       />
 
       <Toast key={toast.key} showing={toast.visible} message={toast.message} success={toast.success} />
