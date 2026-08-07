@@ -56,7 +56,7 @@ export default function ApplicationStatusCard() {
   }
 
   // Branch 2: Draft
-  if (myApplication && !myApplication.submittedAt) {
+  if (myApplication && myApplication.submissionStatus !== "submitted") {
     const firstName = getCommitteeName(committees, myApplication.firstChoiceCommittee);
     const secondName = getCommitteeName(committees, myApplication.secondChoiceCommittee);
     const thirdName = getCommitteeName(committees, myApplication.thirdChoiceCommittee);
@@ -84,7 +84,7 @@ export default function ApplicationStatusCard() {
   }
 
   // Branch 3: Submitted
-  if (myApplication && myApplication.submittedAt) {
+  if (myApplication && myApplication.submissionStatus === "submitted") {
     const choices = [
       {
         committeeId: myApplication.firstChoiceCommittee,

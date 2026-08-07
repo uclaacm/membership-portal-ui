@@ -1,25 +1,30 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
+import { useRouter } from "next/navigation";
 
 import WizardProgressBar from "@/components/Internship/WizardProgressBar";
 import Step1Committees from "@/components/Internship/ApplicationWizard/Step1Committees";
 import Step2Questions from "@/components/Internship/ApplicationWizard/Step2Questions";
 import Step3Resume from "@/components/Internship/ApplicationWizard/Step3Resume";
 import Step4Review from "@/components/Internship/ApplicationWizard/Step4Review";
+import submitApplication from "@/app/actions/internship/submitApplication";
 import { myApplicationAtom } from "@/lib/atoms";
 
 const TOTAL_STEPS = 4;
 
 export default function ApplicationWizard() {
-  const draft = useAtomValue(myApplicationAtom);
+  const router = useRouter();
+  const [draft, setMyApplication] = useAtom(myApplicationAtom);
   const [currentStep, setCurrentStep] = useState(1);
   const [step1Valid, setStep1Valid] = useState(false);
   const [step2Valid, setStep2Valid] = useState(false);
   const [step3Valid, setStep3Valid] = useState(false);
   const [step4Valid, setStep4Valid] = useState(false);
   const [advancing, setAdvancing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
   const flushPendingStep1Ref = useRef(null);
   const flushPendingStep2Ref = useRef(null);
   const flushPendingStep3Ref = useRef(null);
@@ -31,12 +36,12 @@ export default function ApplicationWizard() {
   const handleStep4ValidityChange = useCallback((valid) => setStep4Valid(valid), []);
 
   const nextDisabled =
-    currentStep === TOTAL_STEPS ||
     (currentStep === 1 && !step1Valid) ||
     (currentStep === 2 && !step2Valid) ||
     (currentStep === 3 && !step3Valid) ||
-    (currentStep === 4 && !step4Valid) ||
     advancing;
+
+  const submitDisabled = !step4Valid || submitting || advancing;
 
   const flushCurrentStep = async () => {
     if (currentStep === 1 && flushPendingStep1Ref.current) {
@@ -86,6 +91,38 @@ export default function ApplicationWizard() {
     }
   };
 
+  const handleSubmit = async () => {
+    if (advancingRef.current) return;
+    advancingRef.current = true;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      try {
+        await flushCurrentStep();
+      } catch (err) {
+        setSubmitError((err && err.message) || "Couldn't save your latest changes. Please retry.");
+        return;
+      }
+
+      if (!draft || !draft._id) {
+        setSubmitError("No application to submit.");
+        return;
+      }
+
+      const result = await submitApplication(draft._id);
+      if (!result.success) {
+        setSubmitError(result.error || "Submit failed");
+        return;
+      }
+
+      setMyApplication(result.data);
+      router.replace("/internship");
+    } finally {
+      advancingRef.current = false;
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="mx-auto mt-[calc(61px+2rem)] max-w-3xl p-6">
       {draft && (
@@ -121,23 +158,37 @@ export default function ApplicationWizard() {
           />
         )}
       </div>
-      <div className="mt-6 flex gap-2">
+      <div className="mt-6 flex items-center gap-2">
         <button
           type="button"
           className="rounded border border-gray-300 px-4 py-2 disabled:opacity-50"
           onClick={handleBack}
-          disabled={currentStep === 1 || advancing}
+          disabled={currentStep === 1 || advancing || submitting}
         >
           Back
         </button>
-        <button
-          type="button"
-          className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
-          onClick={handleNext}
-          disabled={nextDisabled}
-        >
-          Next
-        </button>
+        {currentStep === TOTAL_STEPS ? (
+          <button
+            type="button"
+            className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+            onClick={handleSubmit}
+            disabled={submitDisabled}
+          >
+            {submitting ? "Submitting…" : "Submit Application"}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+            onClick={handleNext}
+            disabled={nextDisabled}
+          >
+            Next
+          </button>
+        )}
+        {submitError && (
+          <span className="text-sm text-red-600">{submitError}</span>
+        )}
       </div>
     </div>
   );
