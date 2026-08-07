@@ -1,0 +1,232 @@
+@use "@/styles/vars";
+
+.officer-dashboard {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  &__cycle {
+    color: vars.$gray3;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  &__placeholder,
+  &__error {
+    padding: 2rem;
+    text-align: center;
+    color: vars.$gray3;
+  }
+
+  &__error {
+    color: vars.$dark-red;
+  }
+
+  &__count {
+    color: vars.$gray3;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.officer-stats-bar {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+
+  &__pill {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid vars.$gray1;
+    background: vars.$white;
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover {
+      border-color: vars.$primary-color;
+    }
+  }
+
+  &__pill--active {
+    border-color: vars.$primary-color;
+    background: rgba(33, 77, 133, 0.08);
+  }
+
+  &__count {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  &__label {
+    color: vars.$gray3;
+  }
+
+  &__pill--active &__label {
+    color: vars.$primary-color;
+  }
+
+  &__pill--pending &__count {
+    color: #92400e;
+  }
+
+  &__pill--reviewing &__count {
+    color: #1e40af;
+  }
+
+  &__pill--interview_scheduled &__count {
+    color: #3730a3;
+  }
+
+  &__pill--accepted &__count {
+    color: vars.$dark-green;
+  }
+
+  &__pill--rejected &__count {
+    color: vars.$dark-red;
+  }
+}
+
+.officer-filter-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  &__search {
+    flex: 1 1 240px;
+    min-width: 200px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid vars.$gray1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+
+    &:focus {
+      outline: none;
+      border-color: vars.$primary-color;
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+
+    select {
+      padding: 0.45rem 0.6rem;
+      border: 1px solid vars.$gray1;
+      border-radius: 4px;
+      background: vars.$white;
+      font-size: 0.9rem;
+      min-width: 170px;
+
+      &:focus {
+        outline: none;
+        border-color: vars.$primary-color;
+      }
+    }
+  }
+
+  &__label {
+    color: vars.$gray3;
+    font-weight: 500;
+  }
+}
+
+.officer-application-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  &__empty {
+    padding: 2rem;
+    text-align: center;
+    color: vars.$gray3;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid vars.$gray1;
+    vertical-align: middle;
+  }
+
+  th {
+    font-weight: 600;
+    color: vars.$gray3;
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  tr:hover td {
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.status-update-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__select {
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid vars.$gray1;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &--pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    &--reviewing {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    &--interview_scheduled {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    &--accepted {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    &--rejected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+  }
+
+  &__error {
+    color: vars.$dark-red;
+    font-size: 0.75rem;
+  }
+}
