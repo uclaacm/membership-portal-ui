@@ -183,11 +183,29 @@
 
 .officer-application-table__scroll {
   overflow-x: auto;
+  // Keep the horizontal scrollbar visible (not just on hover/scroll) as a
+  // fallback for narrow windows, since the table can still exceed the
+  // container width even after tightening column widths below.
+  scrollbar-width: auto; // Firefox
+  scrollbar-color: vars.$gray3 vars.$gray1; // Firefox
+
+  &::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: vars.$gray1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: vars.$gray3;
+    border-radius: 999px;
+  }
 }
 
 .officer-application-table {
   width: 100%;
-  min-width: 900px;
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 0.9rem;
 
@@ -219,9 +237,15 @@
     cursor: pointer;
   }
 
+  &__email-col {
+    max-width: 400px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   &__notes-col {
-    min-width: 280px;
-    max-width: 420px;
+    min-width: 100px;
+    max-width: 200px;
     vertical-align: top;
   }
 }
@@ -232,6 +256,7 @@
   gap: 0.25rem;
 
   &__select {
+    width: 84px;
     padding: 0.35rem 0.6rem;
     border-radius: 999px;
     border: 1px solid vars.$gray1;
@@ -240,6 +265,9 @@
     cursor: pointer;
     background: vars.$white;
     color: vars.$gray3;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     &:disabled {
       opacity: 0.6;
@@ -437,12 +465,16 @@
   gap: 0.25rem;
 
   &__select {
+    width: 118px;
     padding: 0.35rem 0.6rem;
     border-radius: 999px;
     border: 1px solid vars.$gray1;
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     &:disabled {
       opacity: 0.6;

@@ -12,7 +12,7 @@ function ApplicationRow({ application, onApplicationChanged, onRowClick }) {
   return (
     <tr className="officer-application-table__row" onClick={() => onRowClick(application._id)}>
       <td>{application.firstName} {application.lastName}</td>
-      <td>{application.email}</td>
+      <td className="officer-application-table__email-col">{application.email}</td>
       <td>{application.graduationYear ?? "—"}</td>
       <td>{application.major}</td>
       <td>{CHOICE_RANK_LABELS[application.myChoiceRank] ?? "—"}</td>

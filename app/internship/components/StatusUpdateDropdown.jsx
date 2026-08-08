@@ -33,6 +33,8 @@ function StatusUpdateDropdown({ applicationId, statusField, status, onChanged })
     onChanged(applicationId, result.data);
   };
 
+  const currentLabel = STATUS_OPTIONS.find((option) => option.value === status)?.label ?? "";
+
   return (
     <div className="status-update-dropdown">
       <select
@@ -41,6 +43,7 @@ function StatusUpdateDropdown({ applicationId, statusField, status, onChanged })
         onChange={handleChange}
         disabled={saving}
         aria-label="Update application status"
+        title={currentLabel}
       >
         {STATUS_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>

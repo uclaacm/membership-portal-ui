@@ -33,6 +33,8 @@ function RatingDropdown({ applicationId, reviewField, value, onChanged }) {
     onChanged(applicationId, result.data);
   };
 
+  const currentLabel = RATING_OPTIONS.find((option) => option.value === (value || ""))?.label ?? "";
+
   return (
     <div className="rating-dropdown">
       <select
@@ -41,6 +43,7 @@ function RatingDropdown({ applicationId, reviewField, value, onChanged }) {
         onChange={handleChange}
         disabled={saving}
         aria-label="Update rating"
+        title={currentLabel}
       >
         {RATING_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>
