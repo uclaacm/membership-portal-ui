@@ -45,6 +45,36 @@
     gap: 1rem;
     margin-bottom: 0.75rem;
   }
+
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: vars.$gray3;
+
+    button {
+      appearance: none;
+      background: vars.$white;
+      border: 1px solid vars.$gray1;
+      border-radius: 4px;
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+
+      &:hover:not(:disabled) {
+        border-color: vars.$primary-color;
+        color: vars.$primary-color;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
 }
 
 .copy-emails-button {

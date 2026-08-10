@@ -10,6 +10,7 @@ import RankedList from "./RankedList";
 import useStep1Save from "./useStep1Save";
 import { authUserProfileAtom, committeesAtom, myApplicationAtom } from "@/lib/atoms";
 import fetchActiveCommittees from "@/app/actions/internship/fetchActiveCommittees";
+import useResolvedCommitteeNames from "@/lib/hooks/useResolvedCommitteeNames";
 
 export default function Step1Committees({ onValidityChange, flushPendingRef }) {
   const router = useRouter();
@@ -125,6 +126,11 @@ export default function Step1Committees({ onValidityChange, flushPendingRef }) {
     setSelectedCommitteeIds((prev) => prev.filter((id) => id !== committeeId));
   }, []);
 
+  // Selections can include a committee that's since been closed (it won't
+  // be in `committees`, which is active-only) — resolve its name separately
+  // so the ranked list doesn't fall back to showing a raw ObjectId.
+  const resolvedNames = useResolvedCommitteeNames(selectedCommitteeIds, committees);
+
   return (
     <section className="space-y-6">
       <h2 className="text-xl font-semibold text-slate-900">Select your committees</h2>
@@ -170,6 +176,7 @@ export default function Step1Committees({ onValidityChange, flushPendingRef }) {
 
       <RankedList
         selectedCommitteeIds={selectedCommitteeIds}
+        resolvedNames={resolvedNames}
         onReorder={handleReorder}
         onRemove={handleRemove}
       />

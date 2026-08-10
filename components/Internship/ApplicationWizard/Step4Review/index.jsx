@@ -11,6 +11,7 @@ import {
   myApplicationAtom,
   responsesByCommitteeAtom,
 } from "@/lib/atoms";
+import useResolvedCommitteeNames, { getCommitteeDisplayName } from "@/lib/hooks/useResolvedCommitteeNames";
 
 const MIN_GRADUATION_YEAR = 2020;
 
@@ -97,23 +98,25 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
     }
   }, [errorKind, router]);
 
-  const committeeById = useMemo(() => {
-    const map = new Map();
-    committees.forEach((committee) => { map.set(committee.id, committee); });
-    return map;
-  }, [committees]);
+  const selectedCommitteeIds = useMemo(
+    () => getSelectedCommitteeIds(myApplication),
+    [myApplication],
+  );
+
+  // A committee can close between when it was selected and this review step
+  // (e.g. once the cycle ends), dropping it out of `committees`, which is
+  // active-only. Resolve those separately so the review still shows a real
+  // name instead of falling back to "Committee".
+  const resolvedNames = useResolvedCommitteeNames(selectedCommitteeIds, committees);
 
   const rankedCommittees = useMemo(() => (
-    getSelectedCommitteeIds(myApplication).map((committeeId, index) => {
-      const committee = committeeById.get(committeeId);
-      return {
-        committeeId,
-        rank: index + 1,
-        displayName: committee?.displayName || "Committee",
-        responses: responsesByCommittee[committeeId] || getSlotResponses(myApplication, index),
-      };
-    })
-  ), [committeeById, myApplication, responsesByCommittee]);
+    selectedCommitteeIds.map((committeeId, index) => ({
+      committeeId,
+      rank: index + 1,
+      displayName: getCommitteeDisplayName(committees, resolvedNames, committeeId) || "Committee",
+      responses: responsesByCommittee[committeeId] || getSlotResponses(myApplication, index),
+    }))
+  ), [committees, resolvedNames, selectedCommitteeIds, myApplication, responsesByCommittee]);
 
   const handleGraduationYearChange = useCallback((event) => {
     setGraduationYearInput(event.target.value);
