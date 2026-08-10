@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import Config from '@/lib/config';
 import {
-  PageHeader, ApiLegend, SearchField, Select, PendingButton,
+  PageHeader, ApiLegend, SearchField, Select,
 } from '../components/primitives';
 import { formatBytes, formatCount, imageFilename } from '../format';
 
@@ -16,9 +16,40 @@ const FILTER_OPTIONS = [
 
 const ONE_MB = 1024 * 1024;
 
-export default function Media({ images, onDelete }) {
+export default function Media({
+  images, canUpload, maxBytes, onUpload, onDelete,
+}) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const [uploading, setUploading] = useState(false);
+  const [uploaded, setUploaded] = useState(null);
+  const [uploadError, setUploadError] = useState('');
+  const fileInput = useRef(null);
+
+  const handleFiles = async (event) => {
+    const files = Array.from(event.target.files || []);
+    // Reset immediately so picking the same file twice in a row still fires a change event.
+    event.target.value = '';
+    if (files.length === 0) return;
+
+    setUploading(true);
+    setUploadError('');
+    setUploaded(null);
+
+    const uploads = [];
+    const failures = [];
+    // Sequential rather than parallel: these are multi-megabyte bodies, and a burst of them
+    // through the Next server proxy is the kind of thing that gets a request dropped.
+    for (let i = 0; i < files.length; i += 1) {
+      const result = await onUpload(files[i]);
+      if (result.success) uploads.push({ name: files[i].name, url: result.url });
+      else failures.push(result.error || `${files[i].name} failed to upload.`);
+    }
+
+    setUploading(false);
+    if (uploads.length > 0) setUploaded(uploads);
+    if (failures.length > 0) setUploadError(failures.join(' '));
+  };
 
   const visible = images.filter((image) => {
     const name = imageFilename(image);
@@ -34,7 +65,9 @@ export default function Media({ images, onDelete }) {
     <>
       <PageHeader
         title="Media"
-        subtitle="Uploaded images, their size, and what still references them."
+        subtitle={canUpload
+          ? `Uploaded images, their size, and what still references them. Max ${Math.round(maxBytes / (1024 * 1024))} MB per image.`
+          : 'Uploaded images, their size, and what still references them.'}
       />
 
       <div className="cp-toolbar">
@@ -44,13 +77,54 @@ export default function Media({ images, onDelete }) {
           <span className="cp-toolbar-meta">
             {formatCount(images.length)} files · {formatBytes(storedBytes)} stored
           </span>
-          <PendingButton
-            variant="primary"
-            label="Upload"
-            note="Needs a file picker wired to uploadImage in app/actions/image — POST /image accepts the file but there is no upload control here."
-          />
+          {canUpload && (
+            <>
+              <input
+                ref={fileInput}
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                onChange={handleFiles}
+              />
+              <button
+                type="button"
+                className="cp-btn primary"
+                disabled={uploading}
+                onClick={() => fileInput.current?.click()}
+              >
+                {uploading ? 'Uploading…' : 'Upload'}
+              </button>
+            </>
+          )}
         </div>
       </div>
+
+      {uploadError && <div className="cp-upload-error">{uploadError}</div>}
+
+      {uploaded && (
+        <div className="cp-upload-result">
+          <strong>Uploaded {uploaded.length} image{uploaded.length === 1 ? '' : 's'}.</strong>
+          {uploaded.map((item) => (
+            <div className="cp-upload-row" key={item.url}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.url} alt={item.name} />
+              <div className="cp-upload-meta">
+                <span className="cp-upload-name">{item.name}</span>
+                {/* This is the URL to paste into an event's cover field. */}
+                <code>{item.url}</code>
+              </div>
+              <button
+                type="button"
+                className="cp-btn secondary small"
+                onClick={() => navigator.clipboard?.writeText(item.url)}
+              >
+                Copy URL
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {visible.length === 0 ? (
         <div className="cp-empty">No images match these filters.</div>
@@ -87,12 +161,15 @@ export default function Media({ images, onDelete }) {
         </div>
       )}
 
-      <ApiLegend pending />
+      <ApiLegend />
     </>
   );
 }
 
 Media.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  canUpload: PropTypes.bool.isRequired,
+  maxBytes: PropTypes.number.isRequired,
+  onUpload: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };

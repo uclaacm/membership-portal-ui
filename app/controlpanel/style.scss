@@ -828,6 +828,68 @@ $cp-topbar-height: 61px;
     color: vars.$gray2;
   }
 
+  // ------------------------------------------------------------ upload results
+
+  .cp-upload-error {
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #f0b4b4;
+    background: $cp-danger-hover;
+    color: vars.$dark-red;
+    font-size: 13px;
+  }
+
+  .cp-upload-result {
+    margin-bottom: 16px;
+    padding: 12px;
+    border: 1px solid vars.$gray1;
+    border-radius: 8px;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .cp-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      img {
+        width: 64px;
+        height: 44px;
+        object-fit: cover;
+        border-radius: 4px;
+        background: $cp-chip;
+        flex-shrink: 0;
+      }
+    }
+
+    .cp-upload-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+      flex-grow: 1;
+    }
+
+    .cp-upload-name {
+      font-weight: 600;
+      color: $cp-strong;
+    }
+
+    code {
+      font-family: monospace;
+      font-size: 12px;
+      background: $cp-chip;
+      padding: 2px 6px;
+      border-radius: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
   // ---------------------------------------------------------------- media grid
 
   .cp-media-grid {
@@ -994,127 +1056,6 @@ $cp-topbar-height: 61px;
 
   // ------------------------------------------------------------------- dialog
 
-  .cp-dialog-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-  }
-
-  .cp-dialog {
-    background: vars.$white;
-    border-radius: 10px;
-    padding: 26px 28px;
-    width: 420px;
-    max-width: 90vw;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-
-    h3 {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0;
-      color: $cp-strong;
-    }
-
-    .cp-field-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: vars.$gray2;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    input[type="email"],
-    input[type="text"] {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid vars.$gray1;
-      border-radius: 6px;
-      font-size: 13px;
-      font-family: inherit;
-      box-sizing: border-box;
-    }
-
-    .cp-segmented {
-      display: flex;
-      border: 1px solid vars.$gray1;
-      border-radius: 6px;
-      overflow: hidden;
-      width: fit-content;
-
-      button {
-        border: none;
-        background: vars.$white;
-        color: vars.$gray2;
-        font-family: inherit;
-        font-size: 13px;
-        padding: 6px 14px;
-        cursor: pointer;
-
-        &:hover {
-          background: $cp-chip;
-        }
-
-        &.selected {
-          background: vars.$secondaryblue;
-          color: vars.$white;
-
-          &:hover {
-            background: vars.$secondaryblue-dark;
-          }
-        }
-      }
-    }
-
-    .cp-chip-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .cp-chip {
-      padding: 4px 11px;
-      border-radius: 999px;
-      border: 1px solid vars.$gray1;
-      background: vars.$white;
-      font-size: 12px;
-      font-weight: 600;
-      color: vars.$gray3;
-      font-family: inherit;
-      cursor: pointer;
-
-      &:hover {
-        border-color: vars.$secondaryblue;
-        color: vars.$secondaryblue;
-      }
-
-      &.selected {
-        border-color: vars.$secondaryblue;
-        background: vars.$tertiaryblue;
-        color: vars.$secondaryblue-dark;
-      }
-    }
-
-    .cp-dialog-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .cp-dialog-error {
-      font-size: 12px;
-      color: vars.$dark-red;
-    }
-  }
-
   .cp-empty {
     padding: 24px 8px;
     font-size: 13px;
@@ -1161,3 +1102,128 @@ $cp-topbar-height: 61px;
     }
   }
 }
+
+// The assign-role dialog renders as a sibling of .control-panel-v2, not a descendant, so
+// these rules must live at the top level. Nested under .control-panel-v2 they matched
+// nothing and the dialog rendered as unstyled inline text at the foot of the page.
+.cp-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.cp-dialog {
+  background: vars.$white;
+  border-radius: 10px;
+  padding: 26px 28px;
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: $cp-strong;
+  }
+
+  .cp-field-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: vars.$gray2;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  input[type="email"],
+  input[type="text"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid vars.$gray1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .cp-segmented {
+    display: flex;
+    border: 1px solid vars.$gray1;
+    border-radius: 6px;
+    overflow: hidden;
+    width: fit-content;
+
+    button {
+      border: none;
+      background: vars.$white;
+      color: vars.$gray2;
+      font-family: inherit;
+      font-size: 13px;
+      padding: 6px 14px;
+      cursor: pointer;
+
+      &:hover {
+        background: $cp-chip;
+      }
+
+      &.selected {
+        background: vars.$secondaryblue;
+        color: vars.$white;
+
+        &:hover {
+          background: vars.$secondaryblue-dark;
+        }
+      }
+    }
+  }
+
+  .cp-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cp-chip {
+    padding: 4px 11px;
+    border-radius: 999px;
+    border: 1px solid vars.$gray1;
+    background: vars.$white;
+    font-size: 12px;
+    font-weight: 600;
+    color: vars.$gray3;
+    font-family: inherit;
+    cursor: pointer;
+
+    &:hover {
+      border-color: vars.$secondaryblue;
+      color: vars.$secondaryblue;
+    }
+
+    &.selected {
+      border-color: vars.$secondaryblue;
+      background: vars.$tertiaryblue;
+      color: vars.$secondaryblue-dark;
+    }
+  }
+
+  .cp-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .cp-dialog-error {
+    font-size: 12px;
+    color: vars.$dark-red;
+  }
+}
+

@@ -6,6 +6,7 @@ import moment from 'moment';
 import Topbar from '@/components/Topbar';
 import Toast from '@/components/Toast';
 import ConfirmationModal from '@/components/Modal/confirmationModal';
+import SyncSheetsModal from '@/components/Modal/syncSheetsModal';
 import Config from '@/lib/config';
 import CookieStore from '@/lib/cookieStore';
 import { isTokenSuperAdmin } from '@/lib/token';
@@ -18,6 +19,7 @@ import deleteEventAction from '@/app/actions/events/deleteEvent';
 import syncEventsAction from '@/app/actions/events/syncEvents';
 import fetchImages from '@/app/actions/image/fetchImages';
 import deleteImageAction from '@/app/actions/image/deleteImage';
+import uploadImageAction from '@/app/actions/image/uploadImage';
 import fetchAdmins from '@/app/actions/user/fetchAdmins';
 import fetchRoster from '@/app/actions/user/fetchRoster';
 import fetchOfficers from '@/app/actions/user/fetchOfficers';
@@ -38,9 +40,16 @@ import Media from './sections/Media';
 import AuditLog from './sections/AuditLog';
 import Settings from './sections/Settings';
 import { formatRelative } from './format';
+// ConfirmationModal and SyncSheetsModal render `.modal-wrapper`, whose styles live here.
+// Without this import they render as unstyled inline text instead of an overlay.
+import '@/components/Modal/style.scss';
 import './style.scss';
 
 const OVERVIEW_ACTIVITY_LIMIT = 7;
+
+// Mirrors the multer limit on POST /image. Checked here too so an oversized file is rejected
+// before it is uploaded rather than after.
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 
 export default function ControlPanelPage() {
   const userProfile = useAtomValue(authUserProfileAtom);
@@ -92,6 +101,7 @@ export default function ControlPanelPage() {
       : null,
     seq: a.seq + 1,
   })), []);
+  const [syncOpen, setSyncOpen] = useState(false);
   const [confirm, setConfirm] = useState(null);
   const [toast, setToast] = useState({ showing: false, success: true, message: '' });
 
@@ -251,10 +261,43 @@ export default function ControlPanelPage() {
     },
   });
 
+  // Returns the raw result so SyncSheetsModal can show its own in-progress and outcome state;
+  // the toast is a second signal for when the modal has already been dismissed.
   const handleSync = async (sheetUrl) => {
     const result = await syncEventsAction(sheetUrl || undefined);
     notify(!!result.success, result.message || result.error || 'Sync finished.');
-    await Promise.all([loadEvents(), loadAudit(auditFilters)]);
+    await Promise.all([loadEvents(), loadAudit(auditFilters, isAdmin)]);
+    return result;
+  };
+
+  /**
+   * Uploads one image and returns its previewable URL.
+   *
+   * The size and type checks are duplicated on the server; this copy exists to fail fast
+   * without pushing several megabytes over the wire first.
+   */
+  const handleUploadImage = async (file) => {
+    if (!file) return { success: false, error: 'No file selected.' };
+    if (!file.type.startsWith('image/')) {
+      return { success: false, error: `${file.name} is not an image.` };
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      return {
+        success: false,
+        error: `${file.name} is ${(file.size / (1024 * 1024)).toFixed(1)} MB — the limit is 5 MB.`,
+      };
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+    const result = await uploadImageAction(formData);
+
+    if (result.success) {
+      notify(true, 'Image uploaded.');
+      await Promise.all([loadImages(), loadAudit(auditFilters, isAdmin)]);
+      return { ...result, url: `${Config.API_URL}${Config.routes.image.specific}/${result.uuid}` };
+    }
+    notify(false, result.error || 'Upload failed.');
     return result;
   };
 
@@ -381,12 +424,20 @@ export default function ControlPanelPage() {
             events={events}
             lastSync={system.lastSync}
             canSync={canManage}
-            onSync={() => handleSync('')}
+            onSync={() => setSyncOpen(true)}
             onDelete={handleDeleteEvent}
           />
         );
       case 'media':
-        return <Media images={images} onDelete={handleDeleteImage} />;
+        return (
+          <Media
+            images={images}
+            canUpload={isAdmin || isOfficer}
+            maxBytes={MAX_UPLOAD_BYTES}
+            onUpload={handleUploadImage}
+            onDelete={handleDeleteImage}
+          />
+        );
       case 'audit':
         return (
           <AuditLog
@@ -405,7 +456,7 @@ export default function ControlPanelPage() {
             system={system}
             canManage={canManage}
             onRotatePassword={handleRotatePassword}
-            onSync={handleSync}
+            onSync={() => setSyncOpen(true)}
             onCloseCycle={handleCloseAll}
           />
         );
@@ -464,6 +515,13 @@ export default function ControlPanelPage() {
         prefill={assign.prefill}
         onClose={() => setAssign((a) => ({ ...a, open: false }))}
         onAssign={handleAssignRole}
+      />
+
+      <SyncSheetsModal
+        opened={syncOpen}
+        onClose={() => setSyncOpen(false)}
+        onSync={handleSync}
+        serviceAccountEmail={serviceAccountEmail}
       />
 
       <ConfirmationModal
