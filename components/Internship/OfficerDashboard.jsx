@@ -14,6 +14,7 @@ import OfficerStatsBar from "@/app/internship/components/OfficerStatsBar";
 import Toast from "@/components/Toast";
 import useDebouncedValue from "@/lib/hooks/useDebouncedValue";
 import { authUserProfileAtom, officerApplicationsAtom } from "@/lib/atoms";
+import CommitteeQuestionsModal from "./CommitteeQuestionsModal";
 import "./OfficerDashboard.scss";
 
 const CHOICE_FIELDS = [
@@ -111,6 +112,7 @@ export default function OfficerDashboard() {
   const [page, setPage] = useState(1);
 
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
+  const [isQuestionsModalOpen, setIsQuestionsModalOpen] = useState(false);
   const [toast, setToast] = useState({ key: 0, message: "", success: true, visible: false });
 
   const showToast = useCallback((message, success) => {
@@ -256,6 +258,14 @@ export default function OfficerDashboard() {
     loadStatusCounts();
   }, [setApplications, loadStatusCounts]);
 
+  const handleQuestionsSaved = useCallback((updatedCommittee) => {
+    setCommittees((prev) => prev.map((committee) => (
+      committee.id === updatedCommittee.id ? { ...committee, ...updatedCommittee } : committee
+    )));
+    setIsQuestionsModalOpen(false);
+    showToast("Committee questions saved", true);
+  }, [showToast]);
+
   // Walks every server page under the current filters (the on-screen list is
   // only one page of up to PAGE_SIZE) so "copy emails" grabs every matching
   // applicant's email, not just whichever page happens to be displayed.
@@ -328,6 +338,13 @@ export default function OfficerDashboard() {
       <div className="officer-dashboard__header">
         <h2>{myCommittee.displayName}</h2>
         <span className="officer-dashboard__cycle">Cycle {recruitmentCycle}</span>
+        <button
+          type="button"
+          className="officer-dashboard__edit-questions"
+          onClick={() => setIsQuestionsModalOpen(true)}
+        >
+          Edit Questions
+        </button>
       </div>
 
       <OfficerStatsBar counts={statusCounts} activeStatus={statusFilter} onSelectStatus={handleSelectStatus} />
@@ -388,6 +405,14 @@ export default function OfficerDashboard() {
       />
 
       <Toast key={toast.key} showing={toast.visible} message={toast.message} success={toast.success} />
+
+      {isQuestionsModalOpen && (
+        <CommitteeQuestionsModal
+          committee={myCommittee}
+          onClose={() => setIsQuestionsModalOpen(false)}
+          onSaved={handleQuestionsSaved}
+        />
+      )}
     </div>
   );
 }

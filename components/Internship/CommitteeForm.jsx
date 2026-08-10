@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import useCustomQuestionsEditor from "@/lib/hooks/useCustomQuestionsEditor";
+import CustomQuestionsEditor from "./CustomQuestionsEditor";
 
 function toDateInputValue(value) {
   if (!value) return "";
@@ -19,6 +21,7 @@ export default function CommitteeForm({ initialValues, submitLabel, onSubmit }) 
     toDateInputValue(initialValues?.applicationDeadline),
   );
   const [isActive, setIsActive] = useState(initialValues?.isActive ?? true);
+  const questionsEditor = useCustomQuestionsEditor(initialValues?.customQuestions);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -28,6 +31,11 @@ export default function CommitteeForm({ initialValues, submitLabel, onSubmit }) 
 
     if (!name.trim()) {
       setError("Name is required.");
+      return;
+    }
+    const questionsError = questionsEditor.validate();
+    if (questionsError) {
+      setError(questionsError);
       return;
     }
 
@@ -42,6 +50,7 @@ export default function CommitteeForm({ initialValues, submitLabel, onSubmit }) 
       internLimit: internLimit.trim() ? Number(internLimit) : undefined,
       applicationDeadline: applicationDeadline || undefined,
       isActive,
+      customQuestions: questionsEditor.toPayload(),
     };
 
     const result = await onSubmit(payload);
@@ -78,6 +87,8 @@ export default function CommitteeForm({ initialValues, submitLabel, onSubmit }) 
           rows={4}
         />
       </label>
+
+      <CustomQuestionsEditor editor={questionsEditor} />
 
       <label className="committee-form__field committee-form__field--inline">
         <span className="committee-form__label">Intern Limit</span>
