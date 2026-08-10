@@ -17,6 +17,7 @@ const config = {
       roster: "/api/v1/user/roster",
       officers: "/api/v1/user/officers",
       role: "/api/v1/user", // + /:uuid/role
+      bulk: "/api/v1/user/bulk",
     },
     audit: "/api/v1/audit",
     activity: "/api/v1/activity",

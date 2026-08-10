@@ -40,13 +40,32 @@ $cp-topbar-height: 61px;
 
   // ---------------------------------------------------------------- left rail
 
+  // Pinned to the viewport so "Switch to member view" and "Sign out" are always reachable
+  // without scrolling. align-self: start stops the grid from stretching the rail to the row
+  // height, which is what gives `sticky` somewhere to stick.
   .cp-rail {
+    position: sticky;
+    top: $cp-topbar-height;
+    align-self: start;
+    height: calc(100vh - #{$cp-topbar-height});
     border-right: 1px solid vars.$gray1;
     background: $cp-surface;
     padding: 24px 0;
     display: flex;
     flex-direction: column;
     gap: 2px;
+    box-sizing: border-box;
+  }
+
+  // Only the section list scrolls; min-height: 0 lets it actually shrink inside the flex
+  // column instead of overflowing and pushing the footer out of view.
+  .cp-nav-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   .cp-rail-label {
@@ -107,6 +126,7 @@ $cp-topbar-height: 61px;
 
   .cp-rail-footer {
     margin-top: auto;
+    flex-shrink: 0;
     border-top: 1px solid vars.$gray1;
     padding: 16px 20px 0;
     display: flex;
@@ -828,6 +848,59 @@ $cp-topbar-height: 61px;
     color: vars.$gray2;
   }
 
+  // --------------------------------------------------------- user detail modal
+
+  .cp-detail-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+
+    img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: $cp-chip;
+    }
+  }
+
+  .cp-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px 24px;
+  }
+
+  .cp-detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 0;
+    border-bottom: 1px solid $cp-rule;
+    min-width: 0;
+  }
+
+  .cp-detail-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: vars.$gray2;
+  }
+
+  .cp-detail-value {
+    font-size: 13px;
+    color: $cp-strong;
+    word-break: break-word;
+  }
+
+  .cp-detail-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
   // ------------------------------------------------------------ upload results
 
   .cp-upload-error {
@@ -941,6 +1014,7 @@ $cp-topbar-height: 61px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       margin-top: 4px;
       font-size: 11px;
 
@@ -952,6 +1026,12 @@ $cp-topbar-height: 61px;
         }
       }
 
+      .cp-media-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
       button {
         background: none;
         border: none;
@@ -960,9 +1040,14 @@ $cp-topbar-height: 61px;
         font-size: 11px;
         color: vars.$dark-red;
         cursor: pointer;
+        white-space: nowrap;
 
         &:hover {
           text-decoration: underline;
+        }
+
+        &.copy {
+          color: vars.$secondaryblue;
         }
       }
     }
@@ -1069,13 +1154,23 @@ $cp-topbar-height: 61px;
       grid-template-columns: 1fr;
     }
 
+    // Below the breakpoint the rail becomes a horizontal strip above the content, so pinning
+    // it to the viewport height would eat the screen.
     .cp-rail {
+      position: static;
+      height: auto;
       border-right: none;
       border-bottom: 1px solid vars.$gray1;
       flex-direction: row;
       flex-wrap: wrap;
       padding: 12px;
       gap: 4px;
+    }
+
+    .cp-nav-items {
+      flex-direction: row;
+      flex-wrap: wrap;
+      overflow-y: visible;
     }
 
     .cp-rail-label,
@@ -1224,6 +1319,41 @@ $cp-topbar-height: 61px;
   .cp-dialog-error {
     font-size: 12px;
     color: vars.$dark-red;
+  }
+
+  // The bulk-add dialog carries a textarea and a failure table, so it needs more room than
+  // the 420px assign-role dialog.
+  &.wide {
+    width: 560px;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d8d8d8;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    box-sizing: border-box;
+    resize: vertical;
+  }
+
+  .cp-field-hint {
+    font-size: 12px;
+    color: #979797;
+    margin: 6px 0 0 0;
+  }
+
+  .cp-bulk-result {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+
+    .cp-bulk-ok {
+      margin: 0;
+      color: rgba(0, 0, 0, 0.85);
+    }
   }
 }
 

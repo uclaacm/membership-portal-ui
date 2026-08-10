@@ -6,7 +6,7 @@ import moment from 'moment';
 import Config from '@/lib/config';
 import DataTable from '../components/DataTable';
 import {
-  PageHeader, Pill, ApiLegend, SearchField, Select, PendingButton,
+  PageHeader, Pill, ApiLegend, SearchField, Select,
 } from '../components/primitives';
 import { eventStatus, formatCount, formatDate } from '../format';
 
@@ -20,7 +20,7 @@ const TIME_OPTIONS = [
 ];
 
 export default function Events({
-  events, lastSync, canSync, onSync, onDelete,
+  events, lastSync, canSync, onSync, onAdd, onEdit, onViewRSVPs, onDelete,
 }) {
   const [search, setSearch] = useState('');
   const [committee, setCommittee] = useState('');
@@ -73,16 +73,8 @@ export default function Events({
       cellClassName: 'cp-row-actions',
       render: (e) => (
         <>
-          <PendingButton
-            inline
-            label="RSVPs"
-            note="Needs an attendee list view — GET /rsvp/:eventUuid exists but has no screen."
-          />
-          <PendingButton
-            inline
-            label="Edit"
-            note="Needs the event edit form hooked up — updateEvent exists in app/actions/events but is not mounted here."
-          />
+          <button type="button" className="secondary" onClick={() => onViewRSVPs(e)}>RSVPs</button>
+          <button type="button" className="primary" onClick={() => onEdit(e)}>Edit</button>
           <button type="button" className="destructive" onClick={() => onDelete(e)}>Delete</button>
         </>
       ),
@@ -106,15 +98,18 @@ export default function Events({
         />
         <Select label="Filter by time" value={time} onChange={setTime} options={TIME_OPTIONS} />
         <div className="cp-toolbar-right">
-          <span className="cp-toolbar-meta">{lastSync}</span>
-          <button type="button" className="cp-btn secondary" onClick={onSync} disabled={!canSync}>
-            Sync from Sheets
-          </button>
-          <PendingButton
-            variant="primary"
-            label="+ Add event"
-            note="Needs the event creation form hooked up — createEvent exists in app/actions/events but is not mounted in the Control Panel."
-          />
+          {/* Sheets sync writes events across every committee, so it is admin-only on the API.
+              Hidden rather than disabled: a greyed-out control an officer can never use is
+              just noise. */}
+          {canSync && (
+            <>
+              <span className="cp-toolbar-meta">{lastSync}</span>
+              <button type="button" className="cp-btn secondary" onClick={onSync}>
+                Sync from Sheets
+              </button>
+            </>
+          )}
+          <button type="button" className="cp-btn primary" onClick={onAdd}>+ Add event</button>
         </div>
       </div>
 
@@ -125,7 +120,7 @@ export default function Events({
         empty="No events match these filters."
       />
 
-      <ApiLegend pending />
+      <ApiLegend />
     </>
   );
 }
@@ -135,5 +130,8 @@ Events.propTypes = {
   lastSync: PropTypes.string.isRequired,
   canSync: PropTypes.bool.isRequired,
   onSync: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onViewRSVPs: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };

@@ -2,11 +2,12 @@
 
 import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
 import {
   PageHeader, ApiLegend, SearchField, Select,
 } from '../components/primitives';
-import { formatBytes, formatCount, imageFilename } from '../format';
+import {
+  formatBytes, formatCount, imageFilename, imageUrl,
+} from '../format';
 
 const FILTER_OPTIONS = [
   { value: 'all', label: 'All files' },
@@ -24,6 +25,7 @@ export default function Media({
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(null);
   const [uploadError, setUploadError] = useState('');
+  const [copied, setCopied] = useState(null);
   const fileInput = useRef(null);
 
   const handleFiles = async (event) => {
@@ -132,13 +134,12 @@ export default function Media({
         <div className="cp-media-grid">
           {visible.map((image) => {
             const references = image.referenceCount ?? 0;
+            const url = imageUrl(image.uuid);
             return (
               <div className="cp-media-tile" key={image.uuid}>
                 <div
                   className="cp-media-thumb"
-                  style={{
-                    backgroundImage: `url(${Config.API_URL}${Config.routes.image.specific}/${image.uuid})`,
-                  }}
+                  style={{ backgroundImage: `url(${url})` }}
                 />
                 <div className="cp-media-body">
                   <span className="cp-media-name" title={image.uuid}>{imageFilename(image)}</span>
@@ -152,7 +153,23 @@ export default function Media({
                         ? 'Unused'
                         : `${references} event${references === 1 ? '' : 's'}`}
                     </span>
-                    <button type="button" onClick={() => onDelete(image)}>Delete</button>
+                    <span className="cp-media-actions">
+                      {/* Available on every tile, not just after upload, so the URL is still
+                          recoverable once the page has been refreshed. */}
+                      <button
+                        type="button"
+                        className="copy"
+                        title={url}
+                        onClick={() => {
+                          navigator.clipboard?.writeText(url);
+                          setCopied(image.uuid);
+                          setTimeout(() => setCopied(null), 1500);
+                        }}
+                      >
+                        {copied === image.uuid ? 'Copied' : 'Copy URL'}
+                      </button>
+                      <button type="button" onClick={() => onDelete(image)}>Delete</button>
+                    </span>
                   </div>
                 </div>
               </div>

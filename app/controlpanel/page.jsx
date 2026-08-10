@@ -9,7 +9,6 @@ import ConfirmationModal from '@/components/Modal/confirmationModal';
 import SyncSheetsModal from '@/components/Modal/syncSheetsModal';
 import Config from '@/lib/config';
 import CookieStore from '@/lib/cookieStore';
-import { isTokenSuperAdmin } from '@/lib/token';
 import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom } from '@/lib/atoms';
 
 import logoutUser from '@/app/actions/auth/logoutUser';
@@ -17,6 +16,8 @@ import changeOneClickPassword from '@/app/actions/auth/changeOneClickPassword';
 import fetchAllEvents from '@/app/actions/events/fetchAllEvents';
 import deleteEventAction from '@/app/actions/events/deleteEvent';
 import syncEventsAction from '@/app/actions/events/syncEvents';
+import createEventAction from '@/app/actions/events/createEvent';
+import updateEventAction from '@/app/actions/events/updateEvent';
 import fetchImages from '@/app/actions/image/fetchImages';
 import deleteImageAction from '@/app/actions/image/deleteImage';
 import uploadImageAction from '@/app/actions/image/uploadImage';
@@ -24,6 +25,7 @@ import fetchAdmins from '@/app/actions/user/fetchAdmins';
 import fetchRoster from '@/app/actions/user/fetchRoster';
 import fetchOfficers from '@/app/actions/user/fetchOfficers';
 import updateUserRole from '@/app/actions/user/updateUserRole';
+import bulkUpdateUsers from '@/app/actions/user/bulkUpdateUsers';
 import fetchAuditLog from '@/app/actions/audit/fetchAuditLog';
 import fetchAllCommittees from '@/app/actions/internship/fetchAllCommittees';
 import fetchAllApplications from '@/app/actions/internship/fetchAllApplications';
@@ -31,6 +33,11 @@ import bulkUpdateCommitteeStatus from '@/app/actions/internship/bulkUpdateCommit
 
 import ControlPanelV2, { SECTIONS, visibleSections } from './ControlPanelV2';
 import AssignRoleDialog from './components/AssignRoleDialog';
+import EventRSVPsModal from './components/EventRSVPsModal';
+import UserDetailModal from './components/UserDetailModal';
+import BulkCommitteeDialog from './components/BulkCommitteeDialog';
+import BulkAddUsersDialog from './components/BulkAddUsersDialog';
+import AdminAddEvent from '@/app/events/AdminEvents/adminAddEvent';
 import Overview from './sections/Overview';
 import Users from './sections/Users';
 import Roles from './sections/Roles';
@@ -43,6 +50,10 @@ import { formatRelative } from './format';
 // ConfirmationModal and SyncSheetsModal render `.modal-wrapper`, whose styles live here.
 // Without this import they render as unstyled inline text instead of an overlay.
 import '@/components/Modal/style.scss';
+// AdminAddEvent carries no styles of its own — its overlay lives in this sheet, scoped under
+// `.admin-dashboard`. Only app/events/page.jsx imported it, so on /controlpanel the form
+// rendered permanently visible and unstyled.
+import '@/app/events/AdminEvents/style.scss';
 import './style.scss';
 
 const OVERVIEW_ACTIVITY_LIMIT = 7;
@@ -50,6 +61,14 @@ const OVERVIEW_ACTIVITY_LIMIT = 7;
 // Mirrors the multer limit on POST /image. Checked here too so an oversized file is rejected
 // before it is uploaded rather than after.
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+
+// Shape AdminAddEvent expects for a new event; it reads every key, so omitting one leaves an
+// uncontrolled input behind.
+const EMPTY_EVENT = {
+  attendancePoints: '', attendanceCode: '', committee: '', cover: '', description: '',
+  endDate: '', eventLink: '', location: '', platforms: [], startDate: '', title: '',
+  startTime: '',
+};
 
 export default function ControlPanelPage() {
   const userProfile = useAtomValue(authUserProfileAtom);
@@ -102,6 +121,13 @@ export default function ControlPanelPage() {
     seq: a.seq + 1,
   })), []);
   const [syncOpen, setSyncOpen] = useState(false);
+  const [eventForm, setEventForm] = useState({
+    showing: false, isEdit: false, event: EMPTY_EVENT, seq: 0,
+  });
+  const [rsvpEvent, setRsvpEvent] = useState(null);
+  const [viewUser, setViewUser] = useState(null);
+  const [bulkCommittee, setBulkCommittee] = useState({ open: false, uuids: [] });
+  const [bulkAddOpen, setBulkAddOpen] = useState(false);
   const [confirm, setConfirm] = useState(null);
   const [toast, setToast] = useState({ showing: false, success: true, message: '' });
 
@@ -109,9 +135,6 @@ export default function ControlPanelPage() {
     setToast({ showing: true, success, message });
     setTimeout(() => setToast((t) => ({ ...t, showing: false })), 3500);
   }, []);
-
-  const token = mounted ? CookieStore.get('token') : null;
-  const isSuperAdmin = isTokenSuperAdmin(token || '');
 
   // ------------------------------------------------------------------ loaders
 
@@ -147,8 +170,6 @@ export default function ControlPanelPage() {
       setOfficers([]);
       return;
     }
-    // fetchAdmins is super-admin-only; a plain admin gets an empty list rather than an
-    // error, so the Admins table simply shows nothing it is not allowed to see.
     const [adminList, officerList] = await Promise.all([fetchAdmins(), fetchOfficers()]);
     setAdmins(adminList);
     setOfficers(officerList);
@@ -230,6 +251,74 @@ export default function ControlPanelPage() {
     }
     return result;
   }, [notify, isAdmin, loadRoles, loadRoster, loadAudit, userFilters, auditFilters]);
+
+
+  const openAddEvent = () => setEventForm((f) => ({
+    showing: true, isEdit: false, event: EMPTY_EVENT, seq: f.seq + 1,
+  }));
+
+  // AdminAddEvent formats the dates as moments, so they have to be converted back from the
+  // ISO strings the API returns before the form can read them.
+  const openEditEvent = (event) => setEventForm((f) => ({
+    seq: f.seq + 1,
+    showing: true,
+    isEdit: true,
+    event: {
+      ...EMPTY_EVENT,
+      ...event,
+      startDate: event.startDate ? moment(event.startDate) : '',
+      endDate: event.endDate ? moment(event.endDate) : '',
+    },
+  }));
+
+  // The form emits one object for both cases; a uuid means it is an edit.
+  const handleSaveEvent = async (event) => {
+    // attendanceCode is NOT NULL on the events table, and sanitize() drops empty strings, so a
+    // blank field reaches the API as null and comes back as an opaque 422. Say what is wrong.
+    if (!event.uuid && !String(event.attendanceCode || '').trim()) {
+      notify(false, 'An attendance code is required to create an event.');
+      return;
+    }
+
+    const result = event.uuid
+      ? await updateEventAction(event)
+      : await createEventAction(event);
+
+    if (result.success) {
+      notify(true, event.uuid ? 'Event updated.' : 'Event created.');
+      setEventForm((f) => ({ ...f, showing: false }));
+      await Promise.all([loadEvents(), loadAudit(auditFilters, isAdmin)]);
+    } else {
+      notify(false, result.error || 'Could not save the event.');
+    }
+  };
+
+
+  /**
+   * Applies a bulk role/committee change and reports it.
+   *
+   * The API reports per-user failures rather than rejecting the whole batch, so the toast
+   * summarises both halves and the dialog shows the detail.
+   */
+  const handleBulkUpdate = async (payload) => {
+    const result = await bulkUpdateUsers(payload);
+
+    if (!result.success) {
+      notify(false, result.error || 'Bulk update failed.');
+      return result;
+    }
+
+    const failedCount = result.failed.length;
+    notify(
+      failedCount === 0,
+      failedCount === 0
+        ? `Updated ${result.updated.length} user${result.updated.length === 1 ? '' : 's'}.`
+        : `Updated ${result.updated.length}, ${failedCount} failed.`,
+    );
+
+    await Promise.all([loadRoster(userFilters), loadRoles(isAdmin), loadAudit(auditFilters, isAdmin)]);
+    return result;
+  };
 
   const handleDeleteEvent = (event) => setConfirm({
     title: 'Delete event',
@@ -372,7 +461,11 @@ export default function ControlPanelPage() {
 
   if (!mounted) return null;
 
-  const canManageAdmins = isSuperAdmin;
+  // "Assign admin role" and "Remove an admin or president" are *protected* in the permission
+  // matrix, not super-admin-only: any admin may do them on an as-needed basis, and every one
+  // is written to the audit log. PATCH /user/:uuid/role enforces the one hard limit — only a
+  // super admin can alter another super admin.
+  const canManageAdmins = isAdmin;
   const canManage = isAdmin;
 
   const sectionTitle = SECTIONS.find((s) => s.id === section)?.label ?? 'Control Panel';
@@ -394,6 +487,9 @@ export default function ControlPanelPage() {
             onFiltersChange={setUserFilters}
             onAssignRole={handleAssignRole}
             onEditUser={(user) => openAssign(user.role, user)}
+            onViewUser={setViewUser}
+            onAssignCommittee={(uuids) => setBulkCommittee({ open: true, uuids })}
+            onBulkAdd={() => setBulkAddOpen(true)}
           />
         );
       case 'roles':
@@ -425,6 +521,9 @@ export default function ControlPanelPage() {
             lastSync={system.lastSync}
             canSync={canManage}
             onSync={() => setSyncOpen(true)}
+            onAdd={openAddEvent}
+            onEdit={openEditEvent}
+            onViewRSVPs={setRsvpEvent}
             onDelete={handleDeleteEvent}
           />
         );
@@ -504,37 +603,76 @@ export default function ControlPanelPage() {
         onLogout={handleLogout}
       >
         {renderSection()}
+        {/* Mounted inside the panel, not beside it: these overlays use .cp-* classes, which
+            are scoped to .control-panel-v2. position: fixed still pins them to the viewport,
+            so nesting costs nothing and keeps one source for the styling. */}
+        <AssignRoleDialog
+          key={assign.seq}
+          open={assign.open}
+          initialRole={assign.role}
+          prefill={assign.prefill}
+          onClose={() => setAssign((a) => ({ ...a, open: false }))}
+          onAssign={handleAssignRole}
+        />
+
+        {/* `.admin-dashboard` is the scope every rule in AdminEvents/style.scss is nested
+            under; without it the imported sheet still matches nothing. */}
+        <div className="admin-dashboard">
+          <AdminAddEvent
+            key={eventForm.seq}
+            event={eventForm.event}
+            isEdit={eventForm.isEdit}
+            showing={eventForm.showing}
+            onClickAdd={handleSaveEvent}
+            onClickCancel={() => setEventForm((f) => ({ ...f, showing: false }))}
+          />
+        </div>
+
+        <EventRSVPsModal event={rsvpEvent} onClose={() => setRsvpEvent(null)} />
+
+        <UserDetailModal
+          user={viewUser}
+          canManageRoles={isAdmin}
+          onEditRole={(user) => { setViewUser(null); openAssign(user.role, user); }}
+          onClose={() => setViewUser(null)}
+        />
+
+        <BulkCommitteeDialog
+          open={bulkCommittee.open}
+          count={bulkCommittee.uuids.length}
+          onClose={() => setBulkCommittee({ open: false, uuids: [] })}
+          onApply={({ committees: picked, committeeMode }) => handleBulkUpdate({
+            uuids: bulkCommittee.uuids, committees: picked, committeeMode,
+          })}
+        />
+
+        <BulkAddUsersDialog
+          open={bulkAddOpen}
+          onClose={() => setBulkAddOpen(false)}
+          onApply={handleBulkUpdate}
+        />
+
+        <SyncSheetsModal
+          opened={syncOpen}
+          onClose={() => setSyncOpen(false)}
+          onSync={handleSync}
+          serviceAccountEmail={serviceAccountEmail}
+        />
+
+        <ConfirmationModal
+          title={confirm?.title ?? ''}
+          message={confirm?.message ?? ''}
+          opened={!!confirm}
+          cancel={() => setConfirm(null)}
+          submit={async () => {
+            const pending = confirm;
+            setConfirm(null);
+            if (pending) await pending.run();
+          }}
+        />
       </ControlPanelV2>
 
       <Toast showing={toast.showing} success={toast.success} message={toast.message} />
-
-      <AssignRoleDialog
-        key={assign.seq}
-        open={assign.open}
-        initialRole={assign.role}
-        prefill={assign.prefill}
-        onClose={() => setAssign((a) => ({ ...a, open: false }))}
-        onAssign={handleAssignRole}
-      />
-
-      <SyncSheetsModal
-        opened={syncOpen}
-        onClose={() => setSyncOpen(false)}
-        onSync={handleSync}
-        serviceAccountEmail={serviceAccountEmail}
-      />
-
-      <ConfirmationModal
-        title={confirm?.title ?? ''}
-        message={confirm?.message ?? ''}
-        opened={!!confirm}
-        cancel={() => setConfirm(null)}
-        submit={async () => {
-          const pending = confirm;
-          setConfirm(null);
-          if (pending) await pending.run();
-        }}
-      />
     </>
   );
 }

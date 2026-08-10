@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Config from '@/lib/config';
 import DataTable from '../components/DataTable';
 import {
-  PageHeader, Pill, TagGroup, Dagger, ApiLegend, SearchField, Select, PendingButton,
+  PageHeader, Pill, TagGroup, Dagger, ApiLegend, SearchField, Select,
 } from '../components/primitives';
 import {
   formatCount, formatDate, formatRelative, formatYear,
@@ -26,7 +26,8 @@ const escapeCsv = (value) => {
 };
 
 export default function Users({
-  data, filters, canManageRoles, onFiltersChange, onAssignRole, onEditUser,
+  data, filters, canManageRoles, onFiltersChange, onAssignRole, onEditUser, onViewUser,
+  onAssignCommittee, onBulkAdd,
 }) {
   const {
     users, memberTotal, page, pages, limit,
@@ -153,11 +154,7 @@ export default function Users({
       cellClassName: 'cp-row-actions',
       render: (user) => (
         <>
-          <PendingButton
-            inline
-            label="View"
-            note="Needs a member detail view — no per-member profile screen exists in the Control Panel yet."
-          />
+          <button type="button" className="secondary" onClick={() => onViewUser(user)}>View</button>
           {canManageRoles && (
             <button type="button" className="primary" onClick={() => onEditUser(user)}>
               Edit role
@@ -199,19 +196,20 @@ export default function Users({
         <div className="cp-toolbar-right">
           <span className="cp-toolbar-meta">{formatCount(memberTotal)} users</span>
           <button type="button" className="cp-btn secondary" onClick={exportCsv}>Export CSV</button>
+          {canManageRoles && (
+            <button type="button" className="cp-btn primary" onClick={onBulkAdd}>+ Add users</button>
+          )}
         </div>
       </div>
 
       {selectedUuids.length > 0 && (
         <div className="cp-bulk-bar">
           <span className="cp-bulk-count">{selectedUuids.length} selected</span>
-          <PendingButton
-            inline
-            label="Assign committee"
-            note="Needs a bulk committee endpoint — the role endpoint sets committees one user at a time."
-          />
           {canManageRoles && (
             <>
+              <button type="button" onClick={() => onAssignCommittee(selectedUuids)}>
+                Assign committee
+              </button>
               <button type="button" onClick={() => bulkAssign('Officer')}>Make officer</button>
               <button type="button" className="destructive" onClick={() => bulkAssign('Member')}>
                 Revoke role
@@ -252,7 +250,7 @@ export default function Users({
         </div>
       </div>
 
-      <ApiLegend pending />
+      <ApiLegend />
     </>
   );
 }
@@ -264,4 +262,7 @@ Users.propTypes = {
   onFiltersChange: PropTypes.func.isRequired,
   onAssignRole: PropTypes.func.isRequired,
   onEditUser: PropTypes.func.isRequired,
+  onViewUser: PropTypes.func.isRequired,
+  onAssignCommittee: PropTypes.func.isRequired,
+  onBulkAdd: PropTypes.func.isRequired,
 };

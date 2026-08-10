@@ -36,26 +36,30 @@ export default function ControlPanelV2({
         <nav className="cp-rail" aria-label="Control panel sections">
           <p className="cp-rail-label">Control panel</p>
 
-          {visibleSections(isAdmin).map((item) => {
+          {/* The nav scrolls on its own so the session controls below stay pinned to the
+              bottom of the viewport rather than being pushed off by a long section list. */}
+          <div className="cp-nav-items">
+            {visibleSections(isAdmin).map((item) => {
             // Counts come from the canonical dataset via `counts`; a section with nothing
             // meaningful to count renders no badge rather than a zero.
-            const count = counts[item.id];
-            return (
-              <button
-                key={item.id}
-                type="button"
-                className={`cp-nav-item ${section === item.id ? 'active' : ''}`}
-                onClick={() => onSectionChange(item.id)}
-                aria-current={section === item.id ? 'page' : undefined}
-              >
-                <i className={`fa ${item.icon} cp-nav-icon`} aria-hidden="true" />
-                <span className="cp-nav-label">{item.label}</span>
-                {count !== undefined && count !== null && (
-                  <span className="cp-nav-count">{formatCount(count)}</span>
-                )}
-              </button>
-            );
-          })}
+              const count = counts[item.id];
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`cp-nav-item ${section === item.id ? 'active' : ''}`}
+                  onClick={() => onSectionChange(item.id)}
+                  aria-current={section === item.id ? 'page' : undefined}
+                >
+                  <i className={`fa ${item.icon} cp-nav-icon`} aria-hidden="true" />
+                  <span className="cp-nav-label">{item.label}</span>
+                  {count !== undefined && count !== null && (
+                    <span className="cp-nav-count">{formatCount(count)}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
           <div className="cp-rail-footer">
             <button type="button" onClick={onToggleView}>

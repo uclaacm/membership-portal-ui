@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Config from '@/lib/config';
 
 /** "Sep 24, 2023", or an em dash when the value is missing. */
 export const formatDate = (value) => (value ? moment(value).format('MMM D, YYYY') : '—');
@@ -32,6 +33,21 @@ export const formatYear = (year) => YEARS[year - 1] || '—';
 export const eventStatus = (event) => {
   if (!event.startDate) return 'Draft';
   return moment(event.startDate).isAfter(moment()) ? 'Upcoming' : 'Past';
+};
+
+/**
+ * Absolute, shareable URL for an uploaded image.
+ *
+ * Config.API_URL is "/app" in the browser, which yields a path-only URL that is useless once
+ * pasted anywhere outside the portal. Prefixing the current origin makes it work in a Sheets
+ * cover column, a Discord message, or an event's cover field.
+ *
+ * Safe to call during render: the Control Panel renders nothing until mounted, so this never
+ * runs on the server where `window` is undefined.
+ */
+export const imageUrl = (uuid) => {
+  const origin = typeof window === 'undefined' ? '' : window.location.origin;
+  return `${origin}${Config.API_URL}${Config.routes.image.specific}/${uuid}`;
 };
 
 /** Filename shown for an uploaded image, which the API stores only by uuid and mimetype. */
