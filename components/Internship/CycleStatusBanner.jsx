@@ -11,8 +11,11 @@ export default function CycleStatusBanner() {
   const setActiveCommittees = useSetAtom(activeCommitteesAtom);
   const hasRequestedRef = useRef(false);
 
+  // Always fetch fresh on mount rather than skipping when activeCommitteesAtom
+  // is already populated — it's shared across components/pages, so treating
+  // it as "already loaded" risks showing a stale snapshot from earlier in
+  // the session (e.g. after an admin opens/closes committees elsewhere).
   useEffect(() => {
-    if (activeCommittees !== null) return;
     if (hasRequestedRef.current) return;
     hasRequestedRef.current = true;
 
@@ -34,7 +37,7 @@ export default function CycleStatusBanner() {
     return () => {
       cancelled = true;
     };
-  }, [activeCommittees, setActiveCommittees]);
+  }, [setActiveCommittees]);
 
   if (activeCommittees === null) return null;
 

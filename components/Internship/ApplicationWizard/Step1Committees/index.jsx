@@ -51,10 +51,12 @@ export default function Step1Committees({ onValidityChange, flushPendingRef }) {
     }
   }, [setCommittees]);
 
+  // Always fetch fresh on mount rather than reusing whatever's already in
+  // committeesAtom — a committee's active status can change in the admin
+  // panel at any time, and this atom is shared across the wizard steps, so
+  // treating a non-empty atom as "already loaded" risks a stale snapshot.
   useEffect(() => {
-    if (committees.length === 0) {
-      loadCommittees();
-    }
+    loadCommittees();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
