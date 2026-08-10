@@ -49,9 +49,9 @@ export default function Topbar({
       <Link href="/events" className={pathname === "/events" ? "selected" : ""}>
         <NavigationItem text="Events" />
       </Link>
-      <Link href="/leaderboard" className={pathname === "/leaderboard" ? "selected" : ""}>
-        <NavigationItem text={isAdmin ? "Members" : "Leaderboard"} />
-      </Link>
+      {/* The Leaderboard item is gone: /leaderboard was deleted and its content now lives in a
+          modal on the dashboard. For admins the same slot read "Members", which the Control
+          Panel's Users section covers. */}
       <Link href="/profile/career" className={pathname.startsWith("/profile/career") ? "selected" : ""}>
         <NavigationItem text="Career Hub" />
       </Link>
