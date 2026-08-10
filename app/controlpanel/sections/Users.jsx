@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Config from '@/lib/config';
 import DataTable from '../components/DataTable';
 import {
-  PageHeader, Pill, TagGroup, Dagger, ApiLegend, SearchField, Select,
+  PageHeader, Pill, TagGroup, Dagger, ApiLegend, SearchField, Select, PendingButton,
 } from '../components/primitives';
 import {
   formatCount, formatDate, formatRelative, formatYear,
@@ -26,7 +26,7 @@ const escapeCsv = (value) => {
 };
 
 export default function Users({
-  data, filters, onFiltersChange, onAssignRole, onEditUser,
+  data, filters, canManageRoles, onFiltersChange, onAssignRole, onEditUser,
 }) {
   const {
     users, memberTotal, page, pages, limit,
@@ -117,7 +117,15 @@ export default function Users({
         </span>
       ),
     },
-    { key: 'email', label: 'Email', render: (user) => user.email },
+    {
+      key: 'email',
+      label: <>Email <Dagger /></>,
+      // The API redacts contact details for members outside an officer's own committees, so
+      // this cell reflects what was actually returned rather than hiding a value we hold.
+      render: (user) => (user.email
+        ? user.email
+        : <span className="cp-redacted" title="Visible to admins, and to officers for their own committees">Hidden</span>),
+    },
     {
       key: 'role',
       label: 'Role',
@@ -144,9 +152,18 @@ export default function Users({
       label: '',
       cellClassName: 'cp-row-actions',
       render: (user) => (
-        <button type="button" className="primary" onClick={() => onEditUser(user)}>
-          Edit role
-        </button>
+        <>
+          <PendingButton
+            inline
+            label="View"
+            note="Needs a member detail view — no per-member profile screen exists in the Control Panel yet."
+          />
+          {canManageRoles && (
+            <button type="button" className="primary" onClick={() => onEditUser(user)}>
+              Edit role
+            </button>
+          )}
+        </>
       ),
     },
   ];
@@ -188,10 +205,19 @@ export default function Users({
       {selectedUuids.length > 0 && (
         <div className="cp-bulk-bar">
           <span className="cp-bulk-count">{selectedUuids.length} selected</span>
-          <button type="button" onClick={() => bulkAssign('Officer')}>Make officer</button>
-          <button type="button" className="destructive" onClick={() => bulkAssign('Member')}>
-            Revoke role
-          </button>
+          <PendingButton
+            inline
+            label="Assign committee"
+            note="Needs a bulk committee endpoint — the role endpoint sets committees one user at a time."
+          />
+          {canManageRoles && (
+            <>
+              <button type="button" onClick={() => bulkAssign('Officer')}>Make officer</button>
+              <button type="button" className="destructive" onClick={() => bulkAssign('Member')}>
+                Revoke role
+              </button>
+            </>
+          )}
           <button type="button" className="cp-bulk-clear" onClick={() => setSelected({})}>Clear</button>
         </div>
       )}
@@ -226,7 +252,7 @@ export default function Users({
         </div>
       </div>
 
-      <ApiLegend />
+      <ApiLegend pending />
     </>
   );
 }
@@ -234,6 +260,7 @@ export default function Users({
 Users.propTypes = {
   data: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired,
+  canManageRoles: PropTypes.bool.isRequired,
   onFiltersChange: PropTypes.func.isRequired,
   onAssignRole: PropTypes.func.isRequired,
   onEditUser: PropTypes.func.isRequired,

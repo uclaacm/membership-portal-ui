@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { PageHeader, SectionHead, Pill, ApiLegend } from '../components/primitives';
+import {
+  PageHeader, SectionHead, Pill, ApiLegend, PendingButton,
+} from '../components/primitives';
 
 export default function Settings({
   serviceAccountEmail, system, canManage, onRotatePassword, onSync, onCloseCycle,
@@ -94,6 +96,12 @@ export default function Settings({
 
         <div className="cp-setting-block">
           <SectionHead title="Recruitment cycle" />
+          <p className="cp-setting-state">
+            There is no cycle object in the API. This row is derived from which committees
+            currently have recruitment open, and &ldquo;Close cycle&rdquo; closes all of them at
+            once. A real cycle — with a name, open and close dates, and history — needs its own
+            model and endpoints.
+          </p>
           <div className="cp-cycle-row">
             <span>{system.cycleName}</span>
             {system.cycleOpen
@@ -109,10 +117,17 @@ export default function Settings({
               Close cycle
             </button>
           </div>
+          <div style={{ marginTop: 12 }}>
+            <PendingButton
+              small
+              label="Open next cycle"
+              note="Needs a recruitment cycle model — opening a cycle should set per-committee deadlines, which no endpoint currently does."
+            />
+          </div>
         </div>
       </div>
 
-      <ApiLegend />
+      <ApiLegend pending />
     </>
   );
 }

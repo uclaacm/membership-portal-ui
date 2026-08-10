@@ -174,10 +174,40 @@ $cp-topbar-height: 61px;
     border-top: 1px solid $cp-rule;
     font-size: 12px;
     color: vars.$gray2;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 
     .cp-dagger {
       color: vars.$secondaryblue;
     }
+  }
+
+  // Marker for controls that exist but are not wired to a handler yet. Amber rather than
+  // blue so it reads as "unfinished", distinct from the blue dagger's "API gap".
+  .cp-pending-mark {
+    color: $cp-warning;
+    font-weight: 700;
+    margin-left: 4px;
+  }
+
+  button.pending,
+  .cp-btn.pending {
+    opacity: 0.65;
+    cursor: not-allowed;
+    border-style: dashed;
+
+    &:hover {
+      background: vars.$white;
+      color: rgba(0, 0, 0, 0.8);
+      border-color: vars.$gray1;
+    }
+  }
+
+  // Redacted cells: an officer may see the member but not their contact details.
+  .cp-redacted {
+    color: vars.$gray2;
+    font-style: italic;
   }
 
   // --------------------------------------------------------------- shared bits

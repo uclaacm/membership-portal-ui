@@ -27,7 +27,7 @@ import fetchAllCommittees from '@/app/actions/internship/fetchAllCommittees';
 import fetchAllApplications from '@/app/actions/internship/fetchAllApplications';
 import bulkUpdateCommitteeStatus from '@/app/actions/internship/bulkUpdateCommitteeStatus';
 
-import ControlPanelV2, { SECTIONS } from './ControlPanelV2';
+import ControlPanelV2, { SECTIONS, visibleSections } from './ControlPanelV2';
 import AssignRoleDialog from './components/AssignRoleDialog';
 import Overview from './sections/Overview';
 import Users from './sections/Users';
@@ -48,7 +48,7 @@ export default function ControlPanelPage() {
   const isOfficer = useAtomValue(isOfficerAtom);
   const [adminView, setAdminView] = useAtom(adminViewAtom);
 
-  const [section, setSection] = useState('overview');
+  const [selectedSection, setSection] = useState('overview');
   const [mounted, setMounted] = useState(false);
 
   // One canonical dataset. Every count in the UI — rail badges, stat tiles, section-head
@@ -118,14 +118,27 @@ export default function ControlPanelPage() {
     setRoster(result);
   }, []);
 
-  const loadAudit = useCallback(async (filters) => {
+  const loadAudit = useCallback(async (filters, allowed) => {
+    if (!allowed) {
+      setAudit({
+        entries: [], total: 0, page: 1, pages: 0,
+      });
+      return;
+    }
     const result = await fetchAuditLog(filters);
     setAudit(result);
   }, []);
 
-  const loadRoles = useCallback(async () => {
-    // fetchAdmins is super-admin-only on the API; a plain admin gets an empty list rather
-    // than an error, so the Admins table simply shows nothing it is not allowed to see.
+  // The role map and the audit log are admin-only on the API. Officers skip these calls
+  // entirely rather than firing requests that can only come back 403.
+  const loadRoles = useCallback(async (allowed) => {
+    if (!allowed) {
+      setAdmins([]);
+      setOfficers([]);
+      return;
+    }
+    // fetchAdmins is super-admin-only; a plain admin gets an empty list rather than an
+    // error, so the Admins table simply shows nothing it is not allowed to see.
     const [adminList, officerList] = await Promise.all([fetchAdmins(), fetchOfficers()]);
     setAdmins(adminList);
     setOfficers(officerList);
@@ -146,10 +159,12 @@ export default function ControlPanelPage() {
     const init = async () => {
       setMounted(true);
 
-      await Promise.all([loadEvents(), loadImages(), loadRoles(), loadInternship()]);
+      await Promise.all([loadEvents(), loadImages(), loadRoles(isAdmin), loadInternship()]);
 
-      const activity = await fetchAuditLog({ range: 'all', limit: OVERVIEW_ACTIVITY_LIMIT });
-      setOverviewActivity(activity.entries);
+      if (isAdmin) {
+        const activity = await fetchAuditLog({ range: 'all', limit: OVERVIEW_ACTIVITY_LIMIT });
+        setOverviewActivity(activity.entries);
+      }
 
       const currentToken = CookieStore.get('token');
       if (!currentToken) return;
@@ -164,7 +179,7 @@ export default function ControlPanelPage() {
       }
     };
     init();
-  }, [loadEvents, loadImages, loadRoles, loadInternship]);
+  }, [isAdmin, loadEvents, loadImages, loadRoles, loadInternship]);
 
   useEffect(() => {
     const run = async () => {
@@ -175,10 +190,17 @@ export default function ControlPanelPage() {
 
   useEffect(() => {
     const run = async () => {
-      if (mounted) await loadAudit(auditFilters);
+      if (mounted) await loadAudit(auditFilters, isAdmin);
     };
     run();
-  }, [mounted, auditFilters, loadAudit]);
+  }, [mounted, auditFilters, isAdmin, loadAudit]);
+
+  // If the signed-in role cannot open the selected section — including on a role change while
+  // the panel is open — fall back to Overview. Derived during render rather than corrected in
+  // an effect, so there is never a frame showing a section the user may not see.
+  const section = visibleSections(isAdmin).some((s) => s.id === selectedSection)
+    ? selectedSection
+    : 'overview';
 
   // ------------------------------------------------------------------ actions
 
@@ -192,12 +214,12 @@ export default function ControlPanelPage() {
     });
     if (result.success) {
       notify(true, `Role updated to ${role}.`);
-      await Promise.all([loadRoles(), loadRoster(userFilters), loadAudit(auditFilters)]);
+      await Promise.all([loadRoles(isAdmin), loadRoster(userFilters), loadAudit(auditFilters)]);
     } else {
       notify(false, result.error || 'Could not update the role.');
     }
     return result;
-  }, [notify, loadRoles, loadRoster, loadAudit, userFilters, auditFilters]);
+  }, [notify, isAdmin, loadRoles, loadRoster, loadAudit, userFilters, auditFilters]);
 
   const handleDeleteEvent = (event) => setConfirm({
     title: 'Delete event',
@@ -325,6 +347,7 @@ export default function ControlPanelPage() {
               limit: roster.limit,
             }}
             filters={userFilters}
+            canManageRoles={isAdmin}
             onFiltersChange={setUserFilters}
             onAssignRole={handleAssignRole}
             onEditUser={(user) => openAssign(user.role, user)}
@@ -399,6 +422,7 @@ export default function ControlPanelPage() {
               audit: overviewActivity,
               system,
             }}
+            isAdmin={isAdmin}
             onNavigate={setSection}
           />
         );
@@ -423,6 +447,7 @@ export default function ControlPanelPage() {
         section={section}
         onSectionChange={setSection}
         counts={counts}
+        isAdmin={isAdmin}
         adminView={adminView}
         onToggleView={() => setAdminView((v) => !v)}
         onLogout={handleLogout}

@@ -46,7 +46,7 @@ AttentionRow.propTypes = {
 
 AttentionRow.defaultProps = { color: '#ffba43', system: false };
 
-export default function Overview({ data, onNavigate }) {
+export default function Overview({ data, isAdmin, onNavigate }) {
   const {
     memberTotal, admins, officers, events, images, applications, audit, system,
   } = data;
@@ -67,25 +67,33 @@ export default function Overview({ data, onNavigate }) {
     <>
       <PageHeader
         title="Overview"
-        subtitle="Chapter and portal state at a glance."
+        subtitle={isAdmin
+          ? 'Chapter and portal state at a glance.'
+          : 'Your committee\'s state at a glance. Portal-wide figures are admin-only.'}
       />
 
       <div className="cp-stat-grid">
         <StatTile
-          label="Members"
+          label={isAdmin ? 'Members' : 'Members in your committees'}
           value={formatCount(memberTotal)}
           delta={`${formatCount(events.length)} events run`}
         />
-        <StatTile
-          label="Admins"
-          value={formatCount(admins.length)}
-          delta={`${superAdmins} super admin · ${presidents} president${presidents === 1 ? '' : 's'}`}
-        />
-        <StatTile
-          label="Officers"
-          value={formatCount(officers.length)}
-          delta={`across ${officerCommittees.size} committee${officerCommittees.size === 1 ? '' : 's'}`}
-        />
+        {/* The role map is admin-only, so these two would read as "0 admins" for an
+            officer — which is false rather than merely unavailable. */}
+        {isAdmin && (
+          <StatTile
+            label="Admins"
+            value={formatCount(admins.length)}
+            delta={`${superAdmins} super admin · ${presidents} president${presidents === 1 ? '' : 's'}`}
+          />
+        )}
+        {isAdmin && (
+          <StatTile
+            label="Officers"
+            value={formatCount(officers.length)}
+            delta={`across ${officerCommittees.size} committee${officerCommittees.size === 1 ? '' : 's'}`}
+          />
+        )}
         <StatTile
           label="Events"
           value={formatCount(events.length)}
@@ -107,19 +115,27 @@ export default function Overview({ data, onNavigate }) {
       <div className="cp-overview-lower">
         <div>
           <SectionHead title="Recent activity" baseline>
-            <button type="button" className="cp-text-button" onClick={() => onNavigate('audit')}>
-              View audit log
-            </button>
+            {isAdmin && (
+              <button type="button" className="cp-text-button" onClick={() => onNavigate('audit')}>
+                View audit log
+              </button>
+            )}
           </SectionHead>
 
-          {audit.length === 0 && (
+          {!isAdmin && (
+            <div className="cp-empty">
+              The activity feed reads from the audit log, which is available to admins only.
+            </div>
+          )}
+
+          {isAdmin && audit.length === 0 && (
             <div className="cp-empty">
               No privileged actions recorded yet. Entries appear here as roles change and content
               is created or removed.
             </div>
           )}
 
-          {audit.map((entry) => {
+          {isAdmin && audit.map((entry) => {
             const style = ACTION_STYLE[entry.action] || DEFAULT_STYLE;
             return (
               <div className="cp-activity-row" key={entry.uuid}>
@@ -155,8 +171,14 @@ export default function Overview({ data, onNavigate }) {
 
           <div style={{ marginTop: 28 }}>
             <SectionHead title="System" baseline />
-            <AttentionRow system label="One-click password" count={system.oneClickRotated} />
-            <AttentionRow system label="Sheets sync" count={system.lastSync} />
+            {/* Both of these are derived from audit entries, which officers cannot read;
+                recruitment comes from the committee list and is visible to everyone. */}
+            {isAdmin && (
+              <>
+                <AttentionRow system label="One-click password" count={system.oneClickRotated} />
+                <AttentionRow system label="Sheets sync" count={system.lastSync} />
+              </>
+            )}
             <AttentionRow system label="Recruitment cycle" count={system.recruitment} />
           </div>
         </div>
@@ -169,5 +191,6 @@ export default function Overview({ data, onNavigate }) {
 
 Overview.propTypes = {
   data: PropTypes.object.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   onNavigate: PropTypes.func.isRequired,
 };

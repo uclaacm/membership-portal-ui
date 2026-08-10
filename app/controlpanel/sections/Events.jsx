@@ -6,7 +6,7 @@ import moment from 'moment';
 import Config from '@/lib/config';
 import DataTable from '../components/DataTable';
 import {
-  PageHeader, Pill, ApiLegend, SearchField, Select,
+  PageHeader, Pill, ApiLegend, SearchField, Select, PendingButton,
 } from '../components/primitives';
 import { eventStatus, formatCount, formatDate } from '../format';
 
@@ -72,7 +72,19 @@ export default function Events({
       label: '',
       cellClassName: 'cp-row-actions',
       render: (e) => (
-        <button type="button" className="destructive" onClick={() => onDelete(e)}>Delete</button>
+        <>
+          <PendingButton
+            inline
+            label="RSVPs"
+            note="Needs an attendee list view — GET /rsvp/:eventUuid exists but has no screen."
+          />
+          <PendingButton
+            inline
+            label="Edit"
+            note="Needs the event edit form hooked up — updateEvent exists in app/actions/events but is not mounted here."
+          />
+          <button type="button" className="destructive" onClick={() => onDelete(e)}>Delete</button>
+        </>
       ),
     },
   ];
@@ -98,6 +110,11 @@ export default function Events({
           <button type="button" className="cp-btn secondary" onClick={onSync} disabled={!canSync}>
             Sync from Sheets
           </button>
+          <PendingButton
+            variant="primary"
+            label="+ Add event"
+            note="Needs the event creation form hooked up — createEvent exists in app/actions/events but is not mounted in the Control Panel."
+          />
         </div>
       </div>
 
@@ -108,7 +125,7 @@ export default function Events({
         empty="No events match these filters."
       />
 
-      <ApiLegend />
+      <ApiLegend pending />
     </>
   );
 }

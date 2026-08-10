@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Config from '@/lib/config';
 import DataTable from '../components/DataTable';
 import {
-  PageHeader, SectionHead, Pill, Dagger, ApiLegend,
+  PageHeader, SectionHead, Pill, Dagger, ApiLegend, PendingButton,
 } from '../components/primitives';
 import { formatDate } from '../format';
 
@@ -105,16 +105,25 @@ export default function Committees({
       key: 'actions',
       label: '',
       cellClassName: 'cp-row-actions',
-      render: (row) => (row.record ? (
-        <button
-          type="button"
-          className="primary"
-          disabled={!canManage}
-          onClick={() => onToggleRecruitment(row.record)}
-        >
-          {row.record.isActive ? 'Close' : 'Open'}
-        </button>
-      ) : <span style={{ color: '#979797' }}>Not configured</span>),
+      render: (row) => (
+        <>
+          {row.record ? (
+            <button
+              type="button"
+              className="primary"
+              disabled={!canManage}
+              onClick={() => onToggleRecruitment(row.record)}
+            >
+              {row.record.isActive ? 'Close' : 'Open'}
+            </button>
+          ) : <span style={{ color: '#979797', marginRight: 10 }}>Not configured</span>}
+          <PendingButton
+            inline
+            label="Edit"
+            note="Needs a committee edit form wired to PATCH /internship/committees/:id — deadline, intern limit and custom questions are read-only here."
+          />
+        </>
+      ),
     },
   ];
 
@@ -147,6 +156,12 @@ export default function Committees({
             <button type="button" className="cp-btn secondary small" disabled={!canManage} onClick={onCloseAll}>
               Close all recruitment
             </button>
+            <PendingButton
+              small
+              variant="primary"
+              label="+ New committee"
+              note="Needs a creation form wired to POST /internship/committees — the action exists in the API but has no UI."
+            />
           </SectionHead>
           <DataTable
             columns={columns}
@@ -200,7 +215,7 @@ export default function Committees({
         </div>
       </div>
 
-      <ApiLegend />
+      <ApiLegend pending />
     </>
   );
 }

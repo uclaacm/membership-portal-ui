@@ -150,13 +150,70 @@ Select.propTypes = {
   label: PropTypes.string.isRequired,
 };
 
-/** Footer legend shown on every section, explaining the dagger. */
-export function ApiLegend() {
+/**
+ * Marks a control that is intentionally present but not yet wired to a handler.
+ *
+ * Rendered disabled with the reason in the tooltip, so the gap is visible in the UI and in the
+ * code rather than living only in a tracking ticket. Every one of these needs an endpoint, a
+ * handler, or both before launch — see the section legend.
+ */
+export function PendingButton({
+  label, note, variant, small, inline,
+}) {
+  if (inline) {
+    return (
+      <button type="button" className="pending" disabled title={note}>
+        {label}
+        <span className="cp-pending-mark">◦</span>
+      </button>
+    );
+  }
+  return (
+    <button
+      type="button"
+      className={`cp-btn ${variant} ${small ? 'small' : ''} pending`}
+      disabled
+      title={note}
+    >
+      {label}
+      <span className="cp-pending-mark">◦</span>
+    </button>
+  );
+}
+
+PendingButton.propTypes = {
+  label: PropTypes.string.isRequired,
+  note: PropTypes.string.isRequired,
+  variant: PropTypes.string,
+  small: PropTypes.bool,
+  inline: PropTypes.bool,
+};
+
+PendingButton.defaultProps = { variant: 'secondary', small: false, inline: false };
+
+/**
+ * Footer legend shown on every section.
+ *
+ * `pending` adds the second line when the section contains controls that are not wired up yet.
+ */
+export function ApiLegend({ pending }) {
   return (
     <div className="cp-legend">
-      <span className="cp-dagger">†</span>
-      {' '}
-      Not available from the current API — needs a new endpoint or field.
+      <div>
+        <span className="cp-dagger">†</span>
+        {' '}
+        Not available from the current API — needs a new endpoint or field.
+      </div>
+      {pending && (
+        <div>
+          <span className="cp-pending-mark">◦</span>
+          {' '}
+          Not wired up yet — the control exists but still needs an endpoint or handler.
+        </div>
+      )}
     </div>
   );
 }
+
+ApiLegend.propTypes = { pending: PropTypes.bool };
+ApiLegend.defaultProps = { pending: false };

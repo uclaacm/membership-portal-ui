@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Config from '@/lib/config';
-import { PageHeader, ApiLegend, SearchField, Select } from '../components/primitives';
+import {
+  PageHeader, ApiLegend, SearchField, Select, PendingButton,
+} from '../components/primitives';
 import { formatBytes, formatCount, imageFilename } from '../format';
 
 const FILTER_OPTIONS = [
@@ -42,6 +44,11 @@ export default function Media({ images, onDelete }) {
           <span className="cp-toolbar-meta">
             {formatCount(images.length)} files · {formatBytes(storedBytes)} stored
           </span>
+          <PendingButton
+            variant="primary"
+            label="Upload"
+            note="Needs a file picker wired to uploadImage in app/actions/image — POST /image accepts the file but there is no upload control here."
+          />
         </div>
       </div>
 
@@ -80,7 +87,7 @@ export default function Media({ images, onDelete }) {
         </div>
       )}
 
-      <ApiLegend />
+      <ApiLegend pending />
     </>
   );
 }
