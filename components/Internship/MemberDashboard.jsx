@@ -31,9 +31,11 @@ export default function MemberDashboard() {
 
       try {
         const applicationPromise = fetchOwnApplication();
-        const committeesPromise = activeCommittees === null
-          ? fetchAllCommittees()
-          : Promise.resolve({ success: true, data: activeCommittees });
+        // Always fetch fresh — a committee's active status can change in the
+        // admin panel at any time, and activeCommitteesAtom is shared across
+        // components/pages, so reusing whatever's already in it risks
+        // showing a stale snapshot from earlier in the session.
+        const committeesPromise = fetchAllCommittees();
 
         const [applicationResult, committeesResult] = await Promise.all([
           applicationPromise,

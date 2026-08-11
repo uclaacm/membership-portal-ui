@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
 
 import fetchAllApplications from "@/app/actions/internship/fetchAllApplications";
 import fetchAllCommittees from "@/app/actions/internship/fetchAllCommittees";
+import fetchApplicationStatusCounts from "@/app/actions/internship/fetchApplicationStatusCounts";
 import ApplicationDetailDrawer from "@/app/internship/components/ApplicationDetailDrawer";
 import ApplicationTable from "@/app/internship/components/ApplicationTable";
 import CopyEmailsButton from "@/app/internship/components/CopyEmailsButton";
@@ -13,6 +14,7 @@ import OfficerStatsBar from "@/app/internship/components/OfficerStatsBar";
 import Toast from "@/components/Toast";
 import useDebouncedValue from "@/lib/hooks/useDebouncedValue";
 import { authUserProfileAtom, officerApplicationsAtom } from "@/lib/atoms";
+import CommitteeQuestionsModal from "./CommitteeQuestionsModal";
 import "./OfficerDashboard.scss";
 
 const CHOICE_FIELDS = [
@@ -53,6 +55,8 @@ const EMPTY_STATUS_COUNTS = {
   rejected: 0,
 };
 
+const PAGE_SIZE = 25;
+
 function getCurrentApplicationCycle() {
   const year = new Date().getFullYear();
   return `${year}-${year + 1}`;
@@ -91,16 +95,24 @@ export default function OfficerDashboard() {
   );
 
   const [committees, setCommittees] = useState([]);
+  const [committeesStatus, setCommitteesStatus] = useState("loading");
+  const [committeesError, setCommitteesError] = useState(null);
+
   const [applications, setApplications] = useAtom(officerApplicationsAtom);
+  const [pagination, setPagination] = useState({ page: 1, limit: PAGE_SIZE, total: 0, pages: 0 });
   const [loadStatus, setLoadStatus] = useState("loading");
   const [loadError, setLoadError] = useState(null);
+
+  const [statusCounts, setStatusCounts] = useState(EMPTY_STATUS_COUNTS);
 
   const [statusFilter, setStatusFilter] = useState("all");
   const [choiceFilter, setChoiceFilter] = useState("all");
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearch = useDebouncedValue(searchInput, 300);
+  const [page, setPage] = useState(1);
 
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
+  const [isQuestionsModalOpen, setIsQuestionsModalOpen] = useState(false);
   const [toast, setToast] = useState({ key: 0, message: "", success: true, visible: false });
 
   const showToast = useCallback((message, success) => {
@@ -120,82 +132,118 @@ export default function OfficerDashboard() {
 
   useEffect(() => {
     let cancelled = false;
+    (async () => {
+      setCommitteesStatus("loading");
+      const result = await fetchAllCommittees();
+      if (cancelled) return;
+      if (result.success) {
+        setCommittees(result.data);
+        setCommitteesError(null);
+        setCommitteesStatus("success");
+      } else {
+        setCommitteesError(result.error);
+        setCommitteesStatus("error");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-    async function load() {
+  const myCommittee = committees.find((committee) => (
+    normalizeCommitteeName(committee.displayName) === officerCommitteeName
+    || normalizeCommitteeName(committee.name) === officerCommitteeName
+  )) ?? null;
+
+  // Used both for the initial/dependency-driven fetch below and as a manual
+  // re-trigger from handleApplicationChanged (a status edit shifts counts).
+  const loadStatusCounts = useCallback(async () => {
+    if (!myCommittee) return;
+    const result = await fetchApplicationStatusCounts(myCommittee.id);
+    if (result.success) {
+      setStatusCounts({ ...EMPTY_STATUS_COUNTS, ...result.counts });
+    }
+  }, [myCommittee]);
+
+  useEffect(() => {
+    if (!myCommittee) return undefined;
+    let cancelled = false;
+    (async () => {
+      const result = await fetchApplicationStatusCounts(myCommittee.id);
+      if (cancelled || !result.success) return;
+      setStatusCounts({ ...EMPTY_STATUS_COUNTS, ...result.counts });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [myCommittee]);
+
+  // Filter changes reset pagination back to page 1 — done directly in each
+  // handler (below) rather than via a useEffect watching the filter values,
+  // since that would just be an extra render-effect-render round trip for a
+  // state update that's already known at the moment the filter changes.
+  function handleStatusFilterChange(nextStatus) {
+    setStatusFilter(nextStatus);
+    setPage(1);
+  }
+
+  function handleChoiceFilterChange(nextChoice) {
+    setChoiceFilter(nextChoice);
+    setPage(1);
+  }
+
+  function handleSearchInputChange(nextSearch) {
+    setSearchInput(nextSearch);
+    setPage(1);
+  }
+
+  // Deliberately does NOT wait on committees/myCommittee — the backend
+  // already scopes an officer's applications to their own committee via
+  // their JWT, so this request doesn't need committee data first. Gating it
+  // on myCommittee would serialize two independent network round trips
+  // (committees, then applications) instead of firing them in parallel.
+  // myCommittee is only needed for client-side enrichment, which happens
+  // reactively below once both have loaded.
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
       setLoadStatus("loading");
-      const [committeesResult, applicationsResult] = await Promise.all([
-        fetchAllCommittees(),
-        fetchAllApplications(),
-      ]);
-
+      const result = await fetchAllApplications({
+        page,
+        limit: PAGE_SIZE,
+        search: debouncedSearch.trim() || undefined,
+        status: statusFilter !== "all" ? statusFilter : undefined,
+        choiceRank: choiceFilter !== "all" ? choiceFilter : undefined,
+      });
       if (cancelled) return;
 
-      if (!committeesResult.success) {
-        setLoadError(committeesResult.error);
-        setLoadStatus("error");
-        return;
-      }
-      if (!applicationsResult.success) {
-        setLoadError(applicationsResult.error);
+      if (!result.success) {
+        setLoadError(result.error);
         setLoadStatus("error");
         return;
       }
 
-      setCommittees(committeesResult.data);
-      setApplications(applicationsResult.data);
+      setApplications(result.data);
+      setPagination(result.pagination);
       setLoadError(null);
       setLoadStatus("success");
-    }
-
-    load();
+    })();
 
     return () => {
       cancelled = true;
     };
-  }, [setApplications]);
+  }, [page, debouncedSearch, statusFilter, choiceFilter, setApplications]);
 
-  const myCommittee = useMemo(() => committees.find((committee) => (
-    normalizeCommitteeName(committee.displayName) === officerCommitteeName
-    || normalizeCommitteeName(committee.name) === officerCommitteeName
-  )), [committees, officerCommitteeName]);
+  const enrichedApplications = myCommittee
+    ? applications.map((application) => enrichForCommittee(application, myCommittee.id)).filter(Boolean)
+    : [];
 
   const recruitmentCycle = applications[0]?.applicationCycle ?? getCurrentApplicationCycle();
 
-  // Recomputed only when the raw application list or the officer's committee
-  // changes — filtering below runs against this instead of re-deriving
-  // rank/status/responses on every keystroke or filter change.
-  const enrichedApplications = useMemo(() => {
-    if (!myCommittee) return [];
-    return applications
-      .map((application) => enrichForCommittee(application, myCommittee.id))
-      .filter(Boolean);
-  }, [applications, myCommittee]);
-
-  const statusCounts = useMemo(() => {
-    const counts = { ...EMPTY_STATUS_COUNTS };
-    enrichedApplications.forEach((application) => {
-      if (application.myStatus in counts) counts[application.myStatus] += 1;
-    });
-    return counts;
-  }, [enrichedApplications]);
-
-  const filteredApplications = useMemo(() => {
-    const term = debouncedSearch.trim().toLowerCase();
-    return enrichedApplications.filter((application) => {
-      if (statusFilter !== "all" && application.myStatus !== statusFilter) return false;
-      if (choiceFilter !== "all" && String(application.myChoiceRank) !== choiceFilter) return false;
-      if (term) {
-        const haystack = `${application.firstName ?? ""} ${application.lastName ?? ""} ${application.email ?? ""}`.toLowerCase();
-        if (!haystack.includes(term)) return false;
-      }
-      return true;
-    });
-  }, [enrichedApplications, statusFilter, choiceFilter, debouncedSearch]);
-
-  const selectedApplication = useMemo(
-    () => enrichedApplications.find((application) => application._id === selectedApplicationId) ?? null,
-    [enrichedApplications, selectedApplicationId],
-  );
+  const selectedApplication = enrichedApplications.find(
+    (application) => application._id === selectedApplicationId,
+  ) ?? null;
 
   // Writes through the shared atom, so the table and the drawer — both
   // reading from the same atom — reflect a status/rating/notes change
@@ -204,7 +252,46 @@ export default function OfficerDashboard() {
     setApplications((prev) => prev.map((application) => (
       application._id === applicationId ? { ...application, ...updatedApplication } : application
     )));
-  }, [setApplications]);
+    // A status change shifts the stats-pill counts; refetch rather than
+    // trying to patch counts locally (rating/notes changes don't affect
+    // counts, but this stays correct for all mutation types either way).
+    loadStatusCounts();
+  }, [setApplications, loadStatusCounts]);
+
+  const handleQuestionsSaved = useCallback((updatedCommittee) => {
+    setCommittees((prev) => prev.map((committee) => (
+      committee.id === updatedCommittee.id ? { ...committee, ...updatedCommittee } : committee
+    )));
+    setIsQuestionsModalOpen(false);
+    showToast("Committee questions saved", true);
+  }, [showToast]);
+
+  // Walks every server page under the current filters (the on-screen list is
+  // only one page of up to PAGE_SIZE) so "copy emails" grabs every matching
+  // applicant's email, not just whichever page happens to be displayed.
+  const handleFetchAllEmails = useCallback(async () => {
+    const emails = [];
+    const fetchOptions = {
+      limit: 100,
+      search: debouncedSearch.trim() || undefined,
+      status: statusFilter !== "all" ? statusFilter : undefined,
+      choiceRank: choiceFilter !== "all" ? choiceFilter : undefined,
+    };
+
+    let currentPage = 1;
+    let totalPages = 1;
+    do {
+      const result = await fetchAllApplications({ ...fetchOptions, page: currentPage });
+      if (!result.success) throw new Error(result.error);
+      result.data.forEach((application) => {
+        if (application.email) emails.push(application.email);
+      });
+      totalPages = result.pagination.pages;
+      currentPage += 1;
+    } while (currentPage <= totalPages);
+
+    return emails;
+  }, [debouncedSearch, statusFilter, choiceFilter]);
 
   const handleCopied = useCallback((count) => {
     showToast(`Copied ${count} email address${count === 1 ? "" : "es"}`, true);
@@ -214,8 +301,16 @@ export default function OfficerDashboard() {
     showToast(message, false);
   }, [showToast]);
 
-  if (loadStatus === "loading") {
+  function handleSelectStatus(nextStatus) {
+    handleStatusFilterChange(nextStatus);
+  }
+
+  if (committeesStatus === "loading" || (committeesStatus === "success" && loadStatus === "loading" && applications.length === 0)) {
     return <div className="officer-dashboard officer-dashboard__placeholder">Loading applications…</div>;
+  }
+
+  if (committeesStatus === "error") {
+    return <div className="officer-dashboard officer-dashboard__error">{committeesError}</div>;
   }
 
   if (loadStatus === "error") {
@@ -243,35 +338,65 @@ export default function OfficerDashboard() {
       <div className="officer-dashboard__header">
         <h2>{myCommittee.displayName}</h2>
         <span className="officer-dashboard__cycle">Cycle {recruitmentCycle}</span>
+        <button
+          type="button"
+          className="officer-dashboard__edit-questions"
+          onClick={() => setIsQuestionsModalOpen(true)}
+        >
+          Edit Questions
+        </button>
       </div>
 
-      <OfficerStatsBar counts={statusCounts} activeStatus={statusFilter} onSelectStatus={setStatusFilter} />
+      <OfficerStatsBar counts={statusCounts} activeStatus={statusFilter} onSelectStatus={handleSelectStatus} />
 
       <OfficerFilterBar
         statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
+        onStatusFilterChange={handleStatusFilterChange}
         choiceFilter={choiceFilter}
-        onChoiceFilterChange={setChoiceFilter}
+        onChoiceFilterChange={handleChoiceFilterChange}
         searchInput={searchInput}
-        onSearchInputChange={setSearchInput}
+        onSearchInputChange={handleSearchInputChange}
       />
 
       <div className="officer-dashboard__toolbar">
         <div className="officer-dashboard__count">
-          {filteredApplications.length} of {enrichedApplications.length} applications
+          {pagination.total} application{pagination.total === 1 ? "" : "s"}
         </div>
         <CopyEmailsButton
-          applications={filteredApplications}
+          totalCount={pagination.total}
+          onFetchAllEmails={handleFetchAllEmails}
           onCopied={handleCopied}
           onError={handleCopyError}
         />
       </div>
 
       <ApplicationTable
-        applications={filteredApplications}
+        applications={enrichedApplications}
         onApplicationChanged={handleApplicationChanged}
         onRowClick={setSelectedApplicationId}
       />
+
+      {pagination.pages > 1 && (
+        <div className="officer-dashboard__pagination">
+          <button
+            type="button"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Previous
+          </button>
+          <span>
+            Page {pagination.page} of {pagination.pages}
+          </span>
+          <button
+            type="button"
+            disabled={page >= pagination.pages}
+            onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       <ApplicationDetailDrawer
         application={selectedApplication}
@@ -280,6 +405,14 @@ export default function OfficerDashboard() {
       />
 
       <Toast key={toast.key} showing={toast.visible} message={toast.message} success={toast.success} />
+
+      {isQuestionsModalOpen && (
+        <CommitteeQuestionsModal
+          committee={myCommittee}
+          onClose={() => setIsQuestionsModalOpen(false)}
+          onSaved={handleQuestionsSaved}
+        />
+      )}
     </div>
   );
 }

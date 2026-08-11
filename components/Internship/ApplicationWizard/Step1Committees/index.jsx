@@ -10,6 +10,7 @@ import RankedList from "./RankedList";
 import useStep1Save from "./useStep1Save";
 import { authUserProfileAtom, committeesAtom, myApplicationAtom } from "@/lib/atoms";
 import fetchActiveCommittees from "@/app/actions/internship/fetchActiveCommittees";
+import useResolvedCommitteeNames from "@/lib/hooks/useResolvedCommitteeNames";
 
 export default function Step1Committees({ onValidityChange, flushPendingRef }) {
   const router = useRouter();
@@ -50,10 +51,12 @@ export default function Step1Committees({ onValidityChange, flushPendingRef }) {
     }
   }, [setCommittees]);
 
+  // Always fetch fresh on mount rather than reusing whatever's already in
+  // committeesAtom — a committee's active status can change in the admin
+  // panel at any time, and this atom is shared across the wizard steps, so
+  // treating a non-empty atom as "already loaded" risks a stale snapshot.
   useEffect(() => {
-    if (committees.length === 0) {
-      loadCommittees();
-    }
+    loadCommittees();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -125,6 +128,11 @@ export default function Step1Committees({ onValidityChange, flushPendingRef }) {
     setSelectedCommitteeIds((prev) => prev.filter((id) => id !== committeeId));
   }, []);
 
+  // Selections can include a committee that's since been closed (it won't
+  // be in `committees`, which is active-only) — resolve its name separately
+  // so the ranked list doesn't fall back to showing a raw ObjectId.
+  const resolvedNames = useResolvedCommitteeNames(selectedCommitteeIds, committees);
+
   return (
     <section className="space-y-6">
       <h2 className="text-xl font-semibold text-slate-900">Select your committees</h2>
@@ -170,6 +178,7 @@ export default function Step1Committees({ onValidityChange, flushPendingRef }) {
 
       <RankedList
         selectedCommitteeIds={selectedCommitteeIds}
+        resolvedNames={resolvedNames}
         onReorder={handleReorder}
         onRemove={handleRemove}
       />
