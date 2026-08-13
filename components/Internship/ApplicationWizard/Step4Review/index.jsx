@@ -195,7 +195,7 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
 
       <div className="space-y-4 rounded border border-slate-200 p-4">
         <h3 className="text-base font-semibold text-slate-900">Resume</h3>
-        {myApplication?.resumeUrl ? (
+        {myApplication?.resumeUrl && /^https?:\/\//i.test(myApplication.resumeUrl) ? (
           <a
             href={myApplication.resumeUrl}
             target="_blank"
@@ -204,6 +204,8 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
           >
             {myApplication.resumeUrl}
           </a>
+        ) : myApplication?.resumeUrl ? (
+          <p className="text-sm text-red-600">Saved resume link must start with http:// or https://.</p>
         ) : (
           <p className="text-sm text-slate-500">No resume link saved.</p>
         )}
