@@ -27,7 +27,7 @@ function NotesCell({ applicationId, reviewField, value, onChanged }) {
     if (!el) return;
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
-  });
+  }, [draft, expanded]);
 
   const handleBlur = async () => {
     const trimmed = draft.trim();
