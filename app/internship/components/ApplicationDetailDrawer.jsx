@@ -9,9 +9,15 @@ export default function ApplicationDetailDrawer({ application, onClose, onApplic
 
   return (
     <div className="application-detail-drawer__overlay" onClick={onClose}>
-      <div className="application-detail-drawer" onClick={(event) => event.stopPropagation()}>
+      <div
+        className="application-detail-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="application-detail-drawer-title"
+        onClick={(event) => event.stopPropagation()}
+      >
         <div className="application-detail-drawer__header">
-          <h3>{application.firstName} {application.lastName}</h3>
+          <h3 id="application-detail-drawer-title">{application.firstName} {application.lastName}</h3>
           <button
             type="button"
             className="application-detail-drawer__close"

@@ -11,9 +11,20 @@ type UpdateApplicationReviewResult =
   | { success: true; data: InternshipApplication }
   | { success: false; error: string };
 
+type ReviewField =
+  | "firstChoiceOfficer1Rating"
+  | "secondChoiceOfficer1Rating"
+  | "thirdChoiceOfficer1Rating"
+  | "firstChoiceOfficer2Rating"
+  | "secondChoiceOfficer2Rating"
+  | "thirdChoiceOfficer2Rating"
+  | "firstChoiceNotes"
+  | "secondChoiceNotes"
+  | "thirdChoiceNotes";
+
 export default async function updateApplicationReview(
   id: string,
-  reviewField: string,
+  reviewField: ReviewField,
   value: string | null,
 ): Promise<UpdateApplicationReviewResult> {
   try {
