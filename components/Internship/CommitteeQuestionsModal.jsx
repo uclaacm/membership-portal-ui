@@ -35,9 +35,9 @@ export default function CommitteeQuestionsModal({ committee, onClose, onSaved })
 
   return (
     <div className="committee-questions-modal-wrapper">
-      <div className="committee-questions-modal">
+      <div className="committee-questions-modal" role="dialog" aria-modal="true" aria-labelledby="committee-questions-modal-title">
         <div className="committee-questions-modal__header">
-          <h3>Edit {committee.displayName} Questions</h3>
+          <h3 id="committee-questions-modal-title">Edit {committee.displayName} Questions</h3>
           <button
             type="button"
             className="committee-questions-modal__close"
