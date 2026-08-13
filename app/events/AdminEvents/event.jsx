@@ -122,10 +122,12 @@ class AdminEventCard extends React.Component {
               </a>
             ) : (
               <>
+                {/* Capacity is optional, so a null must read as a plain count rather than
+                    "42/0" — the denominator only appears when a limit is actually set. */}
                 <div className="rsvp-count">
                   RSVPs:
                   {' '}
-                  {rsvps || 0}
+                  {event.capacity ? `${rsvps || 0}/${event.capacity}` : (rsvps || 0)}
                 </div>
                 <button
                   type="button"

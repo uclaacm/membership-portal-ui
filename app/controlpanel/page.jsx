@@ -285,7 +285,10 @@ export default function ControlPanelPage() {
       : await createEventAction(event);
 
     if (result.success) {
-      notify(true, event.uuid ? 'Event updated.' : 'Event created.');
+      // A failed marketing notification is reported, not treated as a failed save — the event
+      // exists either way, and silently dropping the notice is how it goes unnoticed.
+      const saved = event.uuid ? 'Event updated.' : 'Event created.';
+      notify(true, result.marketingNote ? `${saved} Marketing not notified — ${result.marketingNote}` : saved);
       setEventForm((f) => ({ ...f, showing: false }));
       await Promise.all([loadEvents(), loadAudit(auditFilters, isAdmin)]);
     } else {
@@ -554,6 +557,7 @@ export default function ControlPanelPage() {
             serviceAccountEmail={serviceAccountEmail}
             system={system}
             canManage={canManage}
+            notify={notify}
             onRotatePassword={handleRotatePassword}
             onSync={() => setSyncOpen(true)}
             onCloseCycle={handleCloseAll}

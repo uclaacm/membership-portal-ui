@@ -493,7 +493,24 @@ export default class AdminAddEvent extends React.Component {
                       placeholder="10"
                     />
                   </div>
+                  <div className="field-group">
+                    <label>Capacity</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={this.state.event.capacity ?? ''}
+                      name="capacity"
+                      onChange={this.handleChange}
+                      placeholder="40"
+                    />
+                  </div>
                 </div>
+                {/* Advisory only: nothing blocks an RSVP past this number. Left blank, cards
+                    fall back to a plain RSVP count with no denominator. */}
+                <p className="field-hint">
+                  Capacity is advisory — it is shown on staff cards and the RSVP list, but does
+                  not stop anyone RSVPing.
+                </p>
               </div>
 
               {/* Description */}
