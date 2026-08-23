@@ -7,7 +7,6 @@ import CommitteeForm from "@/components/Internship/CommitteeForm";
 import ConfirmationModal from "@/components/Modal/confirmationModal";
 import fetchCommitteeById from "@/app/actions/internship/fetchCommitteeById";
 import updateCommittee from "@/app/actions/internship/updateCommittee";
-import archiveCommittee from "@/app/actions/internship/archiveCommittee";
 import deleteCommittee from "@/app/actions/internship/deleteCommittee";
 import "@/components/Internship/AdminDashboard.scss";
 
@@ -21,7 +20,7 @@ export default function EditCommitteePage({ params }) {
 
   const [dangerError, setDangerError] = useState(null);
   const [dangerPending, setDangerPending] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null); // "archive" | "delete" | null
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,32 +47,18 @@ export default function EditCommitteePage({ params }) {
     return result;
   }
 
-  async function handleConfirmDanger() {
-    const action = confirmAction;
-    setConfirmAction(null);
+  async function handleConfirmDelete() {
+    setConfirmDelete(false);
     setDangerPending(true);
     setDangerError(null);
 
-    if (action === "archive") {
-      const result = await archiveCommittee(id);
-      setDangerPending(false);
-      if (!result.success) {
-        setDangerError(result.error);
-        return;
-      }
-      window.alert(`Archived ${result.archivedCount} application${result.archivedCount === 1 ? "" : "s"} for this committee.`);
+    const result = await deleteCommittee(id);
+    setDangerPending(false);
+    if (!result.success) {
+      setDangerError(result.error);
       return;
     }
-
-    if (action === "delete") {
-      const result = await deleteCommittee(id);
-      setDangerPending(false);
-      if (!result.success) {
-        setDangerError(result.error);
-        return;
-      }
-      router.push("/internship/admin");
-    }
+    router.push("/internship/admin");
   }
 
   return (
@@ -100,25 +85,6 @@ export default function EditCommitteePage({ params }) {
               <div className="committee-form__danger-actions">
                 <div className="committee-form__danger-row">
                   <div>
-                    <strong>Archive this committee&apos;s applications</strong>
-                    <p>
-                      Marks the committee&apos;s current-cycle applications as archived. They&apos;ll
-                      no longer appear in the current Applications view, but stay visible in the
-                      past-cycles view. The committee itself is unaffected.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="committee-form__danger-btn"
-                    disabled={dangerPending}
-                    onClick={() => setConfirmAction("archive")}
-                  >
-                    Archive Applications
-                  </button>
-                </div>
-
-                <div className="committee-form__danger-row">
-                  <div>
                     <strong>Delete committee</strong>
                     <p>
                       Deactivates the committee (it stops accepting applications and disappears
@@ -129,7 +95,7 @@ export default function EditCommitteePage({ params }) {
                     type="button"
                     className="committee-form__danger-btn committee-form__danger-btn--delete"
                     disabled={dangerPending}
-                    onClick={() => setConfirmAction("delete")}
+                    onClick={() => setConfirmDelete(true)}
                   >
                     Delete Committee
                   </button>
@@ -140,15 +106,11 @@ export default function EditCommitteePage({ params }) {
         )}
 
         <ConfirmationModal
-          opened={confirmAction !== null}
-          title={confirmAction === "delete" ? "Delete this committee?" : "Archive this committee's applications?"}
-          message={
-            confirmAction === "delete"
-              ? "This deactivates the committee. It will stop accepting applications and disappear from active lists. This can be undone by reactivating it later."
-              : "This archives every current-cycle application for this committee. They'll be hidden from the current Applications view but remain visible in the past-cycles view."
-          }
-          submit={handleConfirmDanger}
-          cancel={() => setConfirmAction(null)}
+          opened={confirmDelete}
+          title="Delete this committee?"
+          message="This deactivates the committee. It will stop accepting applications and disappear from active lists. This can be undone by reactivating it later."
+          submit={handleConfirmDelete}
+          cancel={() => setConfirmDelete(false)}
         />
       </div>
     </ProtectedRoute>

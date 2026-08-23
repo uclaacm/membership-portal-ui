@@ -124,10 +124,6 @@ export type DeleteInternshipCommitteeResult =
   | { success: true }
   | { success: false; error: string };
 
-export type ArchiveCommitteeResult =
-  | { success: true; archivedCount: number }
-  | { success: false; error: string };
-
 export interface InternshipCycleInfo {
   currentCycle: string;
   suggestedNextCycle: string;
