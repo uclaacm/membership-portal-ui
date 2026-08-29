@@ -22,6 +22,22 @@
     font-weight: 500;
   }
 
+  &__committee-select {
+    appearance: none;
+    background: vars.$white;
+    border: 1px solid vars.$gray1;
+    border-radius: 4px;
+    padding: 0.35rem 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: vars.$primary-color;
+    }
+  }
+
   &__edit-questions {
     margin-left: auto;
     appearance: none;

@@ -90,13 +90,15 @@ function enrichForCommittee(application, committeeId) {
 
 export default function OfficerDashboard() {
   const authProfile = useAtomValue(authUserProfileAtom);
-  const officerCommitteeName = normalizeCommitteeName(
-    authProfile && "committees" in authProfile ? authProfile.committees?.[0] : undefined,
-  );
+
+  const officerCommitteeNames = (
+    authProfile && "committees" in authProfile ? authProfile.committees ?? [] : []
+  ).map(normalizeCommitteeName).filter(Boolean);
 
   const [committees, setCommittees] = useState([]);
   const [committeesStatus, setCommitteesStatus] = useState("loading");
   const [committeesError, setCommitteesError] = useState(null);
+  const [selectedCommitteeId, setSelectedCommitteeId] = useState(null);
 
   const [applications, setApplications] = useAtom(officerApplicationsAtom);
   const [pagination, setPagination] = useState({ page: 1, limit: PAGE_SIZE, total: 0, pages: 0 });
@@ -150,10 +152,21 @@ export default function OfficerDashboard() {
     };
   }, []);
 
-  const myCommittee = committees.find((committee) => (
-    normalizeCommitteeName(committee.displayName) === officerCommitteeName
-    || normalizeCommitteeName(committee.name) === officerCommitteeName
-  )) ?? null;
+  const myCommittees = committees.filter((committee) => (
+    officerCommitteeNames.includes(normalizeCommitteeName(committee.displayName))
+    || officerCommitteeNames.includes(normalizeCommitteeName(committee.name))
+  ));
+
+  useEffect(() => {
+    if (myCommittees.length === 0) return;
+    const stillValid = myCommittees.some((committee) => committee.id === selectedCommitteeId);
+    if (!stillValid) {
+      setSelectedCommitteeId(myCommittees[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myCommittees.map((committee) => committee.id).join(",")]);
+
+  const myCommittee = myCommittees.find((committee) => committee.id === selectedCommitteeId) ?? null;
 
   // Used both for the initial/dependency-driven fetch below and as a manual
   // re-trigger from handleApplicationChanged (a status edit shifts counts).
@@ -317,7 +330,7 @@ export default function OfficerDashboard() {
     return <div className="officer-dashboard officer-dashboard__error">{loadError}</div>;
   }
 
-  if (!officerCommitteeName) {
+  if (officerCommitteeNames.length === 0) {
     return (
       <div className="officer-dashboard officer-dashboard__error">
         Your account is not assigned to a committee.
@@ -328,7 +341,7 @@ export default function OfficerDashboard() {
   if (!myCommittee) {
     return (
       <div className="officer-dashboard officer-dashboard__error">
-        Could not find a committee matching &quot;{officerCommitteeName}&quot;.
+        Could not find a committee matching &quot;{officerCommitteeNames.join(", ")}&quot;.
       </div>
     );
   }
@@ -336,7 +349,22 @@ export default function OfficerDashboard() {
   return (
     <div className="officer-dashboard">
       <div className="officer-dashboard__header">
-        <h2>{myCommittee.displayName}</h2>
+        {myCommittees.length > 1 ? (
+          <select
+            className="officer-dashboard__committee-select"
+            value={myCommittee.id}
+            onChange={(event) => setSelectedCommitteeId(event.target.value)}
+            aria-label="Select committee"
+          >
+            {myCommittees.map((committee) => (
+              <option key={committee.id} value={committee.id}>
+                {committee.displayName}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <h2>{myCommittee.displayName}</h2>
+        )}
         <span className="officer-dashboard__cycle">Cycle {recruitmentCycle}</span>
         <button
           type="button"

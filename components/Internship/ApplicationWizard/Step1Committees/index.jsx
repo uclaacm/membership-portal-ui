@@ -109,13 +109,17 @@ export default function Step1Committees({ onValidityChange, flushPendingRef }) {
         if (prev.includes(committeeId)) {
           return prev.filter((id) => id !== committeeId);
         }
+        const committee = committees.find((c) => c.id === committeeId);
+        if (committee && committee.isActive === false) {
+          return prev;
+        }
         if (prev.length >= 3) {
           return prev;
         }
         return [...prev, committeeId];
       });
     },
-    [myApplication?._id, profileComplete],
+    [myApplication?._id, profileComplete, committees],
   );
 
   const handleReorder = useCallback((newIds) => {
