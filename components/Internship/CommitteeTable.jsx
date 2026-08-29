@@ -132,6 +132,7 @@ export default function CommitteeTable({ committees, onMutated }) {
   const [error, setError] = useState(null);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [cycleNotice, setCycleNotice] = useState(null);
+  const [deleteNotice, setDeleteNotice] = useState(null);
 
   const allIds = useMemo(() => committees.map(c => c.id), [committees]);
   const allChecked = allIds.length > 0 && selected.size === allIds.length;
@@ -173,6 +174,7 @@ export default function CommitteeTable({ committees, onMutated }) {
 
   async function handleConfirmDelete() {
     const id = deleteTargetId;
+    const name = deleteTarget?.displayName ?? "Committee";
     setDeleteTargetId(null);
     setPending(true);
     setError(null);
@@ -182,6 +184,14 @@ export default function CommitteeTable({ committees, onMutated }) {
       setError(result.error);
       return;
     }
+    const parts = [];
+    if (result.deletedApplications > 0) {
+      parts.push(`deleted ${result.deletedApplications} application${result.deletedApplications === 1 ? "" : "s"} that had no other committee choice`);
+    }
+    if (result.updatedApplications > 0) {
+      parts.push(`removed this committee's choice from ${result.updatedApplications} other application${result.updatedApplications === 1 ? "" : "s"}`);
+    }
+    setDeleteNotice(`${name} deleted.${parts.length > 0 ? ` Also ${parts.join(" and ")}.` : ""}`);
     onMutated?.();
   }
 
@@ -221,6 +231,7 @@ export default function CommitteeTable({ committees, onMutated }) {
       </div>
 
       {cycleNotice && <div className="cycle-controls__notice">{cycleNotice}</div>}
+      {deleteNotice && <div className="cycle-controls__notice">{deleteNotice}</div>}
       {error && <div className="committee-table-wrapper__error">{error}</div>}
 
       {selected.size > 0 && (
@@ -310,8 +321,13 @@ export default function CommitteeTable({ committees, onMutated }) {
 
       <ConfirmationModal
         opened={deleteTargetId !== null}
-        title="Delete this committee?"
-        message={`This deactivates "${deleteTarget?.displayName ?? ""}" — it stops accepting applications and disappears from active lists. This can be undone by reactivating it later.`}
+        title="Permanently delete this committee?"
+        message={
+          `This permanently deletes "${deleteTarget?.displayName ?? ""}" and cannot be undone.`
+          + (deleteTarget?.applicationCount
+            ? ` ${deleteTarget.applicationCount} application${deleteTarget.applicationCount === 1 ? "" : "s"} reference this committee — any application with no other committee choice will be deleted entirely, and this committee's choice, responses, status, and officer review will be removed from any application that also chose a different committee.`
+            : " No applications currently reference this committee.")
+        }
         submit={handleConfirmDelete}
         cancel={() => setDeleteTargetId(null)}
       />

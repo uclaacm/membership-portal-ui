@@ -39,7 +39,11 @@ export default async function deleteCommittee(committeeId: string): Promise<Dele
       return { success: false, error: msg };
     }
 
-    return { success: true };
+    return {
+      success: true,
+      deletedApplications: data?.deletedApplications ?? 0,
+      updatedApplications: data?.updatedApplications ?? 0,
+    };
   } catch (err) {
     Logger.error(`deleteCommittee failed: ${(err as Error).message}`);
     return { success: false, error: "Failed to delete committee." };

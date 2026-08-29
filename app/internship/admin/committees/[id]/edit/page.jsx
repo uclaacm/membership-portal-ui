@@ -87,8 +87,8 @@ export default function EditCommitteePage({ params }) {
                   <div>
                     <strong>Delete committee</strong>
                     <p>
-                      Deactivates the committee (it stops accepting applications and disappears
-                      from active lists). This does not delete any existing application data.
+                      Permanently deletes the committee. This cannot be undone. Any application
+                      with this committee will have the committee choice, responses, status, and officer review removed from it.
                     </p>
                   </div>
                   <button
@@ -107,8 +107,8 @@ export default function EditCommitteePage({ params }) {
 
         <ConfirmationModal
           opened={confirmDelete}
-          title="Delete this committee?"
-          message="This deactivates the committee. It will stop accepting applications and disappear from active lists. This can be undone by reactivating it later."
+          title="Permanently delete this committee?"
+          message="This permanently deletes the committee and cannot be undone. Any application with no other committee choice will be deleted entirely, and this committee's choice, responses, status, and officer review will be removed from any application that also chose a different committee."
           submit={handleConfirmDelete}
           cancel={() => setConfirmDelete(false)}
         />

@@ -121,7 +121,7 @@ export type UpdateInternshipCommitteeResult =
   | { success: false; error: string };
 
 export type DeleteInternshipCommitteeResult =
-  | { success: true }
+  | { success: true; deletedApplications: number; updatedApplications: number }
   | { success: false; error: string };
 
 export interface InternshipCycleInfo {
