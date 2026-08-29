@@ -61,7 +61,6 @@ export default function CustomQuestionsEditor({ editor }) {
     addQuestion,
     updateQuestion,
     handleQuestionTextChange,
-    handleQuestionKeyChange,
     removeQuestion,
     moveQuestion,
     addChoice,
@@ -120,17 +119,6 @@ export default function CustomQuestionsEditor({ editor }) {
           </div>
 
           <div className="committee-form__question-row committee-form__question-row--meta">
-            <label className="committee-form__question-key">
-              <span>Key</span>
-              <input
-                type="text"
-                value={question.questionKey}
-                onChange={(e) => handleQuestionKeyChange(question.clientId, e.target.value)}
-                placeholder="auto-generated"
-                required
-              />
-            </label>
-
             <label className="committee-form__question-type">
               <span>Type</span>
               <select
