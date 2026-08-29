@@ -21,11 +21,13 @@ export default function ApplicationStatusCard() {
     : [];
   const resolvedNames = useResolvedCommitteeNames(applicationCommitteeIds, committees);
 
-  const applicationWizardLink = (
-    <Link href="/internship/apply" className="application-status-card__button">
-      Start/Continue application
-    </Link>
-  );
+  function renderApplicationWizardLink(label) {
+    return (
+      <Link href="/internship/apply" className="application-status-card__button">
+        {label}
+      </Link>
+    );
+  }
 
   // Branch 0: Loading
   if (activeCommittees === null) {
@@ -49,7 +51,7 @@ export default function ApplicationStatusCard() {
             Applications are open
           </div>
           <div className="application-status-card__cta">
-            {applicationWizardLink}
+            {renderApplicationWizardLink("Start Application")}
           </div>
         </div>
       </div>
@@ -72,7 +74,7 @@ export default function ApplicationStatusCard() {
             {thirdName && <span className="committee-chip">{thirdName}</span>}
           </div>
           <div className="application-status-card__cta">
-            {applicationWizardLink}
+            {renderApplicationWizardLink("Continue Application")}
           </div>
           {myApplication.lastModifiedAt && (
             <p className="application-status-card__timestamp">

@@ -84,6 +84,10 @@ export default function ApplicationWizard() {
     setAdvancing(true);
     try {
       try { await flushCurrentStep(); } catch { return; }
+      if (currentStep === 1) {
+        router.push("/internship");
+        return;
+      }
       setCurrentStep((s) => Math.max(1, s - 1));
     } finally {
       advancingRef.current = false;
@@ -163,7 +167,7 @@ export default function ApplicationWizard() {
           type="button"
           className="rounded border border-gray-300 px-4 py-2 disabled:opacity-50"
           onClick={handleBack}
-          disabled={currentStep === 1 || advancing || submitting}
+          disabled={advancing || submitting}
         >
           Back
         </button>
