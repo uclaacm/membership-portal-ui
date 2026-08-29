@@ -191,10 +191,6 @@ export default function OfficerDashboard() {
     };
   }, [myCommittee]);
 
-  // Filter changes reset pagination back to page 1 — done directly in each
-  // handler (below) rather than via a useEffect watching the filter values,
-  // since that would just be an extra render-effect-render round trip for a
-  // state update that's already known at the moment the filter changes.
   function handleStatusFilterChange(nextStatus) {
     setStatusFilter(nextStatus);
     setPage(1);
@@ -210,13 +206,6 @@ export default function OfficerDashboard() {
     setPage(1);
   }
 
-  // Deliberately does NOT wait on committees/myCommittee — the backend
-  // already scopes an officer's applications to their own committee via
-  // their JWT, so this request doesn't need committee data first. Gating it
-  // on myCommittee would serialize two independent network round trips
-  // (committees, then applications) instead of firing them in parallel.
-  // myCommittee is only needed for client-side enrichment, which happens
-  // reactively below once both have loaded.
   useEffect(() => {
     let cancelled = false;
 
@@ -258,16 +247,10 @@ export default function OfficerDashboard() {
     (application) => application._id === selectedApplicationId,
   ) ?? null;
 
-  // Writes through the shared atom, so the table and the drawer — both
-  // reading from the same atom — reflect a status/rating/notes change
-  // immediately, regardless of which one triggered it.
   const handleApplicationChanged = useCallback((applicationId, updatedApplication) => {
     setApplications((prev) => prev.map((application) => (
       application._id === applicationId ? { ...application, ...updatedApplication } : application
     )));
-    // A status change shifts the stats-pill counts; refetch rather than
-    // trying to patch counts locally (rating/notes changes don't affect
-    // counts, but this stays correct for all mutation types either way).
     loadStatusCounts();
   }, [setApplications, loadStatusCounts]);
 
@@ -279,9 +262,6 @@ export default function OfficerDashboard() {
     showToast("Committee questions saved", true);
   }, [showToast]);
 
-  // Walks every server page under the current filters (the on-screen list is
-  // only one page of up to PAGE_SIZE) so "copy emails" grabs every matching
-  // applicant's email, not just whichever page happens to be displayed.
   const handleFetchAllEmails = useCallback(async () => {
     const emails = [];
     const fetchOptions = {

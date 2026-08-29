@@ -372,6 +372,10 @@
     background: rgba(0, 0, 0, 0.02);
   }
 
+  tbody tr {
+    cursor: pointer;
+  }
+
   tr:hover td {
     background: rgba(0, 0, 0, 0.02);
   }

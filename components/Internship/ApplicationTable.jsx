@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import fetchAllApplications from "@/app/actions/internship/fetchAllApplications";
 import fetchApplicationCycle from "@/app/actions/internship/fetchApplicationCycle";
 import useDebouncedValue from "@/lib/hooks/useDebouncedValue";
+import AdminApplicationDetailDrawer from "@/app/internship/components/AdminApplicationDetailDrawer";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All statuses" },
@@ -27,9 +28,6 @@ function formatDate(value) {
   });
 }
 
-// Resolves a cycleFilter selection into the {applicationCycle, archived}
-// params fetchAllApplications expects. "current" intentionally omits both —
-// the backend already defaults to non-archived applications.
 function resolveCycleParams(cycleFilter) {
   if (cycleFilter === "current") return {};
   if (cycleFilter === "archived") return { archived: true };
@@ -46,13 +44,12 @@ export default function ApplicationTable({ committees = [] }) {
   const [committeeFilter, setCommitteeFilter] = useState("all");
   const [cycleFilter, setCycleFilter] = useState("current");
   const [page, setPage] = useState(1);
-
   const [cycleInfo, setCycleInfo] = useState(null);
-
   const [applications, setApplications] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: PAGE_SIZE, total: 0, pages: 0 });
   const [status, setStatus] = useState("loading"); // loading | success | error
   const [error, setError] = useState(null);
+  const [selectedApplicationId, setSelectedApplicationId] = useState(null);
 
   const committeeLookup = useMemo(() => {
     const map = new Map();
@@ -98,6 +95,14 @@ export default function ApplicationTable({ committees = [] }) {
       cancelled = true;
     };
   }, [page, debouncedSearch, statusFilter, committeeFilter, cycleFilter]);
+
+  const selectedApplication = applications.find((app) => app._id === selectedApplicationId) ?? null;
+
+  function handleApplicationChanged(applicationId, updatedApplication) {
+    setApplications((prev) => prev.map((app) => (
+      app._id === applicationId ? { ...app, ...updatedApplication } : app
+    )));
+  }
 
   return (
     <div className="application-table-wrapper">
@@ -188,7 +193,7 @@ export default function ApplicationTable({ committees = [] }) {
             </thead>
             <tbody>
               {applications.map(app => (
-                <tr key={app._id}>
+                <tr key={app._id} onClick={() => setSelectedApplicationId(app._id)}>
                   <td>
                     {app.firstName} {app.lastName}
                   </td>
@@ -257,6 +262,13 @@ export default function ApplicationTable({ committees = [] }) {
           )}
         </>
       )}
+
+      <AdminApplicationDetailDrawer
+        application={selectedApplication}
+        committees={committees}
+        onClose={() => setSelectedApplicationId(null)}
+        onApplicationChanged={handleApplicationChanged}
+      />
     </div>
   );
 }
