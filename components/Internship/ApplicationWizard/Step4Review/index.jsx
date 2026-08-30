@@ -12,6 +12,7 @@ import {
   responsesByCommitteeAtom,
 } from "@/lib/atoms";
 import useResolvedCommitteeNames, { getCommitteeDisplayName } from "@/lib/hooks/useResolvedCommitteeNames";
+import isValidResumeUrl from "@/components/Internship/ApplicationWizard/isValidResumeUrl";
 
 const MIN_GRADUATION_YEAR = 2020;
 
@@ -73,7 +74,8 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
   const graduationYear = Number(graduationYearInput);
   const graduationYearValid =
     Number.isInteger(graduationYear) && graduationYear >= MIN_GRADUATION_YEAR;
-  const stepValid = Boolean(myApplication?._id && graduationYearValid);
+  const resumeUrlValid = isValidResumeUrl(myApplication?.resumeUrl);
+  const stepValid = Boolean(myApplication?._id && graduationYearValid && resumeUrlValid);
 
   useEffect(() => {
     onValidityChange(stepValid);
@@ -195,7 +197,7 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
 
       <div className="space-y-4 rounded border border-slate-200 p-4">
         <h3 className="text-base font-semibold text-slate-900">Resume</h3>
-        {myApplication?.resumeUrl && /^https?:\/\//i.test(myApplication.resumeUrl) ? (
+        {myApplication?.resumeUrl && resumeUrlValid ? (
           <a
             href={myApplication.resumeUrl}
             target="_blank"

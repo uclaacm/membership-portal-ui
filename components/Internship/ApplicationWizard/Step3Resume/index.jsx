@@ -5,19 +5,8 @@ import { useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 
 import useStep3Save from "./useStep3Save";
+import isValidResumeUrl from "@/components/Internship/ApplicationWizard/isValidResumeUrl";
 import { myApplicationAtom } from "@/lib/atoms";
-
-function isValidPublicUrl(value) {
-  const trimmed = value.trim();
-  if (!trimmed) return false;
-
-  try {
-    const url = new URL(trimmed);
-    return url.protocol === "https:" || url.protocol === "http:";
-  } catch {
-    return false;
-  }
-}
 
 export default function Step3Resume({ onValidityChange, flushPendingRef }) {
   const router = useRouter();
@@ -27,7 +16,7 @@ export default function Step3Resume({ onValidityChange, flushPendingRef }) {
 
   const resumeUrl = touched ? resumeUrlInput : (myApplication?.resumeUrl || "");
 
-  const resumeUrlValid = useMemo(() => isValidPublicUrl(resumeUrl), [resumeUrl]);
+  const resumeUrlValid = useMemo(() => isValidResumeUrl(resumeUrl), [resumeUrl]);
 
   useEffect(() => {
     onValidityChange(resumeUrlValid);
