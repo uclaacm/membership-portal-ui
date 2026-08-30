@@ -15,9 +15,11 @@ export default class Toast extends React.Component {
 
     this.showToast = this.showToast.bind(this);
     this.hideToast = this.hideToast.bind(this);
+  }
 
-    if (props.showing) {
-      this.showToast(props.message, props.success, props.duration);
+  componentDidMount() {
+    if (this.props.showing) {
+      this.showToast(this.props.message, this.props.success, this.props.duration);
     }
   }
 
