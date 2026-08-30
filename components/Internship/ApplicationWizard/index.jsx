@@ -128,7 +128,7 @@ export default function ApplicationWizard() {
   };
 
   return (
-    <div className="mx-auto mt-[calc(61px+2rem)] max-w-3xl p-6">
+    <div className="mx-auto mt-8 max-w-3xl p-6">
       {draft && (
         <div className="mb-4 rounded bg-blue-50 px-3 py-2 text-sm text-blue-700">
           Existing draft loaded for {draft.applicationCycle}
