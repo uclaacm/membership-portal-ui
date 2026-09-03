@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import moment from 'moment';
 import Topbar from '@/components/Topbar';
 import EventCard from '@/components/EventCard';
@@ -17,7 +17,7 @@ import createRSVP from '@/app/actions/rsvp/createRSVP';
 import cancelRSVP from '@/app/actions/rsvp/cancelRSVP';
 import checkInAction from '@/app/actions/attendance/checkIn';
 import Config from '@/lib/config';
-import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from '@/lib/atoms';
+import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom } from '@/lib/atoms';
 import './eventsPage.scss';
 
 const RANGES = [
@@ -37,6 +37,9 @@ export default function EventsPage() {
   const userProfile = useAtomValue(authUserProfileAtom);
   const isAdmin = useAtomValue(isAdminAtom);
   const isOfficer = useAtomValue(isOfficerAtom);
+  // The page is role-aware on its own, but the profile menu's view switch is shared chrome and
+  // still drives this atom, so it has to be threaded through.
+  const [adminView, setAdminView] = useAtom(adminViewAtom);
 
   const [events, setEvents] = useState([]);
   const [rsvpedUuids, setRsvpedUuids] = useState({});
@@ -168,6 +171,10 @@ export default function EventsPage() {
         onLogout={async () => { await logoutUser(); }}
         isRealAdmin={isAdmin}
         isOfficer={isOfficer}
+        adminView={adminView}
+        onToggleAdminView={() => setAdminView((v) => !v)}
+        officerView={adminView}
+        onToggleOfficerView={() => setAdminView((v) => !v)}
       />
 
       <div className="events-page__inner">

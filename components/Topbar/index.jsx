@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import NavigationItem from "./NavigationItem";
 import ProfileDropdown from "./ProfileDropdown";
+import AppLauncher from "./AppLauncher";
 import Config from "@/lib/config";
 import "./styles.scss";
 
@@ -18,8 +19,10 @@ export default function Topbar({
   isOfficer,
   officerView,
   onToggleOfficerView,
+  cycle,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [launcherOpen, setLauncherOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -37,6 +40,8 @@ export default function Topbar({
     setMenuOpen(prev => !prev);
   };
 
+  // Three constant items. The bar no longer changes shape by role — Internship, Career Hub and
+  // the Control Panel moved behind the launcher, and Leaderboard is gone with its page.
   const sharedLinks = (
     <>
       <Link href="/home" className={pathname === "/home" ? "selected" : ""}>
@@ -45,17 +50,8 @@ export default function Topbar({
       <Link href="/events" className={pathname === "/events" ? "selected" : ""}>
         <NavigationItem text="Events" />
       </Link>
-      {/* The Leaderboard item is gone: /leaderboard was deleted and its content now lives in a
-          modal on the dashboard. For admins the same slot read "Members", which the Control
-          Panel's Users section covers. */}
-      <Link href="/profile/career" className={pathname.startsWith("/profile/career") ? "selected" : ""}>
-        <NavigationItem text="Career Hub" />
-      </Link>
       <Link href="/resources" className={pathname === "/resources" ? "selected" : ""}>
         <NavigationItem text={isAdmin ? "Organization" : "Resources"} />
-      </Link>
-      <Link href="/internship" className={pathname.startsWith("/internship") ? "selected" : ""}>
-        <NavigationItem text="Internship" />
       </Link>
     </>
   );
@@ -70,12 +66,6 @@ export default function Topbar({
 
         <div className={`topbar-links ${menuOpen ? "open" : ""}`}>
           {sharedLinks}
-
-          {(isRealAdmin || isOfficer) && adminView && (
-            <Link href="/controlpanel" className={pathname === "/controlpanel" ? "selected" : ""}>
-              <NavigationItem text="Control Panel" />
-            </Link>
-          )}
         </div>
 
         {/* Hamburger Button (Mobile only) */}
@@ -83,17 +73,28 @@ export default function Topbar({
           <i className={`fa ${menuOpen ? "fa-times" : "fa-bars"}`} />
         </div>
 
-        {/* Profile Icon (Desktop only) */}
-        <ProfileDropdown
-          picture={picture}
-          onLogout={onLogout}
-          isAdmin={isRealAdmin}
-          adminView={adminView}
-          onToggleAdminView={onToggleAdminView}
-          isOfficer={isOfficer}
-          officerView={officerView}
-          onToggleOfficerView={onToggleOfficerView}
-        />
+        {/* Right cluster: launcher then avatar, both fixed width. Opening one closes the other. */}
+        <div className="topbar-actions">
+          <AppLauncher
+            open={launcherOpen}
+            onToggle={() => setLauncherOpen((v) => !v)}
+            onClose={() => setLauncherOpen(false)}
+            staff={isRealAdmin || isOfficer}
+            cycle={cycle}
+          />
+
+          <ProfileDropdown
+            picture={picture}
+            onLogout={onLogout}
+            isAdmin={isRealAdmin}
+            adminView={adminView}
+            onToggleAdminView={onToggleAdminView}
+            isOfficer={isOfficer}
+            officerView={officerView}
+            onToggleOfficerView={onToggleOfficerView}
+            onOpen={() => setLauncherOpen(false)}
+          />
+        </div>
       </div>
     </div>
   );

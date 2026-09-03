@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import './profileDropdown.scss';
 
-export default function ProfileDropdown({ picture, isAdmin, adminView, onToggleAdminView, isOfficer, officerView, onToggleOfficerView, onLogout }) {
+export default function ProfileDropdown({ picture, isAdmin, adminView, onToggleAdminView, isOfficer, officerView, onToggleOfficerView, onLogout, onOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
 
@@ -20,7 +20,11 @@ export default function ProfileDropdown({ picture, isAdmin, adminView, onToggleA
   }, []);
 
   const toggleDropdown = () => {
-    setIsOpen(prev => !prev);
+    // Opening one dropdown closes the other, so the two panels can never overlap.
+    setIsOpen(prev => {
+      if (!prev && onOpen) onOpen();
+      return !prev;
+    });
   };
 
   return (
