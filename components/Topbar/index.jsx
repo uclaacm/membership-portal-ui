@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import NavigationItem from "./NavigationItem";
 import ProfileDropdown from "./ProfileDropdown";
 import AppLauncher from "./AppLauncher";
+import useCycleState from "@/lib/hooks/useCycleState";
 import Config from "@/lib/config";
 import "./styles.scss";
 
@@ -21,6 +22,9 @@ export default function Topbar({
   onToggleOfficerView,
   cycle,
 }) {
+  // Sourced here rather than threaded from every page: the topbar is on every screen, and a
+  // caller that forgot the prop made the launcher assert "Applications closed".
+  const loadedCycle = useCycleState();
   const [menuOpen, setMenuOpen] = useState(false);
   const [launcherOpen, setLauncherOpen] = useState(false);
   const pathname = usePathname();
@@ -80,7 +84,7 @@ export default function Topbar({
             onToggle={() => setLauncherOpen((v) => !v)}
             onClose={() => setLauncherOpen(false)}
             staff={isRealAdmin || isOfficer}
-            cycle={cycle}
+            cycle={cycle ?? loadedCycle}
           />
 
           <ProfileDropdown

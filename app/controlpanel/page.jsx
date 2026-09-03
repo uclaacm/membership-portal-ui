@@ -399,19 +399,6 @@ export default function ControlPanelPage() {
     if (result.success) await loadAudit(auditFilters);
   };
 
-  const handleToggleRecruitment = (committee) => setConfirm({
-    title: committee.isActive ? 'Close recruitment' : 'Open recruitment',
-    message: `${committee.isActive ? 'Close' : 'Open'} recruitment for ${committee.displayName}?`,
-    run: async () => {
-      const result = await bulkUpdateCommitteeStatus({
-        action: committee.isActive ? 'close' : 'open',
-        committeeIds: [committee.id],
-      });
-      notify(result.success, result.success ? 'Recruitment updated.' : result.error);
-      await Promise.all([loadInternship(), loadAudit(auditFilters)]);
-    },
-  });
-
   const handleCloseAll = () => setConfirm({
     title: 'Close all recruitment',
     message: 'Close recruitment for every committee?',
@@ -512,9 +499,6 @@ export default function ControlPanelPage() {
             admins={admins}
             officers={officers}
             events={events}
-            canManage={canManage}
-            onToggleRecruitment={handleToggleRecruitment}
-            onCloseAll={handleCloseAll}
           />
         );
       case 'events':

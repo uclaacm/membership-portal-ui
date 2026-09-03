@@ -45,12 +45,20 @@ export default function AppLauncher({
     };
   }, [open, onClose]);
 
+  // `cycle` is null until the lookup resolves. Neither state may be asserted before then —
+  // showing "Applications closed" while the internship screens showed everything open was the
+  // bug this guard exists to prevent.
   const cycleOpen = !!cycle?.open;
-  let internshipMeta = 'Applications closed';
-  if (cycleOpen) {
-    internshipMeta = staff
-      ? `Cycle open · ${cycle.awaitingReview ?? 0} awaiting review`
-      : `Applications open${cycle.closes ? ` · closes ${cycle.closes}` : ''}`;
+  let internshipMeta = 'Applications and committees';
+  if (cycle) {
+    if (cycleOpen) {
+      const count = `${cycle.openCount} committee${cycle.openCount === 1 ? '' : 's'}`;
+      internshipMeta = staff
+        ? `Cycle open · ${cycle.awaitingReview != null ? `${cycle.awaitingReview} awaiting review` : count}`
+        : `Applications open · ${count}${cycle.closes ? ` · closes ${cycle.closes}` : ''}`;
+    } else {
+      internshipMeta = 'Applications closed';
+    }
   }
 
   return (
