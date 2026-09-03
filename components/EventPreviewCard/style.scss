@@ -258,3 +258,70 @@
     flex: 0 0 auto;
   }
 }
+
+// ── Staff footer strip (admin only) ───────────────────────────────────────────
+//
+// Sits outside `.preview-card-container` rather than inside it: the card's two faces are
+// absolutely positioned against a fixed 230x280 box, so anything added within it would either
+// be clipped or ride on top of the artwork. As a sibling it also keeps the footer's controls
+// out of the card's click target, which is what makes "click card to edit" unambiguous.
+.preview-card-shell {
+  display: flex;
+  flex-direction: column;
+  width: 230px;
+}
+
+.preview-admin-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 0 2px;
+  font-family: "Lato", sans-serif;
+}
+
+.preview-admin-count {
+  font-size: 12px;
+  color: rgb(74, 74, 74);
+  white-space: nowrap;
+}
+
+.preview-admin-btn {
+  background: none;
+  border: 1px solid #d8d8d8;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: #f2f2f2;
+    border-color: #bbb;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.preview-admin-external {
+  font-size: 12px;
+  color: rgba(30, 108, 255, 1);
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+}
+
+// The attendance code replaces the RSVP pill in staff view; it is informational, so it drops
+// the button affordance the member pill carries.
+.preview-rsvp-pill.is-code {
+  background: rgba(0, 0, 0, 0.62);
+  font-family: "Lato", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
