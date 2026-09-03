@@ -9,7 +9,7 @@ import ConfirmationModal from '@/components/Modal/confirmationModal';
 import SyncSheetsModal from '@/components/Modal/syncSheetsModal';
 import Config from '@/lib/config';
 import CookieStore from '@/lib/cookieStore';
-import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom } from '@/lib/atoms';
+import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from '@/lib/atoms';
 
 import logoutUser from '@/app/actions/auth/logoutUser';
 import changeOneClickPassword from '@/app/actions/auth/changeOneClickPassword';
@@ -74,7 +74,6 @@ export default function ControlPanelPage() {
   const userProfile = useAtomValue(authUserProfileAtom);
   const isAdmin = useAtomValue(isAdminAtom);
   const isOfficer = useAtomValue(isOfficerAtom);
-  const [adminView, setAdminView] = useAtom(adminViewAtom);
 
   const [selectedSection, setSection] = useState('overview');
   const [mounted, setMounted] = useState(false);
@@ -570,15 +569,10 @@ export default function ControlPanelPage() {
   return (
     <>
       <Topbar
-        isAdmin={adminView}
         picture={userProfile?.picture}
         onLogout={handleLogout}
         isRealAdmin={isAdmin}
-        adminView={adminView}
-        onToggleAdminView={() => setAdminView((v) => !v)}
         isOfficer={isOfficer}
-        officerView={adminView}
-        onToggleOfficerView={() => setAdminView((v) => !v)}
       />
 
       <ControlPanelV2
@@ -586,8 +580,6 @@ export default function ControlPanelPage() {
         onSectionChange={setSection}
         counts={counts}
         isAdmin={isAdmin}
-        adminView={adminView}
-        onToggleView={() => setAdminView((v) => !v)}
         onLogout={handleLogout}
       >
         {renderSection()}

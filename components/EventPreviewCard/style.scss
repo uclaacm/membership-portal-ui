@@ -190,7 +190,18 @@
     font-weight: 500;
     padding: 5px 14px;
     border-radius: 12px;
+    // Decorative by default: in the create-event form's live preview the pill is a plain div
+    // sitting over the card, and must not swallow clicks meant for the card behind it.
     pointer-events: none;
+  }
+
+  // The real RSVP control carries the same class but is a <button> with an onClick, so the
+  // rule above made it inert — the click landed on the .preview-meta line underneath instead.
+  button.preview-rsvp-pill {
+    pointer-events: auto;
+    cursor: pointer;
+    border: none;
+    font-family: "Lato", sans-serif;
   }
 }
 // Grid usage: the card is authored at a fixed 230x280. In a dashboard grid track it should

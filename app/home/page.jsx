@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import moment from 'moment';
 
-import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom } from '@/lib/atoms';
+import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from '@/lib/atoms';
 import logoutUser from '@/app/actions/auth/logoutUser';
 import fetchLeaderboard from '@/app/actions/leaderboard/fetchLeaderboard';
 import fetchFutureEvents from '@/app/actions/events/fetchFutureEvents';
@@ -53,7 +53,6 @@ export default function HomePage() {
   const userProfile = useAtomValue(authUserProfileAtom);
   const isAdmin = useAtomValue(isAdminAtom);
   const isOfficer = useAtomValue(isOfficerAtom);
-  const [adminView, setAdminView] = useAtom(adminViewAtom);
 
   const [mounted, setMounted] = useState(false);
   const [events, setEvents] = useState([]);
@@ -208,15 +207,10 @@ export default function HomePage() {
   return (
     <>
       <Topbar
-        isAdmin={adminView}
         picture={userProfile?.picture}
         onLogout={() => logoutUser()}
         isRealAdmin={isAdmin}
-        adminView={adminView}
-        onToggleAdminView={() => setAdminView((v) => !v)}
         isOfficer={isOfficer}
-        officerView={adminView}
-        onToggleOfficerView={() => setAdminView((v) => !v)}
       />
 
       <div className="dash-root">

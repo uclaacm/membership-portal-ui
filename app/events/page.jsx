@@ -17,7 +17,11 @@ import createRSVP from '@/app/actions/rsvp/createRSVP';
 import cancelRSVP from '@/app/actions/rsvp/cancelRSVP';
 import checkInAction from '@/app/actions/attendance/checkIn';
 import Config from '@/lib/config';
-import { authUserProfileAtom, isAdminAtom, isOfficerAtom, adminViewAtom } from '@/lib/atoms';
+import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from '@/lib/atoms';
+// AdminAddEvent carries no styles of its own — its overlay lives in this sheet, scoped under
+// `.admin-dashboard`. The page rewrite dropped the old `./style.scss` import that used to pull
+// it in, so the form rendered as an unstyled block at the foot of the page.
+import './AdminEvents/style.scss';
 import './eventsPage.scss';
 
 const RANGES = [
@@ -39,7 +43,6 @@ export default function EventsPage() {
   const isOfficer = useAtomValue(isOfficerAtom);
   // The page is role-aware on its own, but the profile menu's view switch is shared chrome and
   // still drives this atom, so it has to be threaded through.
-  const [adminView, setAdminView] = useAtom(adminViewAtom);
 
   const [events, setEvents] = useState([]);
   const [rsvpedUuids, setRsvpedUuids] = useState({});
@@ -171,10 +174,6 @@ export default function EventsPage() {
         onLogout={async () => { await logoutUser(); }}
         isRealAdmin={isAdmin}
         isOfficer={isOfficer}
-        adminView={adminView}
-        onToggleAdminView={() => setAdminView((v) => !v)}
-        officerView={adminView}
-        onToggleOfficerView={() => setAdminView((v) => !v)}
       />
 
       <div className="events-page__inner">
@@ -254,14 +253,18 @@ export default function EventsPage() {
         ))}
       </div>
 
+      {/* `.admin-dashboard` is the scope every rule in AdminEvents/style.scss is nested under;
+          without the wrapper the imported sheet still matches nothing. */}
       {(creating || editing) && (
-        <AdminAddEvent
-          showing
-          isEdit={!!editing}
-          event={editing ?? {}}
-          onClickAdd={saveEvent}
-          onClickCancel={() => { setEditing(null); setCreating(false); }}
-        />
+        <div className="admin-dashboard">
+          <AdminAddEvent
+            showing
+            isEdit={!!editing}
+            event={editing ?? {}}
+            onClickAdd={saveEvent}
+            onClickCancel={() => { setEditing(null); setCreating(false); }}
+          />
+        </div>
       )}
 
       {rsvpModalEvent && (

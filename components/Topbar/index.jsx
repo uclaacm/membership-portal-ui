@@ -11,15 +11,10 @@ import Config from "@/lib/config";
 import "./styles.scss";
 
 export default function Topbar({
-  isAdmin,
   picture,
   onLogout,
   isRealAdmin,
-  adminView,
-  onToggleAdminView,
   isOfficer,
-  officerView,
-  onToggleOfficerView,
   cycle,
 }) {
   // Sourced here rather than threaded from every page: the topbar is on every screen, and a
@@ -55,7 +50,7 @@ export default function Topbar({
         <NavigationItem text="Events" />
       </Link>
       <Link href="/resources" className={pathname === "/resources" ? "selected" : ""}>
-        <NavigationItem text={isAdmin ? "Organization" : "Resources"} />
+        <NavigationItem text="Organization" />
       </Link>
     </>
   );
@@ -90,12 +85,6 @@ export default function Topbar({
           <ProfileDropdown
             picture={picture}
             onLogout={onLogout}
-            isAdmin={isRealAdmin}
-            adminView={adminView}
-            onToggleAdminView={onToggleAdminView}
-            isOfficer={isOfficer}
-            officerView={officerView}
-            onToggleOfficerView={onToggleOfficerView}
             onOpen={() => setLauncherOpen(false)}
           />
         </div>
