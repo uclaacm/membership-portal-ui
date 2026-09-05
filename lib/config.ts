@@ -170,6 +170,11 @@ const config = {
         picture: "",
       },
       {
+        name: "Samuel Lo",
+        position: "Dev Team Officer",
+        picture: "/officers/SamuelLo.jpg",
+      },
+      {
         name: "Alice Zhong",
         position: "Dev Team Officer",
         picture: "/officers/AliceZhong.jpg",
