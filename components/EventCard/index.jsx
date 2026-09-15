@@ -33,7 +33,7 @@ export default function EventCard({
   // Most stored covers are dead external links, so the fallback chain does real work. It has to
   // be an <img>: `background-image` cannot report a load failure, so a broken URL would just
   // leave the placeholder colour showing with no way to recover.
-  const banner = Config.committeeBanners[committee] || '';
+  const banner = Config.committeeBanners[committee] || Config.defaultEventBanner;
   const [src, setSrc] = useState(event.cover || banner);
 
   const onCoverError = () => setSrc((current) => (current === banner ? '' : banner));

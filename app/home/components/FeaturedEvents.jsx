@@ -8,7 +8,7 @@ import EventPreviewCard from '@/components/EventPreviewCard';
 
 const committeeColor = (committee, map) => map[committee] || map.ACM || '#1d6bff';
 
-const bannerFor = (event) => Config.committeeBanners[event.committee] || null;
+const bannerFor = (event) => Config.committeeBanners[event.committee] || Config.defaultEventBanner;
 
 /**
  * Cover art for an event, as a real <img> rather than a background.

@@ -418,7 +418,7 @@ const config = {
   // committees, and every Control Panel filter. "Dev Team" belongs here: officers are assigned
   // to it, and leaving it out is what previously made the only committee with officers
   // impossible to select. Mirrors COMMITTEES in the API's app/committees.js.
-  committees: ["Dev Team", "AI", "Cyber", "Design", "Hack", "ICPC", "Studio", "TeachLA", "W", "Cloud"],
+  committees: ["Dev Team", "AI", "Cyber", "Design", "Hack", "ICPC", "Quantum", "Studio", "TeachLA", "W", "Cloud"],
   committeeColors: [
     ["ACM", "#1d6bff"],
     ["Dev Team", "#3b59ed"],
@@ -427,11 +427,18 @@ const config = {
     ["Design", "#fe833d"],
     ["Hack", "#c95ffd"],
     ["ICPC", "#ff6b6b"],
+    ["Quantum", "#7b2ff7"],
     ["Studio", "#ed3267"],
     ["TeachLA", "#5fda10"],
     ["W", "#01d4cb"],
     ["Cloud", "#9f97ff"],
   ],
+  // Cover art for any committee without its own entry in committeeBanners below — including
+  // ACM itself, which is what event.committee falls back to for chapter-wide events. This is
+  // the square 1200x1200 chapter logo rather than a 1.9:1 banner like the others, so
+  // object-fit: cover keeps only its middle horizontal band. Swap this for a real
+  // /event_banners/acm_banner.webp when there's artwork at the right ratio.
+  defaultEventBanner: "/committees/acm.png",
   committeeBanners: {
     "Dev Team" : "/event_banners/acm_dev_banner.webp",
     "AI" : "/event_banners/acm_ai_banner.webp",
