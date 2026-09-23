@@ -64,12 +64,16 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
   const profileMajor = getProfileMajor(authProfile);
   const profileYear = getProfileYear(authProfile);
   const profileGraduationYear = graduationYearFromProfileYear(profileYear);
-  const displayMajor = myApplication?.major || profileMajor;
+  const displayMajor = profileMajor || myApplication?.major || "";
 
   const [phone, setPhone] = useState(myApplication?.phone || "");
   const [graduationYearInput, setGraduationYearInput] = useState(
-    String(myApplication?.graduationYear || profileGraduationYear || ""),
+    String(profileGraduationYear || myApplication?.graduationYear || ""),
   );
+
+  useEffect(() => {
+    if (profileGraduationYear) setGraduationYearInput(String(profileGraduationYear));
+  }, [profileGraduationYear]);
 
   const graduationYear = Number(graduationYearInput);
   const graduationYearValid =
@@ -83,6 +87,7 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
 
   const { saveState, error, errorKind, flushPending, retry } = useStep4Save({
     phone,
+    major: displayMajor,
     graduationYear,
     canSave: stepValid,
   });
