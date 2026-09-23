@@ -71,9 +71,11 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
     String(profileGraduationYear || myApplication?.graduationYear || ""),
   );
 
-  useEffect(() => {
+  const [syncedProfileGraduationYear, setSyncedProfileGraduationYear] = useState(profileGraduationYear);
+  if (profileGraduationYear !== syncedProfileGraduationYear) {
+    setSyncedProfileGraduationYear(profileGraduationYear);
     if (profileGraduationYear) setGraduationYearInput(String(profileGraduationYear));
-  }, [profileGraduationYear]);
+  }
 
   const graduationYear = Number(graduationYearInput);
   const graduationYearValid =
