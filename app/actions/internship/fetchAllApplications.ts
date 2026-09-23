@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
-import { isAuthenticated, isTokenAdmin, isTokenOfficer } from "@/lib/token";
+import { isAuthenticated } from "@/lib/token";
 import type {
   FetchApplicationsOptions,
   InternshipApplicationsListResult,
@@ -20,10 +20,6 @@ export default async function fetchAllApplications(
 
     if (!isAuthenticated(token)) {
       return { success: false, error: "Not authenticated" };
-    }
-
-    if (!isTokenAdmin(token) && !isTokenOfficer(token)) {
-      return { success: false, error: "Not authorized" };
     }
 
     const params = new URLSearchParams();
@@ -53,7 +49,10 @@ export default async function fetchAllApplications(
     if (!response.ok || data?.success === false) {
       const validationMessage = Array.isArray(data?.errors) ? data.errors[0]?.msg : undefined;
       const message =
-        validationMessage ?? data?.message ?? data?.error ?? "Failed to fetch applications";
+        validationMessage ??
+        data?.message ??
+        (typeof data?.error === "string" ? data.error : data?.error?.message) ??
+        "Failed to fetch applications";
       Logger.error(`fetchAllApplications failed: ${message}`);
       return { success: false, error: message };
     }

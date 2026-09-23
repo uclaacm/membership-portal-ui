@@ -1,5 +1,7 @@
 // Get claims from JSON Web Token (JWT)
-// JWT is signed on backend, sent with every request, and verified on backend
+// JWT is signed on backend, sent with every request, and verified on backend.
+// The token carries no roles — they can change mid-session and a token can't. Read roles
+// from the user record's accessType instead (accessTypeAtom on the client, fetchAccessType on the server).
 function tokenGetClaims(token: string) {
   if (!token) {
     return {};
@@ -21,18 +23,6 @@ export function isAuthenticated(token: string | undefined): token is string {
   return !!token;
 }
 
-export function isTokenAdmin(token: string): boolean {
-  return !!tokenGetClaims(token).admin;
-}
-
-export function isTokenSuperAdmin(token: string): boolean {
-  return !!tokenGetClaims(token).superAdmin;
-}
-
 export function isTokenRegistered(token: string): boolean {
   return !!tokenGetClaims(token).registered;
-}
-
-export function isTokenOfficer(token: string): boolean {
-  return !!tokenGetClaims(token).officer;
 }

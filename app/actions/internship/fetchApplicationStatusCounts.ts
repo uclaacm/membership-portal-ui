@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
-import { isAuthenticated, isTokenAdmin, isTokenOfficer } from "@/lib/token";
+import { isAuthenticated } from "@/lib/token";
 
 export type FetchApplicationStatusCountsResult =
   | { success: true; counts: Record<string, number> }
@@ -18,9 +18,6 @@ export default async function fetchApplicationStatusCounts(
 
     if (!isAuthenticated(token)) {
       return { success: false, error: "Not authenticated" };
-    }
-    if (!isTokenAdmin(token) && !isTokenOfficer(token)) {
-      return { success: false, error: "Not authorized" };
     }
 
     const params = new URLSearchParams();
@@ -37,7 +34,10 @@ export default async function fetchApplicationStatusCounts(
     const data = await response.json().catch(() => null);
 
     if (!response.ok || data?.success === false) {
-      const message = data?.message ?? data?.error ?? `Request failed (${response.status})`;
+      const message =
+        data?.message ??
+        (typeof data?.error === "string" ? data.error : data?.error?.message) ??
+        `Request failed (${response.status})`;
       Logger.error(`fetchApplicationStatusCounts failed: ${message}`);
       return { success: false, error: message };
     }

@@ -3,8 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSetAtom } from "jotai";
-import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from "@/lib/atoms";
-import { isTokenAdmin, isTokenOfficer } from "@/lib/token";
+import { accessTypeAtom, authUserProfileAtom } from "@/lib/atoms";
 import CookieStore from "@/lib/cookieStore";
 import type { UserExtendedProfile } from "@/lib/types/User";
 
@@ -18,8 +17,7 @@ export default function AuthSync({
   const router = useRouter();
   const pathname = usePathname();
   const setUserProfile = useSetAtom(authUserProfileAtom);
-  const setIsAdmin = useSetAtom(isAdminAtom);
-  const setIsOfficer = useSetAtom(isOfficerAtom);
+  const setAccessType = useSetAtom(accessTypeAtom);
 
   // A token the API rejected is dead — clear it and send the user to log in, rather than
   // leaving them on a signed-in-looking page whose every request fails. This is what makes a
@@ -36,21 +34,12 @@ export default function AuthSync({
     if (pathname !== "/login") router.replace("/login");
   }, [unauthorized, pathname, router]);
 
+  // The access type must come from the freshly fetched user record, never the token: a token
+  // is frozen at login and would go stale the moment a role changes.
   useEffect(() => {
     setUserProfile(user);
-    if (user) {
-      const token = CookieStore.get("token");
-      if (token) {
-        const admin = isTokenAdmin(token);
-        const officer = isTokenOfficer(token);
-        setIsAdmin(admin);
-        setIsOfficer(officer);
-      }
-    } else {
-      setIsAdmin(false);
-      setIsOfficer(false);
-    }
-  }, [user, setUserProfile, setIsAdmin, setIsOfficer]);
+    setAccessType(user?.accessType ?? null);
+  }, [user, setUserProfile, setAccessType]);
 
   return null;
 }
