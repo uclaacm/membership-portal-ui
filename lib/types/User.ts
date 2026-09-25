@@ -1,3 +1,5 @@
+export type AccessType = "RESTRICTED" | "STANDARD" | "OFFICER" | "ADMIN" | "SUPERADMIN";
+
 export interface UserPublicProfile {
   firstName: string;
   lastName: string;
@@ -10,6 +12,7 @@ export interface UserExtendedProfile extends UserPublicProfile {
   email: string;
   year: number;
   major: string;
+  accessType?: AccessType;
   committees?: string[];
   bio?: string;
   pronouns?: string;

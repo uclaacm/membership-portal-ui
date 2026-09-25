@@ -2,7 +2,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { isAuthenticated, isTokenAdmin, isTokenOfficer, isTokenRegistered } from "@/lib/token";
+import { fetchAccessType, hasAdminAccess, hasOfficerAccess } from "@/lib/roles";
+import { isAuthenticated, isTokenRegistered } from "@/lib/token";
 
 const SUPER_PROTECTED = ["/controlpanel"];
 const PROTECTED = ["/home", "/events", "/profile", "/resources", "/leaderboard"];
@@ -24,8 +25,6 @@ export default async function proxy(req: NextRequest) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   const authenticated = isAuthenticated(token);
-  const isAdmin = isTokenAdmin(token || "");
-  const isOfficer = isTokenOfficer(token || "");
   const isRegistered = isTokenRegistered(token || "");
 
   // Edge cases
@@ -39,7 +38,10 @@ export default async function proxy(req: NextRequest) {
     const registerUrl = new URL("/register", req.url);
     return NextResponse.redirect(registerUrl);
   }
-  if (isSuperProtected && !isAdmin && !isOfficer) return NextResponse.redirect(homeUrl);
+  if (isSuperProtected) {
+    const accessType = await fetchAccessType(token!);
+    if (!hasAdminAccess(accessType) && !hasOfficerAccess(accessType)) return NextResponse.redirect(homeUrl);
+  }
 
   return NextResponse.next();
 }
