@@ -8,6 +8,8 @@
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "test": "jest --config jest.config.json",
+    "test:unit": "jest --config jest.config.json tests/unit",
+    "test:component": "jest --config jest.config.json --passWithNoTests tests/component",
     "lint": "eslint ."
   },
   "repository": {
