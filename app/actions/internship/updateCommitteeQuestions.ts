@@ -3,7 +3,6 @@
 import { cookies } from "next/headers";
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
-import { isTokenAdmin, isTokenOfficer } from "@/lib/token";
 import type {
   InternshipCustomQuestion,
   InternshipCommittee,
@@ -22,10 +21,6 @@ export default async function updateCommitteeQuestions(
     const cks = await cookies();
     const token = cks.get("token")?.value;
     if (!token) return { success: false, error: "Not authenticated" };
-
-    if (!isTokenAdmin(token) && !isTokenOfficer(token)) {
-      return { success: false, error: "Not authorized" };
-    }
 
     const response = await fetch(
       `${Config.API_URL}${Config.routes.internship.committees}/${committeeId}/questions`,
