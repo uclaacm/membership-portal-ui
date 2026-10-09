@@ -39,8 +39,7 @@ export default function Topbar({
     setMenuOpen(prev => !prev);
   };
 
-  // Four constant items. The bar doesn't change shape by role. Internship is also in the
-  // launcher; Career Hub and the Control Panel live only there. Leaderboard is gone with its page.
+  // Four constant items. The bar doesn't change shape by role. Career Hub and the Control Panel live in grid. Leaderboard page is gone.
   const sharedLinks = (
     <>
       <Link href="/home" className={pathname === "/home" ? "selected" : ""}>
