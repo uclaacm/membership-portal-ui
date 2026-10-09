@@ -51,7 +51,7 @@ export default function Topbar({
       <Link href="/resources" className={pathname === "/resources" ? "selected" : ""}>
         <NavigationItem text="Organization" />
       </Link>
-      <Link href="/internship" className={pathname?.startsWith("/internship") ? "selected" : ""}>
+      <Link href="/internship" className={pathname === "/internship" ? "selected" : ""}>
         <NavigationItem text="Internship" />
       </Link>
     </>
