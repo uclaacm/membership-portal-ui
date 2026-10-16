@@ -68,6 +68,7 @@ export interface InternshipCommittee {
   internLimit?: number;
   applicationDeadline?: string;
   customQuestions: InternshipCommitteeQuestion[];
+  decisionsReleased?: boolean;
 }
 
 export type FetchCommitteeByIdResult = { success: true; data: InternshipCommittee } | { success: false; error: string };
