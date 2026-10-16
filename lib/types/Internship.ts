@@ -22,9 +22,10 @@ export interface InternshipApplication {
   firstChoiceResponses: InternshipQuestionResponse[];
   secondChoiceResponses: InternshipQuestionResponse[];
   thirdChoiceResponses: InternshipQuestionResponse[];
-  firstChoiceStatus: string;
-  secondChoiceStatus: string;
-  thirdChoiceStatus: string;
+  // null on the applicant's own application until that committee releases decisions
+  firstChoiceStatus: string | null;
+  secondChoiceStatus: string | null;
+  thirdChoiceStatus: string | null;
   firstChoiceOfficer1Rating?: "yes" | "no" | "maybe" | null;
   secondChoiceOfficer1Rating?: "yes" | "no" | "maybe" | null;
   thirdChoiceOfficer1Rating?: "yes" | "no" | "maybe" | null;
