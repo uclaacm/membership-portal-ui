@@ -15,6 +15,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 const MAX_COVER_BYTES = 5 * 1024 * 1024;
 
 export default class AdminAddEvent extends React.Component {
+  static defaultProps = {
+    onClickAdd: null,
+    onClickCancel: null,
+    onClickDelete: null,
+    isEdit: false,
+    showing: false,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -632,12 +640,4 @@ AdminAddEvent.propTypes = {
   onClickDelete: PropTypes.func,
   isEdit: PropTypes.bool,
   showing: PropTypes.bool,
-};
-
-AdminAddEvent.defaultProps = {
-  onClickAdd: null,
-  onClickCancel: null,
-  onClickDelete: null,
-  isEdit: false,
-  showing: false,
 };
