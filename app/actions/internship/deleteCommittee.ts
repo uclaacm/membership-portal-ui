@@ -3,7 +3,6 @@
 import { cookies } from "next/headers";
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
-import { isTokenAdmin } from "@/lib/token";
 import type { DeleteInternshipCommitteeResult } from "@/lib/types/Internship";
 
 export default async function deleteCommittee(committeeId: string): Promise<DeleteInternshipCommitteeResult> {
@@ -11,10 +10,6 @@ export default async function deleteCommittee(committeeId: string): Promise<Dele
     const cks = await cookies();
     const token = cks.get("token")?.value;
     if (!token) return { success: false, error: "Not authenticated" };
-
-    if (!isTokenAdmin(token)) {
-      return { success: false, error: "Not authorized" };
-    }
 
     const response = await fetch(
       `${Config.API_URL}${Config.routes.internship.committees}/${committeeId}`,
