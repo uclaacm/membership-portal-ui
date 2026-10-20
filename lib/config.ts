@@ -188,7 +188,7 @@ const config = {
       {
         name: "Daniil Malakhov",
         position: "Dev Team Officer",
-        picture: "",
+        picture: "/officers/DaniilMalakhov.jpg",
       },
       {
         name: "Spandan Patel",
@@ -198,12 +198,12 @@ const config = {
       {
         name: "Siddhant Patil",
         position: "Dev Team Officer",
-        picture: "",
+        picture: "/officers/SiddhantPatil.png",
       },
       {
         name: "Marc Jowell Bagaoisan",
         position: "Dev Team Officer",
-        picture: "",
+        picture: "/officers/MJBagaoisan.jpg",
       },
       {
         name: "Lily Wu",
