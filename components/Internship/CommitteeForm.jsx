@@ -17,7 +17,8 @@ export default function CommitteeForm({ initialValues, submitLabel, onSubmit }) 
   const isEdit = Boolean(initialValues?.name);
   const [name, setName] = useState(initialValues?.name ?? "");
   const [displayName, setDisplayName] = useState(initialValues?.displayName ?? "");
-  const [color, setColor] = useState(initialValues?.color ?? DEFAULT_COMMITTEE_COLOR);
+  // Empty until someone picks one, so saving other fields never stores the default as a choice.
+  const [color, setColor] = useState(initialValues?.color ?? "");
   const [bannerUrl, setBannerUrl] = useState(initialValues?.bannerUrl ?? "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
   const [internLimit, setInternLimit] = useState(
@@ -52,8 +53,8 @@ export default function CommitteeForm({ initialValues, submitLabel, onSubmit }) 
     const payload = {
       name: trimmedName,
       displayName: displayName.trim() || trimmedName,
-      color,
-      bannerUrl: bannerUrl.trim() || undefined,
+      color: color || undefined,
+      bannerUrl: isEdit ? bannerUrl.trim() : bannerUrl.trim() || undefined,
       description: description.trim() || undefined,
       internLimit: internLimit.trim() ? Number(internLimit) : undefined,
       applicationDeadline: applicationDeadline || undefined,
@@ -103,7 +104,7 @@ export default function CommitteeForm({ initialValues, submitLabel, onSubmit }) 
 
       <label className="committee-form__field committee-form__field--inline">
         <span className="committee-form__label">Color</span>
-        <input type="color" value={color} onChange={(e) => setColor(e.target.value)} />
+        <input type="color" value={color || DEFAULT_COMMITTEE_COLOR} onChange={(e) => setColor(e.target.value)} />
       </label>
 
       <label className="committee-form__field">
