@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSetAtom } from "jotai";
 import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from "@/lib/atoms";
-import { isTokenAdmin, isTokenOfficer } from "@/lib/token";
+import { isTokenAdmin, isTokenOfficer, tokenExpiresAt } from "@/lib/token";
 import CookieStore from "@/lib/cookieStore";
 import type { UserExtendedProfile } from "@/lib/types/User";
 
@@ -21,36 +21,67 @@ export default function AuthSync({
   const setIsAdmin = useSetAtom(isAdminAtom);
   const setIsOfficer = useSetAtom(isOfficerAtom);
 
-  // A token the API rejected is dead — clear it and send the user to log in, rather than
-  // leaving them on a signed-in-looking page whose every request fails. This is what makes a
-  // deploy that rotated the signing secret self-correct instead of needing a manual sign-out.
-  //
-  // Only 401 triggers this. A 403 means the session is valid but the role lacks permission
-  // (an officer opening an admin-only endpoint, say), and logging out on 403 would boot
-  // officers out of the portal the moment they touched one.
   useEffect(() => {
-    if (!unauthorized) return;
-    CookieStore.remove("token");
-    // Guard against a redirect loop: once the cookie is gone the next render is a clean
-    // logged-out state, and /login itself needs no redirect.
-    if (pathname !== "/login") router.replace("/login");
-  }, [unauthorized, pathname, router]);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let invalidated = false;
+    let hadToken = !!CookieStore.get("token");
 
-  useEffect(() => {
-    setUserProfile(user);
-    if (user) {
-      const token = CookieStore.get("token");
-      if (token) {
-        const admin = isTokenAdmin(token);
-        const officer = isTokenOfficer(token);
-        setIsAdmin(admin);
-        setIsOfficer(officer);
-      }
-    } else {
+    const invalidate = () => {
+      if (invalidated) return;
+      invalidated = true;
+      CookieStore.remove("token");
+      setUserProfile(null);
       setIsAdmin(false);
       setIsOfficer(false);
+      if (pathname !== "/login") router.replace("/login");
+      router.refresh();
+    };
+
+    const checkExpiry = () => {
+      clearTimeout(timer);
+      if (invalidated) return;
+      // Always read latest cookie val
+      const token = CookieStore.get("token");
+      if (!token) {
+        if (hadToken) invalidate();
+        return;
+      }
+      hadToken = true;
+      const remaining = (tokenExpiresAt(token) ?? 0) - Date.now();
+      if (remaining <= 0) {
+        invalidate();
+        return;
+      }
+      timer = setTimeout(checkExpiry, Math.min(remaining, 2_147_483_647));
+    };
+
+    // Only 401 sets unauthorized
+    if (unauthorized) {
+      invalidate();
+      return;
     }
-  }, [user, setUserProfile, setIsAdmin, setIsOfficer]);
+
+    checkExpiry();
+
+    if (!invalidated) {
+      const token = CookieStore.get("token");
+      setUserProfile(token ? user : null);
+      setIsAdmin(!!user && !!token && isTokenAdmin(token));
+      setIsOfficer(!!user && !!token && isTokenOfficer(token));
+    }
+
+    // Timers can be suspended when device sleeps or tab is backgrounded
+    window.addEventListener("focus", checkExpiry);
+    document.addEventListener("visibilitychange", checkExpiry);
+    window.addEventListener("pageshow", checkExpiry);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("focus", checkExpiry);
+      document.removeEventListener("visibilitychange", checkExpiry);
+      window.removeEventListener("pageshow", checkExpiry);
+    };
+  }, [user, unauthorized, pathname, router, setUserProfile, setIsAdmin, setIsOfficer]);
 
   return null;
 }
