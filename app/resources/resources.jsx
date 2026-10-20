@@ -38,7 +38,7 @@ export default function Resources() {
             <dl className="grid grid-cols-2 gap-y-5 rounded-xl border border-[#d8d8d8] bg-white py-5 2xl:grid-cols-4 [&>div]:border-[#eeeeee] [&>div:nth-child(even)]:border-l 2xl:[&>div+div]:border-l">
               {[
                 { value: '1,000+', label: 'Members', icon: 'fa-users' },
-                { value: Config.committees.length, label: 'Committees', icon: 'fa-layer-group' },
+                { value: '10', label: 'Committees', icon: 'fa-layer-group' },
                 { value: 'Workshops', label: 'Learn together', icon: 'fa-calendar-days' },
                 { value: 'Projects', label: 'Build with peers', icon: 'fa-code' },
               ].map(({ value, label, icon }) => (
