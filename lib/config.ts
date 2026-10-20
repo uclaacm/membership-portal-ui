@@ -201,11 +201,6 @@ const config = {
         picture: "",
       },
       {
-        name: "Ryan Dewey",
-        position: "Dev Team Officer",
-        picture: "/officers/RyanDewey.jpg",
-      },
-      {
         name: "Marc Jowell Bagaoisan",
         position: "Dev Team Officer",
         picture: "",
