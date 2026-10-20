@@ -156,7 +156,7 @@ const config = {
       },
       {
         name: "Rizwaan Bana",
-        position: "Dev Team Project Manager",
+        position: "Dev Team PM",
         picture: "/officers/RizwaanBana.jpg",
       },
       {
@@ -228,7 +228,7 @@ const config = {
     resources: [
       {
         type: "github",
-        title: "Github",
+        title: "GitHub",
         subtitle: "github.com/uclaacm",
         link: "https://github.com/uclaacm",
       },
