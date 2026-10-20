@@ -62,8 +62,13 @@ export interface InternshipCommitteeQuestion {
 
 export interface InternshipCommittee {
   id: string;
+  /** Permanent key that officers and events reference. Never changes after creation. */
   name: string;
   displayName: string;
+  /** Accent color for this committee's events, e.g. "#1d6bff". */
+  color?: string;
+  /** Default event cover: a site path or uploaded image URL. */
+  bannerUrl?: string;
   description?: string;
   isActive: boolean;
   internLimit?: number;
@@ -73,6 +78,13 @@ export interface InternshipCommittee {
 }
 
 export type FetchCommitteeByIdResult = { success: true; data: InternshipCommittee } | { success: false; error: string };
+
+/** Every committee's identity and styling, active or not. */
+export type CommitteeDirectoryEntry = Pick<InternshipCommittee, "id" | "name" | "displayName" | "color" | "bannerUrl" | "isActive">;
+
+export type FetchCommitteeDirectoryResult =
+  | { success: true; data: CommitteeDirectoryEntry[] }
+  | { success: false; error: string };
 
 export interface InternshipCommitteeAdminListItem extends InternshipCommittee {
   applicationCount: number;
@@ -105,6 +117,8 @@ export interface InternshipCustomQuestion {
 export type CreateInternshipCommitteePayload = {
   name: string;
   displayName: string;
+  color?: string;
+  bannerUrl?: string;
   description?: string;
   isActive?: boolean;
   internLimit?: number;
@@ -123,7 +137,15 @@ export type UpdateInternshipCommitteeResult =
   | { success: false; error: string };
 
 export type DeleteInternshipCommitteeResult =
-  | { success: true; deletedApplications: number; updatedApplications: number }
+  | {
+    success: true;
+    deletedApplications: number;
+    updatedApplications: number;
+    /** Users the committee was removed from. */
+    updatedUsers: number;
+    /** Officers left with no committee, so demoted to member. */
+    demotedOfficers: number;
+  }
   | { success: false; error: string };
 
 export interface InternshipCycleInfo {

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import DatePicker from 'react-datepicker';
 import Config from '@/lib/config';
+import { committeeStyle, GENERAL_COMMITTEE } from '@/lib/committees';
 import uploadImage from '@/app/actions/image/uploadImage';
 import fetchImages from '@/app/actions/image/fetchImages';
 
@@ -22,6 +23,7 @@ export default class AdminAddEvent extends React.Component {
     onClickDelete: null,
     isEdit: false,
     showing: false,
+    committees: [],
   };
 
   constructor(props) {
@@ -89,9 +91,14 @@ export default class AdminAddEvent extends React.Component {
     });
   }
 
+  // Committees come from the database via the `committees` prop; a class component can't use
+  // the useCommitteeDirectory hook itself.
+  styleFor(committee) {
+    return committeeStyle(this.props.committees, committee);
+  }
+
   getDefaultBanner(committee){
-    const bannerImageURL = Config.committeeBanners[committee];
-    return bannerImageURL ? bannerImageURL : "/logo.png";
+    return this.styleFor(committee).bannerUrl || "/logo.png";
   }
 
 
@@ -336,7 +343,6 @@ export default class AdminAddEvent extends React.Component {
 
   renderPreviewCard() {
     const { event, isPreviewFlipped } = this.state;
-    const committeeColorMap = Object.fromEntries(Config.committeeColors);
 
     const title = event.title || 'Event Title';
     const committee = event.committee || 'ACM';
@@ -350,7 +356,7 @@ export default class AdminAddEvent extends React.Component {
       dateStr = event.startDate.format('MMM D, YYYY, h:mm a');
     }
 
-    const committeeColor = committeeColorMap[committee] || '#1E6CFF';
+    const committeeColor = this.styleFor(committee).color;
 
     return (
       <div className={`preview-card-container${isPreviewFlipped ? ' is-flipped' : ''}`}>
@@ -395,7 +401,6 @@ export default class AdminAddEvent extends React.Component {
   }
 
   render() {
-    const committeeColorMap = Object.fromEntries(Config.committeeColors);
     const { coverMode } = this.state;
     const platforms = this.state.event.platforms || [];
 
@@ -513,14 +518,14 @@ export default class AdminAddEvent extends React.Component {
                   <div className="field-group">
                     <label>Committee <span className="required-mark">*</span></label>
                     <select
-                      value={this.state.event.committee || 'ACM'}
+                      value={this.state.event.committee || GENERAL_COMMITTEE}
                       name="committee"
                       onChange={this.handleCommiteeChange}
-                      style={{ color: committeeColorMap[this.state.event.committee] }}
+                      style={{ color: this.styleFor(this.state.event.committee).color }}
                     >
-                      <option value="ACM" style={{ color: committeeColorMap['ACM'] }}>ACM</option>
-                      {Config.committees.map((committee, index) => (
-                        <option key={index} value={committee} style={{ color: committeeColorMap[committee] }}>{committee}</option>
+                      <option value={GENERAL_COMMITTEE} style={{ color: this.styleFor(GENERAL_COMMITTEE).color }}>{GENERAL_COMMITTEE}</option>
+                      {this.props.committees.map((committee) => (
+                        <option key={committee.name} value={committee.name} style={{ color: this.styleFor(committee.name).color }}>{committee.displayName}</option>
                       ))}
                     </select>
                   </div>
@@ -726,4 +731,11 @@ AdminAddEvent.propTypes = {
   onClickDelete: PropTypes.func,
   isEdit: PropTypes.bool,
   showing: PropTypes.bool,
+  // From useCommitteeDirectory: every committee's name, label and styling.
+  committees: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    displayName: PropTypes.string,
+    color: PropTypes.string,
+    bannerUrl: PropTypes.string,
+  })),
 };

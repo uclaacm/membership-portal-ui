@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
 
 const MODES = [
   { value: 'add', label: 'Add to' },
@@ -13,10 +12,10 @@ const MODES = [
 /**
  * Assigns committees to the users currently selected in the Users table.
  *
- * Chips come from `committeeOptions` (Config.committees plus created committees), never a local copy.
+ * Chips come from `committeeOptions`, the committee records in the database, never a local copy.
  */
 export default function BulkCommitteeDialog({
-  open, count, onClose, onApply, committeeOptions = Config.committees,
+  open, count, onClose, onApply, committeeOptions,
 }) {
   const [committees, setCommittees] = useState([]);
   const [mode, setMode] = useState('add');
@@ -77,14 +76,14 @@ export default function BulkCommitteeDialog({
         <div>
           <span className="cp-field-label">Committees</span>
           <div className="cp-chip-group">
-            {committeeOptions.map((committee) => (
+            {committeeOptions.map(({ name, displayName }) => (
               <button
-                key={committee}
+                key={name}
                 type="button"
-                className={`cp-chip ${committees.includes(committee) ? 'selected' : ''}`}
-                onClick={() => toggle(committee)}
+                className={`cp-chip ${committees.includes(name) ? 'selected' : ''}`}
+                onClick={() => toggle(name)}
               >
-                {committee}
+                {displayName || name}
               </button>
             ))}
           </div>
@@ -109,7 +108,10 @@ export default function BulkCommitteeDialog({
 }
 
 BulkCommitteeDialog.propTypes = {
-  committeeOptions: PropTypes.arrayOf(PropTypes.string),
+  committeeOptions: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    displayName: PropTypes.string,
+  })).isRequired,
   open: PropTypes.bool.isRequired,
   count: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,

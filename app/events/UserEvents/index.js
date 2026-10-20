@@ -8,7 +8,6 @@ import OverlayPopup from '@/components/OverlayPopup';
 import EarlierEventsIcon from '../earlierEventsIcon';
 import EventDay from './eventDay';
 import EventFilterBar from '../EventFilterBar';
-import Config from '@/lib/config';
 
 
 export default class UserEvents extends React.Component {
@@ -212,8 +211,8 @@ export default class UserEvents extends React.Component {
       );
     }
 
-    // Sample data for committees and time ranges
-    const { committees } = Config;
+    // Committees that actually have events, so the filter never offers an empty option.
+    const committees = [...new Set((this.props.events || []).map((e) => e.committee).filter(Boolean))];
     const timeRanges = ['All Time', 'Past Events', 'Today', 'This Week', 'This Month', 'This Quarter', 'This Year'];
 
     // Filter events based on search criteria

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
 
 const ROLES = ['Member', 'Officer', 'Admin'];
 
@@ -29,7 +28,7 @@ export const parseEmails = (raw) => [
  * so the result panel lists every failure with its reason rather than reporting one summary.
  */
 export default function BulkAddUsersDialog({
-  open, onClose, onApply, committeeOptions = Config.committees,
+  open, onClose, onApply, committeeOptions,
 }) {
   const [raw, setRaw] = useState('');
   const [role, setRole] = useState('Officer');
@@ -117,14 +116,14 @@ export default function BulkAddUsersDialog({
               <div>
                 <span className="cp-field-label">Committees</span>
                 <div className="cp-chip-group">
-                  {committeeOptions.map((committee) => (
+                  {committeeOptions.map(({ name, displayName }) => (
                     <button
-                      key={committee}
+                      key={name}
                       type="button"
-                      className={`cp-chip ${committees.includes(committee) ? 'selected' : ''}`}
-                      onClick={() => toggle(committee)}
+                      className={`cp-chip ${committees.includes(name) ? 'selected' : ''}`}
+                      onClick={() => toggle(name)}
                     >
-                      {committee}
+                      {displayName || name}
                     </button>
                   ))}
                 </div>
@@ -189,7 +188,10 @@ export default function BulkAddUsersDialog({
 }
 
 BulkAddUsersDialog.propTypes = {
-  committeeOptions: PropTypes.arrayOf(PropTypes.string),
+  committeeOptions: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    displayName: PropTypes.string,
+  })).isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onApply: PropTypes.func.isRequired,

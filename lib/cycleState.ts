@@ -1,5 +1,4 @@
 import moment from "moment";
-import Config from "@/lib/config";
 
 /**
  * One derivation of recruitment state, shared by every surface that reports it.
@@ -29,32 +28,6 @@ export interface CycleState {
   awaitingReview?: number;
 }
 
-/**
- * Committee records are keyed by the canonical name in `Config.committees`, which the API
- * mirrors in `app/committees.js` and the seed in `app/db/dev-setup.js` writes verbatim. There
- * is one list; a record that does not match it is genuinely not set up, not a name to guess at.
- *
- * Comparison is normalised only for case and punctuation, so "TeachLA" and "teach-la" are the
- * same committee. It deliberately does not accept abbreviations: tolerating "Dev" for
- * "Dev Team" is what let the seed drift from the canonical list unnoticed.
- */
-const normalize = (value?: string | null) =>
-  String(value ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
-
-export function findCommitteeRecord(
-  committees: InternshipCommittee[],
-  canonicalName: string,
-): InternshipCommittee | null {
-  const target = normalize(canonicalName);
-  if (!target) return null;
-
-  return (
-    (committees ?? []).find(
-      (c) => normalize(c.name) === target || normalize(c.displayName) === target,
-    ) ?? null
-  );
-}
-
 export function deriveCycleState(
   committees: InternshipCommittee[],
   awaitingReview?: number,
@@ -72,12 +45,4 @@ export function deriveCycleState(
     closes: nextDeadline ? moment(nextDeadline).format("MMM D") : null,
     awaitingReview,
   };
-}
-
-/** The canonical committee list joined to whatever internship record backs each one. */
-export function joinCanonicalCommittees(committees: InternshipCommittee[]) {
-  return Config.committees.map((name: string) => ({
-    name,
-    record: findCommitteeRecord(committees ?? [], name),
-  }));
 }

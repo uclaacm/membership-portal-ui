@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Config from '@/lib/config';
+import { GENERAL_COMMITTEE } from '@/lib/committees';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import DataTable from '../components/DataTable';
 import {
   PageHeader, Pill, ApiLegend, SearchField, Select,
@@ -26,21 +27,23 @@ export default function Events({
   const [committee, setCommittee] = useState('');
   const [time, setTime] = useState('all');
 
+  const { committees, styleFor } = useCommitteeDirectory();
   const committeeOptions = useMemo(() => [
     { value: '', label: 'All committees' },
-    ...Config.committees.map((c) => ({ value: c, label: c })),
-  ], []);
+    { value: GENERAL_COMMITTEE, label: `${GENERAL_COMMITTEE} (chapter-wide)` },
+    ...committees.map((c) => ({ value: c.name, label: c.displayName || c.name })),
+  ], [committees]);
 
   const visible = events.filter((event) => {
     if (search && !event.title.toLowerCase().includes(search.toLowerCase())) return false;
-    if (committee && event.committee !== committee) return false;
+    if (committee && (event.committee || GENERAL_COMMITTEE) !== committee) return false;
     if (time === 'all') return true;
     return eventStatus(event).toLowerCase() === time;
   });
 
   const columns = [
     { key: 'title', label: 'Event', cellClassName: 'identifier', render: (e) => e.title },
-    { key: 'committee', label: 'Committee', render: (e) => e.committee || 'ACM' },
+    { key: 'committee', label: 'Committee', render: (e) => styleFor(e.committee).label },
     {
       key: 'date',
       label: 'Date',

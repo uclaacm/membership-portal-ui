@@ -2,22 +2,21 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
 
 const ROLES = ['Member', 'Officer', 'Admin'];
 
 /**
  * Assign-role dialog, opened from "+ Add admin" / "+ Add officer".
  *
- * The committee chips come from `committeeOptions` (Config.committees plus committees created in
- * the Control Panel), never from a local copy. A second hardcoded list here previously left out
- * the only committee that had officers, making it impossible to assign anyone to it.
+ * The committee chips come from `committeeOptions`, the committee records in the database, never
+ * a local copy. A hardcoded list here previously offered committees with no record, and officers
+ * assigned to them hit "Could not find a committee matching ..." on their dashboard.
  *
  * State is reset by remounting: the caller passes a `key` that changes each time the dialog
  * opens, so a previous attempt cannot leak into the next one and no reset effect is needed.
  */
 export default function AssignRoleDialog({
-  open, initialRole = 'Officer', prefill = null, onClose, onAssign, committeeOptions = Config.committees,
+  open, initialRole = 'Officer', prefill = null, onClose, onAssign, committeeOptions,
 }) {
   const [email, setEmail] = useState(prefill?.email ?? '');
   const [role, setRole] = useState(prefill?.role ?? initialRole);
@@ -96,14 +95,14 @@ export default function AssignRoleDialog({
           <div>
             <span className="cp-field-label">Committees</span>
             <div className="cp-chip-group">
-              {committeeOptions.map((committee) => (
+              {committeeOptions.map(({ name, displayName }) => (
                 <button
-                  key={committee}
+                  key={name}
                   type="button"
-                  className={`cp-chip ${committees.includes(committee) ? 'selected' : ''}`}
-                  onClick={() => toggleCommittee(committee)}
+                  className={`cp-chip ${committees.includes(name) ? 'selected' : ''}`}
+                  onClick={() => toggleCommittee(name)}
                 >
-                  {committee}
+                  {displayName || name}
                 </button>
               ))}
             </div>
@@ -124,7 +123,10 @@ export default function AssignRoleDialog({
 }
 
 AssignRoleDialog.propTypes = {
-  committeeOptions: PropTypes.arrayOf(PropTypes.string),
+  committeeOptions: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    displayName: PropTypes.string,
+  })).isRequired,
   open: PropTypes.bool.isRequired,
   initialRole: PropTypes.string,
   prefill: PropTypes.shape({
