@@ -116,32 +116,32 @@ const config = {
       {
         name: "Snigdha Kansal",
         position: "Dev Team Director, 24-25",
-        picture: "",
+        picture: "https://avatars.githubusercontent.com/u/93846021?v=4",
       },
       {
         name: "Arsh Malik",
         position: "Dev Team Director, 23-24",
-        picture: "",
+        picture: "https://avatars.githubusercontent.com/u/51771221?v=4",
       },
       {
         name: "Matthew Nieva",
         position: "Dev Team Director, 22-23",
-        picture: "",
+        picture: "https://avatars.githubusercontent.com/u/65370631?v=4",
       },
       {
         name: "Advaith Gowrishetty",
         position: "Dev Team Director, 21-22",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQH3zO_dm00Y3g/profile-displayphoto-scale_400_400/B56aEXhtNvHUAg-/0/1791396076202?e=1793836800&v=beta&t=lAo8tf4TVQmxTt7nXinFgJAop_VPE9jozYJV6UbTXCY",
       },
       {
         name: "Austin Keil",
         position: "Dev Team Director, 20-21",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQHu3X4qZokTog/profile-displayphoto-scale_400_400/B56ZycZMyFKkAg-/0/1772150378225?e=1793836800&v=beta&t=WkP8URmT0VRLjeit3xQoRZERMlN_cUziEFtctTxWR5s",
       },
       {
         name: "Nhi Van",
         position: "Dev Team Director, 20-21",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQGuhg4k46t79w/profile-displayphoto-scale_400_400/B56Z98h5YtH4Ag-/0/1784500688703?e=1793836800&v=beta&t=KWrrX4eCWGTtnvTTg8w9SE4HMhYsMYfVDG4XajlFNNk",
       },
     ],
     currentDevTeam: [
