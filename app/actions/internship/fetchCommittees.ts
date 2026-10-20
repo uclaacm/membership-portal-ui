@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
-import { isAuthenticated, isTokenAdmin } from "@/lib/token";
+import { isAuthenticated } from "@/lib/token";
 import type {
   FetchCommitteesResult,
   InternshipCommitteeAdminListItem,
@@ -16,10 +16,6 @@ export default async function fetchCommittees(): Promise<FetchCommitteesResult> 
 
     if (!isAuthenticated(token)) {
       return { success: false, error: "Not authenticated" };
-    }
-
-    if (!isTokenAdmin(token)) {
-      return { success: false, error: "Not authorized" };
     }
 
     const response = await fetch(`${Config.API_URL}${Config.routes.internship.committeesAdmin}`, {

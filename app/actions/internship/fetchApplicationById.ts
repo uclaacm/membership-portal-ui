@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
-import { isAuthenticated, isTokenOfficer } from "@/lib/token";
+import { isAuthenticated } from "@/lib/token";
 import type { FetchApplicationByIdResult, InternshipApplication } from "@/lib/types/Internship";
 
 export default async function fetchApplicationById(applicationId: string): Promise<FetchApplicationByIdResult> {
@@ -13,7 +13,6 @@ export default async function fetchApplicationById(applicationId: string): Promi
     const token = cks.get("token")?.value;
 
     if (!isAuthenticated(token)) return { success: false, error: "Not authenticated" };
-    if (!isTokenOfficer(token!)) return { success: false, error: "Unauthorized" };
 
     const response = await fetch(Config.API_URL + Config.routes.internship.applications + "/" + applicationId, {
       headers: {

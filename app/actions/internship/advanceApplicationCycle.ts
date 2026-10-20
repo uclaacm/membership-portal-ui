@@ -3,7 +3,6 @@
 import { cookies } from "next/headers";
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
-import { isTokenAdmin } from "@/lib/token";
 import type { AdvanceCycleResult } from "@/lib/types/Internship";
 
 export default async function advanceApplicationCycle(newCycle: string): Promise<AdvanceCycleResult> {
@@ -11,10 +10,6 @@ export default async function advanceApplicationCycle(newCycle: string): Promise
     const cks = await cookies();
     const token = cks.get("token")?.value;
     if (!token) return { success: false, error: "Not authenticated" };
-
-    if (!isTokenAdmin(token)) {
-      return { success: false, error: "Not authorized" };
-    }
 
     const response = await fetch(`${Config.API_URL}${Config.routes.internship.cycleAdvance}`, {
       method: "POST",

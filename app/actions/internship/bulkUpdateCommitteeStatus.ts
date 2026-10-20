@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
-import { isAuthenticated, isTokenAdmin } from "@/lib/token";
+import { isAuthenticated } from "@/lib/token";
 import type {
   BulkUpdateCommitteeStatusPayload,
   BulkUpdateCommitteeStatusResult,
@@ -18,10 +18,6 @@ export default async function bulkUpdateCommitteeStatus(
 
     if (!isAuthenticated(token)) {
       return { success: false, error: "Not authenticated" };
-    }
-
-    if (!isTokenAdmin(token)) {
-      return { success: false, error: "Not authorized" };
     }
 
     const body: { action: "open" | "close"; committeeIds?: string[] } = { action: payload.action };
