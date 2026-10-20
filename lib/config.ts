@@ -79,27 +79,27 @@ const config = {
       {
         name: "Kevin Wang",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://avatars.githubusercontent.com/u/2747165?v=4",
       },
       {
         name: "Ram Goli",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQGbwH_PMijtIQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1683901171536?e=1793836800&v=beta&t=fumpMHm3b1N7xQSJFJaG4EswPp0UiqxCtGEFo9-Lb08",
       },
       {
         name: "Brandon Liu",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/C5603AQFemaW2cXfJ5A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1517522198365?e=1793836800&v=beta&t=Hg3oODGAMjbnEBQOuyU7AxIl-uGGpTaiYOVIbf0YMv4",
       },
       {
         name: "Nikhil Kansal",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQEyud1-JvMhSg/profile-displayphoto-crop_800_800/B56ZyyWSsmJ0AI-/0/1772518717050?e=1793836800&v=beta&t=pPac6efdIKNWTJmCgm7stjabfx26Wjl9P_84AM369lM",
       },
       {
         name: "Justin Liu",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQEMQrUqWDiorg/profile-displayphoto-crop_800_800/B56Z8CYaQZHcAI-/0/1782451383614?e=1793836800&v=beta&t=EA6oi5UXXrhF-ZBEJrKIuIJ38gNdh_IeZgIMzYoKLIE",
       },
     ],
     devTeamDirectors: [
