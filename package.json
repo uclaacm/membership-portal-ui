@@ -7,7 +7,9 @@
     "dev": "next dev -p 8000 -H 0.0.0.0",
     "build": "NODE_ENV=production next build",
     "start": "next start",
-    "test": "jest --config jest.config.json",
+    "test": "jest --config jest.config.js",
+    "test:unit": "jest --config jest.config.js tests/unit",
+    "test:component": "jest --config jest.config.js --passWithNoTests tests/component",
     "lint": "eslint ."
   },
   "repository": {
