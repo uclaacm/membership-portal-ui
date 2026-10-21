@@ -5,7 +5,7 @@ import fetchAllApplications from "@/app/actions/internship/fetchAllApplications"
 import fetchApplicationCycle from "@/app/actions/internship/fetchApplicationCycle";
 import fetchEveryApplication from "@/lib/fetchEveryApplication";
 import useDebouncedValue from "@/lib/hooks/useDebouncedValue";
-import { formatSpreadsheetDate } from "@/lib/spreadsheet";
+import { buildApplicationSpreadsheetRows } from "@/lib/applicationSpreadsheet";
 import AdminApplicationDetailDrawer from "@/app/internship/components/AdminApplicationDetailDrawer";
 import ExportSpreadsheetButton from "@/app/internship/components/ExportSpreadsheetButton";
 
@@ -112,46 +112,7 @@ export default function ApplicationTable({ committees = NO_COMMITTEES }) {
       committeeId: committeeFilter !== "all" ? committeeFilter : undefined,
       ...resolveCycleParams(cycleFilter),
     });
-    const getCommitteeName = id => (id ? committeeLookup.get(id) ?? id : "");
-
-    const header = [
-      "First Name",
-      "Last Name",
-      "Email",
-      "Phone",
-      "University",
-      "Major",
-      "Grad Year",
-      "1st Choice",
-      "1st Choice Status",
-      "2nd Choice",
-      "2nd Choice Status",
-      "3rd Choice",
-      "3rd Choice Status",
-      "Resume",
-      "Cycle",
-      "Submitted",
-    ];
-    const rows = matchingApplications.map(application => [
-      application.firstName,
-      application.lastName,
-      application.email,
-      application.phone,
-      application.university,
-      application.major,
-      application.graduationYear,
-      getCommitteeName(application.firstChoiceCommittee),
-      application.firstChoiceStatus,
-      getCommitteeName(application.secondChoiceCommittee),
-      application.secondChoiceStatus,
-      getCommitteeName(application.thirdChoiceCommittee),
-      application.thirdChoiceStatus,
-      application.resumeUrl,
-      application.applicationCycle,
-      formatSpreadsheetDate(application.submittedAt),
-    ]);
-
-    return [header, ...rows];
+    return buildApplicationSpreadsheetRows(matchingApplications, committeeLookup);
   }
 
   function handleApplicationChanged(applicationId, updatedApplication) {
