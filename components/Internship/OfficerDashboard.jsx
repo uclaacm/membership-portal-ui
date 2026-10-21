@@ -6,13 +6,18 @@ import { useAtom, useAtomValue } from "jotai";
 import fetchAllApplications from "@/app/actions/internship/fetchAllApplications";
 import fetchAllCommittees from "@/app/actions/internship/fetchAllCommittees";
 import fetchApplicationStatusCounts from "@/app/actions/internship/fetchApplicationStatusCounts";
+import updateDecisionsReleased from "@/app/actions/internship/updateDecisionsReleased";
 import ApplicationDetailDrawer from "@/app/internship/components/ApplicationDetailDrawer";
 import ApplicationTable from "@/app/internship/components/ApplicationTable";
 import CopyEmailsButton from "@/app/internship/components/CopyEmailsButton";
+import ExportSpreadsheetButton from "@/app/internship/components/ExportSpreadsheetButton";
 import OfficerFilterBar from "@/app/internship/components/OfficerFilterBar";
 import OfficerStatsBar from "@/app/internship/components/OfficerStatsBar";
+import ReleaseDecisionsToggle from "@/app/internship/components/ReleaseDecisionsToggle";
 import Toast from "@/components/Toast";
+import fetchEveryApplication from "@/lib/fetchEveryApplication";
 import useDebouncedValue from "@/lib/hooks/useDebouncedValue";
+import { formatSpreadsheetDate } from "@/lib/spreadsheet";
 import { authUserProfileAtom, officerApplicationsAtom } from "@/lib/atoms";
 import CommitteeQuestionsModal from "./CommitteeQuestionsModal";
 import "./OfficerDashboard.scss";
@@ -88,6 +93,58 @@ function enrichForCommittee(application, committeeId) {
   };
 }
 
+// Expects applications already run through enrichForCommittee. Each of the
+// committee's questions gets its own column so answers line up across rows.
+function buildOfficerSpreadsheetRows(applications) {
+  const questions = new Map();
+  applications.forEach((application) => {
+    application.myResponses.forEach((response) => {
+      if (!questions.has(response.questionKey)) questions.set(response.questionKey, response.question);
+    });
+  });
+
+  const header = [
+    "First Name",
+    "Last Name",
+    "Email",
+    "Phone",
+    "University",
+    "Major",
+    "Grad Year",
+    "Choice",
+    "Status",
+    "Officer 1 Rating",
+    "Officer 2 Rating",
+    "Notes",
+    "Resume",
+    "Submitted",
+    ...questions.values(),
+  ];
+
+  const rows = applications.map((application) => {
+    const answers = new Map(application.myResponses.map((response) => [response.questionKey, response.answer]));
+    return [
+      application.firstName,
+      application.lastName,
+      application.email,
+      application.phone,
+      application.university,
+      application.major,
+      application.graduationYear,
+      application.myChoiceRank,
+      application.myStatus,
+      application.myOfficer1Rating,
+      application.myOfficer2Rating,
+      application.myNotes,
+      application.resumeUrl,
+      formatSpreadsheetDate(application.submittedAt),
+      ...[...questions.keys()].map((questionKey) => answers.get(questionKey)),
+    ];
+  });
+
+  return [header, ...rows];
+}
+
 export default function OfficerDashboard() {
   const authProfile = useAtomValue(authUserProfileAtom);
 
@@ -115,10 +172,11 @@ export default function OfficerDashboard() {
 
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
   const [isQuestionsModalOpen, setIsQuestionsModalOpen] = useState(false);
+  const [isSavingDecisions, setIsSavingDecisions] = useState(false);
   const [toast, setToast] = useState({ key: 0, message: "", success: true, visible: false });
 
-  const showToast = useCallback((message, success) => {
-    setToast((prev) => ({ key: prev.key + 1, message, success, visible: true }));
+  const showToast = useCallback((message, success, tone) => {
+    setToast((prev) => ({ key: prev.key + 1, message, success, tone, visible: true }));
   }, []);
 
   // The Toast component re-arms its hide timer on every prop update where
@@ -152,9 +210,10 @@ export default function OfficerDashboard() {
     };
   }, []);
 
+  // Officers are assigned by a committee's permanent `name` (the API matches the same way), so
+  // relabelling a committee's displayName never detaches its officers.
   const myCommittees = committees.filter((committee) => (
-    officerCommitteeNames.includes(normalizeCommitteeName(committee.displayName))
-    || officerCommitteeNames.includes(normalizeCommitteeName(committee.name))
+    officerCommitteeNames.includes(normalizeCommitteeName(committee.name))
   ));
 
   useEffect(() => {
@@ -262,40 +321,60 @@ export default function OfficerDashboard() {
     showToast("Committee questions saved", true);
   }, [showToast]);
 
+  const fetchMatchingApplications = useCallback(() => fetchEveryApplication({
+    search: debouncedSearch.trim() || undefined,
+    status: statusFilter !== "all" ? statusFilter : undefined,
+    choiceRank: choiceFilter !== "all" ? choiceFilter : undefined,
+  }), [debouncedSearch, statusFilter, choiceFilter]);
+
   const handleFetchAllEmails = useCallback(async () => {
-    const emails = [];
-    const fetchOptions = {
-      limit: 100,
-      search: debouncedSearch.trim() || undefined,
-      status: statusFilter !== "all" ? statusFilter : undefined,
-      choiceRank: choiceFilter !== "all" ? choiceFilter : undefined,
-    };
+    const matchingApplications = await fetchMatchingApplications();
+    return matchingApplications.map((application) => application.email).filter(Boolean);
+  }, [fetchMatchingApplications]);
 
-    let currentPage = 1;
-    let totalPages = 1;
-    do {
-      const result = await fetchAllApplications({ ...fetchOptions, page: currentPage });
-      if (!result.success) throw new Error(result.error);
-      result.data.forEach((application) => {
-        if (application.email) emails.push(application.email);
-      });
-      totalPages = result.pagination.pages;
-      currentPage += 1;
-    } while (currentPage <= totalPages);
-
-    return emails;
-  }, [debouncedSearch, statusFilter, choiceFilter]);
+  const handleFetchSpreadsheetRows = useCallback(async () => {
+    const matchingApplications = await fetchMatchingApplications();
+    const committeeApplications = matchingApplications
+      .map((application) => enrichForCommittee(application, myCommittee.id))
+      .filter(Boolean);
+    return buildOfficerSpreadsheetRows(committeeApplications);
+  }, [fetchMatchingApplications, myCommittee]);
 
   const handleCopied = useCallback((count) => {
     showToast(`Copied ${count} email address${count === 1 ? "" : "es"}`, true);
   }, [showToast]);
 
-  const handleCopyError = useCallback((message) => {
+  const handleExported = useCallback((count) => {
+    showToast(`Exported ${count} application${count === 1 ? "" : "s"}`, true);
+  }, [showToast]);
+
+  const handleToolbarError = useCallback((message) => {
     showToast(message, false);
   }, [showToast]);
 
   function handleSelectStatus(nextStatus) {
     handleStatusFilterChange(nextStatus);
+  }
+
+  async function handleReleaseDecisionsChange(released) {
+    const committeeId = myCommittee.id;
+    setIsSavingDecisions(true);
+    const result = await updateDecisionsReleased(committeeId, released);
+    setIsSavingDecisions(false);
+
+    if (!result.success) {
+      showToast(result.error, false);
+      return;
+    }
+    const { decisionsReleased } = result.data;
+    setCommittees((prev) => prev.map((committee) => (
+      committee.id === committeeId ? { ...committee, decisionsReleased } : committee
+    )));
+    if (decisionsReleased) {
+      showToast("Decisions released to applicants", true);
+    } else {
+      showToast("Decisions hidden from applicants", true, "concealed");
+    }
   }
 
   if (committeesStatus === "loading" || (committeesStatus === "success" && loadStatus === "loading" && applications.length === 0)) {
@@ -326,6 +405,9 @@ export default function OfficerDashboard() {
     );
   }
 
+  const committeeSlug = (myCommittee.displayName || myCommittee.name).toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const exportFileName = `${committeeSlug}-applications.csv`;
+
   return (
     <div className="officer-dashboard">
       <div className="officer-dashboard__header">
@@ -355,7 +437,15 @@ export default function OfficerDashboard() {
         </button>
       </div>
 
-      <OfficerStatsBar counts={statusCounts} activeStatus={statusFilter} onSelectStatus={handleSelectStatus} />
+      <div className="officer-dashboard__stats-row">
+        <OfficerStatsBar counts={statusCounts} activeStatus={statusFilter} onSelectStatus={handleSelectStatus} />
+        <ReleaseDecisionsToggle
+          committeeName={myCommittee.displayName}
+          released={Boolean(myCommittee.decisionsReleased)}
+          onChange={handleReleaseDecisionsChange}
+          saving={isSavingDecisions}
+        />
+      </div>
 
       <OfficerFilterBar
         statusFilter={statusFilter}
@@ -370,12 +460,21 @@ export default function OfficerDashboard() {
         <div className="officer-dashboard__count">
           {pagination.total} application{pagination.total === 1 ? "" : "s"}
         </div>
-        <CopyEmailsButton
-          totalCount={pagination.total}
-          onFetchAllEmails={handleFetchAllEmails}
-          onCopied={handleCopied}
-          onError={handleCopyError}
-        />
+        <div className="officer-dashboard__toolbar-actions">
+          <CopyEmailsButton
+            totalCount={pagination.total}
+            onFetchAllEmails={handleFetchAllEmails}
+            onCopied={handleCopied}
+            onError={handleToolbarError}
+          />
+          <ExportSpreadsheetButton
+            totalCount={pagination.total}
+            fileName={exportFileName}
+            onFetchRows={handleFetchSpreadsheetRows}
+            onExported={handleExported}
+            onError={handleToolbarError}
+          />
+        </div>
       </div>
 
       <ApplicationTable
@@ -412,7 +511,7 @@ export default function OfficerDashboard() {
         onApplicationChanged={handleApplicationChanged}
       />
 
-      <Toast key={toast.key} showing={toast.visible} message={toast.message} success={toast.success} />
+      <Toast key={toast.key} showing={toast.visible} message={toast.message} success={toast.success} tone={toast.tone} />
 
       {isQuestionsModalOpen && (
         <CommitteeQuestionsModal

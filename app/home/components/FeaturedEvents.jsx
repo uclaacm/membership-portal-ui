@@ -1,14 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Config from '@/lib/config';
 import EventPreviewCard from '@/components/EventPreviewCard';
-
-const committeeColor = (committee, map) => map[committee] || map.ACM || '#1d6bff';
-
-const bannerFor = (event) => Config.committeeBanners[event.committee] || null;
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 
 /**
  * Cover art for an event, as a real <img> rather than a background.
@@ -18,9 +14,10 @@ const bannerFor = (event) => Config.committeeBanners[event.committee] || null;
  * showed a flat placeholder. An <img> gives us onError, which is the only reliable signal that
  * the committee banner should take over.
  */
-function Cover({ event, className }) {
-  const banner = bannerFor(event);
-  const [src, setSrc] = useState(event.cover || banner);
+function Cover({ event, banner = null, className }) {
+  // Tracks failures rather than the current src so the banner slots in once committees load.
+  const [failed, setFailed] = useState([]);
+  const src = [event.cover, banner].find((url) => url && !failed.includes(url));
 
   if (!src) return <div className={className} />;
 
@@ -31,14 +28,18 @@ function Cover({ event, className }) {
       src={src}
       alt=""
       loading="lazy"
-      onError={() => setSrc((current) => (current === banner ? null : banner))}
+      onError={() => setFailed((current) => [...current, src])}
     />
   );
 }
 
-Cover.propTypes = { event: PropTypes.object.isRequired, className: PropTypes.string.isRequired };
+Cover.propTypes = {
+  event: PropTypes.object.isRequired,
+  banner: PropTypes.string,
+  className: PropTypes.string.isRequired,
+};
 
-function RsvpButton({ going, onToggle, inCard }) {
+function RsvpButton({ going, onToggle, inCard = false }) {
   return (
     <button
       type="button"
@@ -56,8 +57,6 @@ RsvpButton.propTypes = {
   inCard: PropTypes.bool,
 };
 
-RsvpButton.defaultProps = { inCard: false };
-
 /**
  * Featured events — one ordered list rendered as two bands.
  *
@@ -68,7 +67,7 @@ RsvpButton.defaultProps = { inCard: false };
 export default function FeaturedEvents({
   cardsRef, rowsRef, events, cardCount, rowCount, rsvped, onToggleRsvp,
 }) {
-  const colors = useMemo(() => Object.fromEntries(Config.committeeColors), []);
+  const { styleFor } = useCommitteeDirectory();
 
   const cards = events.slice(0, cardCount);
   const rows = events.slice(cardCount, cardCount + rowCount);
@@ -116,13 +115,13 @@ export default function FeaturedEvents({
         {rows.map((event) => (
           <article className="dash-event-row" key={event.uuid}>
             <div className="dash-event-thumb">
-              <Cover event={event} className="dash-event-cover" />
+              <Cover event={event} banner={styleFor(event.committee).bannerUrl} className="dash-event-cover" />
             </div>
             <div className="dash-event-rowbody">
               <h3 className="dash-event-rowtitle">{event.title}</h3>
               <span className="dash-event-meta">
-                <b style={{ color: committeeColor(event.committee, colors) }}>
-                  {event.committee || 'ACM'}
+                <b style={{ color: styleFor(event.committee).color }}>
+                  {styleFor(event.committee).label}
                 </b>
                 {' · '}
                 {moment(event.startDate).format('MMM D, h:mm a')}

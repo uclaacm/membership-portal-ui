@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Config from '@/lib/config';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import './style.scss';
 
 /**
@@ -15,28 +15,28 @@ import './style.scss';
  *
  * The role changes the affordances on the card, never the layout of the page:
  *   member  → RSVP / Going pill, "42 going"
- *   staff   → RSVPs button, "42/60 RSVPs", edit + delete when they may modify it
+ *   staff   → RSVPs button, "42/60 RSVPs", edit + delete + Check-ins when they may modify it
  *
  * @param canModify  admin anywhere, officer only inside their own committees. Computed by the
  *   caller from `userProfile.committees` so the rule lives next to the permission matrix.
  * @param compact    dashboard sizing — a 104px cover instead of 132px. Nothing else differs.
  */
 export default function EventCard({
-  event, staff, canModify, compact,
-  rsvpCount, checkedInCount, going,
-  onRsvp, onViewRsvps, onEdit, onDelete,
+  event, staff = false, canModify = false, compact = false,
+  rsvpCount = 0, checkedInCount = null, going = false,
+  onRsvp = null, onViewRsvps = null, onViewCheckIns = null, onEdit = null, onDelete = null,
 }) {
-  const committeeColors = Object.fromEntries(Config.committeeColors);
-  const committee = event.committee || 'ACM';
-  const color = committeeColors[committee] || '#1d6bff';
+  const { styleFor } = useCommitteeDirectory();
+  const { label: committee, color, bannerUrl: banner } = styleFor(event.committee);
 
   // Most stored covers are dead external links, so the fallback chain does real work. It has to
   // be an <img>: `background-image` cannot report a load failure, so a broken URL would just
-  // leave the placeholder colour showing with no way to recover.
-  const banner = Config.committeeBanners[committee] || '';
-  const [src, setSrc] = useState(event.cover || banner);
+  // leave the placeholder colour showing with no way to recover. Tracking failures rather than
+  // the current src lets the banner slot in once the committee list loads.
+  const [failed, setFailed] = useState([]);
+  const src = [event.cover, banner].find((url) => url && !failed.includes(url)) || '';
 
-  const onCoverError = () => setSrc((current) => (current === banner ? '' : banner));
+  const onCoverError = () => setFailed((current) => [...current, src]);
 
   const start = event.startDate ? moment(event.startDate) : null;
   const end = event.endDate ? moment(event.endDate) : null;
@@ -111,6 +111,18 @@ export default function EventCard({
               </button>
             )}
 
+            {/* Check-ins follow the same scope as editing: admins everywhere, officers only
+                in their own committees. The API enforces the same rule. */}
+            {staff && canModify && onViewCheckIns && (
+              <button
+                type="button"
+                className="event-card__pill-btn is-staff"
+                onClick={() => onViewCheckIns(event)}
+              >
+                Check-ins
+              </button>
+            )}
+
             {staff ? (
               onViewRsvps && (
                 <button
@@ -160,19 +172,7 @@ EventCard.propTypes = {
   going: PropTypes.bool,
   onRsvp: PropTypes.func,
   onViewRsvps: PropTypes.func,
+  onViewCheckIns: PropTypes.func,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
-};
-
-EventCard.defaultProps = {
-  staff: false,
-  canModify: false,
-  compact: false,
-  rsvpCount: 0,
-  checkedInCount: null,
-  going: false,
-  onRsvp: null,
-  onViewRsvps: null,
-  onEdit: null,
-  onDelete: null,
 };

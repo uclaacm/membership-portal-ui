@@ -8,6 +8,7 @@ import bulkUpdateCommitteeStatus from "@/app/actions/internship/bulkUpdateCommit
 import deleteCommittee from "@/app/actions/internship/deleteCommittee";
 import fetchApplicationCycle from "@/app/actions/internship/fetchApplicationCycle";
 import advanceApplicationCycle from "@/app/actions/internship/advanceApplicationCycle";
+import useCommitteeDirectory from "@/lib/hooks/useCommitteeDirectory";
 
 function formatDeadline(value) {
   if (!value) return "—";
@@ -127,6 +128,7 @@ function CycleControls({ onAdvanced }) {
 }
 
 export default function CommitteeTable({ committees, onMutated }) {
+  const { refresh: refreshCommitteeDirectory } = useCommitteeDirectory();
   const [selected, setSelected] = useState(() => new Set());
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(null);
@@ -191,7 +193,11 @@ export default function CommitteeTable({ committees, onMutated }) {
     if (result.updatedApplications > 0) {
       parts.push(`removed this committee's choice from ${result.updatedApplications} other application${result.updatedApplications === 1 ? "" : "s"}`);
     }
+    if (result.updatedUsers > 0) {
+      parts.push(`removed it from ${result.updatedUsers} officer${result.updatedUsers === 1 ? "" : "s"}${result.demotedOfficers > 0 ? ` (${result.demotedOfficers} left with no committee became members)` : ""}`);
+    }
     setDeleteNotice(`${name} deleted.${parts.length > 0 ? ` Also ${parts.join(" and ")}.` : ""}`);
+    refreshCommitteeDirectory();
     onMutated?.();
   }
 
@@ -327,6 +333,7 @@ export default function CommitteeTable({ committees, onMutated }) {
           + (deleteTarget?.applicationCount
             ? ` ${deleteTarget.applicationCount} application${deleteTarget.applicationCount === 1 ? "" : "s"} reference this committee — any application with no other committee choice will be deleted entirely, and this committee's choice, responses, status, and officer review will be removed from any application that also chose a different committee.`
             : " No applications currently reference this committee.")
+          + " It will also be removed from every officer assigned to it; officers with no other committee become members."
         }
         submit={handleConfirmDelete}
         cancel={() => setDeleteTargetId(null)}
