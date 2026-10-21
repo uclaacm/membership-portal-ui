@@ -1,5 +1,6 @@
 "use client";
 
+import DropdownSelect from '@/components/DropdownSelect';
 import { useEffect, useMemo, useState } from "react";
 import fetchAllApplications from "@/app/actions/internship/fetchAllApplications";
 import fetchApplicationCycle from "@/app/actions/internship/fetchApplicationCycle";
@@ -191,30 +192,30 @@ export default function ApplicationTable({ committees = NO_COMMITTEES }) {
 
         <label className="application-filters__field">
           <span className="application-filters__label">Status</span>
-          <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
+          <DropdownSelect value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
             {STATUS_OPTIONS.map(option => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
-          </select>
+          </DropdownSelect>
         </label>
 
         <label className="application-filters__field">
           <span className="application-filters__label">Committee</span>
-          <select value={committeeFilter} onChange={e => { setCommitteeFilter(e.target.value); setPage(1); }}>
+          <DropdownSelect value={committeeFilter} onChange={e => { setCommitteeFilter(e.target.value); setPage(1); }}>
             <option value="all">All</option>
             {committees.map(c => (
               <option key={c.id} value={c.id}>
                 {c.displayName ?? c.name}
               </option>
             ))}
-          </select>
+          </DropdownSelect>
         </label>
 
         <label className="application-filters__field">
           <span className="application-filters__label">Cycle</span>
-          <select value={cycleFilter} onChange={e => { setCycleFilter(e.target.value); setPage(1); }}>
+          <DropdownSelect value={cycleFilter} onChange={e => { setCycleFilter(e.target.value); setPage(1); }}>
             <option value="current">
               Current{cycleInfo ? ` (${cycleInfo.currentCycle})` : ""}
             </option>
@@ -224,7 +225,7 @@ export default function ApplicationTable({ committees = NO_COMMITTEES }) {
                 Archived — {cycle}
               </option>
             ))}
-          </select>
+          </DropdownSelect>
         </label>
       </div>
 
