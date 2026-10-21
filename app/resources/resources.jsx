@@ -1,4 +1,5 @@
 import Config from '@/lib/config';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import Image from 'next/image';
 import OfficerTile from './officerTile';
 
@@ -12,9 +13,18 @@ const activities = [
 const heading = 'font-[family-name:var(--font-poppins)] text-base font-semibold text-black/85';
 const panel = 'rounded-xl border border-[#d8d8d8] bg-white p-5';
 const linkFocus = 'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#3b59ed]';
-const committeeColors = Object.fromEntries(Config.committeeColors);
+const committeeOrder = ['Dev Team', 'AI', 'Cyber', 'Design', 'Hack', 'ICPC', 'Studio', 'TeachLA', 'W', 'Cloud'];
+const committeeRank = name => {
+  const index = committeeOrder.indexOf(name);
+  return index === -1 ? committeeOrder.length : index;
+};
 
 export default function Resources() {
+  const { committees, loaded, styleFor } = useCommitteeDirectory();
+  const orderedCommittees = [...committees].sort(
+    (a, b) => committeeRank(a.name) - committeeRank(b.name),
+  );
+
   return (
     <div className="resources-wrapper">
       <main className="px-[60px] pt-7" aria-label="About ACM at UCLA">
@@ -38,7 +48,7 @@ export default function Resources() {
             <dl className="grid grid-cols-2 gap-y-5 rounded-xl border border-[#d8d8d8] bg-white py-5 2xl:grid-cols-4 [&>div]:border-[#eeeeee] [&>div:nth-child(even)]:border-l 2xl:[&>div+div]:border-l">
               {[
                 { value: '1,000+', label: 'Members', icon: 'fa-users' },
-                { value: '10', label: 'Committees', icon: 'fa-layer-group' },
+                { value: loaded ? committees.length : '10', label: 'Committees', icon: 'fa-layer-group' },
                 { value: 'Workshops', label: 'Learn together', icon: 'fa-calendar-days' },
                 { value: 'Projects', label: 'Build with peers', icon: 'fa-code' },
               ].map(({ value, label, icon }) => (
@@ -128,22 +138,25 @@ export default function Resources() {
               </div>
               <p className="mt-1 text-[13px] text-black/60">Find a community that shares your interests.</p>
               <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
-                {Config.committees.map(name => (
-                  <li key={name}>
-                    <a
-                      href={name === 'Dev Team' ? 'https://www.uclaacm.com/dev' : `https://www.uclaacm.com/committees#${name.toLowerCase()}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ '--committee-color': committeeColors[name], '--committee-tint': `${committeeColors[name]}14` }}
-                      className={`flex items-center gap-2 rounded-md bg-[#fbfbfb] px-2 py-2 text-[13px] !text-black/80 transition-colors hover:bg-[var(--committee-tint)] hover:!text-[var(--committee-color)] motion-reduce:transition-none ${linkFocus}`}
-                    >
-                      <Image src={`/committees/${name === 'Dev Team' ? 'dev' : name.toLowerCase()}.png`} alt="" width={28} height={28} className="shrink-0 object-contain" />
-                      {name}
-                      <i className="fa-solid fa-arrow-up-right-from-square ml-auto text-[10px] text-black/45" aria-hidden="true" />
-                      <span className="sr-only"> (opens in a new tab)</span>
-                    </a>
-                  </li>
-                ))}
+                {orderedCommittees.map(({ name }) => {
+                  const { color, label } = styleFor(name);
+                  return (
+                    <li key={name}>
+                      <a
+                        href={name === 'Dev Team' ? 'https://www.uclaacm.com/dev' : `https://www.uclaacm.com/committees#${name.toLowerCase()}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ '--committee-color': color, '--committee-tint': `${color}14` }}
+                        className={`flex items-center gap-2 rounded-md bg-[#fbfbfb] px-2 py-2 text-[13px] !text-black/80 transition-colors hover:bg-[var(--committee-tint)] hover:!text-[var(--committee-color)] motion-reduce:transition-none ${linkFocus}`}
+                      >
+                        <Image src={`/committees/${name === 'Dev Team' ? 'dev' : name.toLowerCase()}.png`} alt="" width={28} height={28} className="shrink-0 object-contain" />
+                        {label}
+                        <i className="fa-solid fa-arrow-up-right-from-square ml-auto text-[10px] text-black/45" aria-hidden="true" />
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           </div>
