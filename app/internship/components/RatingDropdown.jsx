@@ -1,5 +1,6 @@
 "use client";
 
+import DropdownSelect from '@/components/DropdownSelect';
 import { memo, useState } from "react";
 
 import updateApplicationReview from "@/app/actions/internship/updateApplicationReview";
@@ -37,7 +38,7 @@ function RatingDropdown({ applicationId, reviewField, value, onChanged }) {
 
   return (
     <div className="rating-dropdown">
-      <select
+      <DropdownSelect
         className={`rating-dropdown__select rating-dropdown__select--${value || "unrated"}`}
         value={value || ""}
         onChange={handleChange}
@@ -50,7 +51,7 @@ function RatingDropdown({ applicationId, reviewField, value, onChanged }) {
             {option.label}
           </option>
         ))}
-      </select>
+      </DropdownSelect>
       {error && <span className="rating-dropdown__error">{error}</span>}
     </div>
   );
