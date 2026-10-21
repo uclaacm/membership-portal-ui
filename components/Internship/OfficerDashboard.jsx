@@ -210,9 +210,10 @@ export default function OfficerDashboard() {
     };
   }, []);
 
+  // Officers are assigned by a committee's permanent `name` (the API matches the same way), so
+  // relabelling a committee's displayName never detaches its officers.
   const myCommittees = committees.filter((committee) => (
-    officerCommitteeNames.includes(normalizeCommitteeName(committee.displayName))
-    || officerCommitteeNames.includes(normalizeCommitteeName(committee.name))
+    officerCommitteeNames.includes(normalizeCommitteeName(committee.name))
   ));
 
   useEffect(() => {

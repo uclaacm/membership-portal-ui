@@ -22,7 +22,8 @@ import createRSVP from '@/app/actions/rsvp/createRSVP';
 import cancelRSVP from '@/app/actions/rsvp/cancelRSVP';
 import syncEventsAction from '@/app/actions/events/syncEvents';
 import checkInAction from '@/app/actions/attendance/checkIn';
-import Config from '@/lib/config';
+import { GENERAL_COMMITTEE } from '@/lib/committees';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from '@/lib/atoms';
 // AdminAddEvent carries no styles of its own — its overlay lives in this sheet, scoped under
 // `.admin-dashboard`. The page rewrite dropped the old `./style.scss` import that used to pull
@@ -60,6 +61,7 @@ function EventsPageInner() {
   const [search, setSearch] = useState('');
   const [committee, setCommittee] = useState('all');
   const [range, setRange] = useState('upcoming');
+  const { committees } = useCommitteeDirectory();
 
   const [editing, setEditing] = useState(null);
   const [creating, setCreating] = useState(false);
@@ -141,7 +143,7 @@ function EventsPageInner() {
     const needle = search.trim().toLowerCase();
 
     return events.filter((e) => {
-      if (committee !== 'all' && e.committee !== committee) return false;
+      if (committee !== 'all' && (e.committee || GENERAL_COMMITTEE) !== committee) return false;
       if (!needle) return true;
       return [e.title, e.location, e.committee]
         .some((field) => String(field ?? '').toLowerCase().includes(needle));
@@ -257,7 +259,8 @@ function EventsPageInner() {
             onChange={(e) => setCommittee(e.target.value)}
           >
             <option value="all">All committees</option>
-            {Config.committees.map((c) => <option key={c} value={c}>{c}</option>)}
+            <option value={GENERAL_COMMITTEE}>{GENERAL_COMMITTEE} (chapter-wide)</option>
+            {committees.map((c) => <option key={c.name} value={c.name}>{c.displayName}</option>)}
           </select>
 
           {/* Cards view only. The month you are looking at already answers "upcoming or past". */}
@@ -373,6 +376,7 @@ function EventsPageInner() {
             showing
             isEdit={!!editing}
             event={editing ?? {}}
+            committees={committees}
             onClickAdd={saveEvent}
             onClickCancel={() => { setEditing(null); setCreating(false); }}
             onClickDelete={canModify(editing ?? {}) ? (event) => {

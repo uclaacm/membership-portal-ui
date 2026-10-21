@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import Button from '@/components/Button';
 import Config from '@/lib/config';
 import CookieStore from '@/lib/cookieStore';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import './ChangeToAdmin.scss';
-
-const COMMITTEES = Config.committees;
 
 const getResponseMessage = (data, fallback) => {
   const value = data?.message || data?.error;
@@ -22,6 +21,7 @@ const ChangeToAdmin = () => {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('OFFICER');
   const [committees, setCommittees] = useState([]);
+  const { committees: committeeOptions } = useCommitteeDirectory();
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ text: '', success: false });
   const [loading, setLoading] = useState(false);
@@ -123,14 +123,14 @@ const ChangeToAdmin = () => {
               <div className="ar-field">
                 <label className="ar-label">Committees</label>
                 <div className="ar-committee-grid">
-                  {COMMITTEES.map(c => (
+                  {committeeOptions.map(({ name, displayName }) => (
                     <button
-                      key={c}
+                      key={name}
                       type="button"
-                      className={`ar-chip ${committees.includes(c) ? 'selected' : ''}`}
-                      onClick={() => toggleCommittee(c)}
+                      className={`ar-chip ${committees.includes(name) ? 'selected' : ''}`}
+                      onClick={() => toggleCommittee(name)}
                     >
-                      {c}
+                      {displayName || name}
                     </button>
                   ))}
                 </div>

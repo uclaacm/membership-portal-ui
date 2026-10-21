@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Config from '@/lib/config';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import './style.scss';
 
 /**
@@ -26,17 +26,17 @@ export default function EventCard({
   rsvpCount = 0, checkedInCount = null, going = false,
   onRsvp = null, onViewRsvps = null, onViewCheckIns = null, onEdit = null, onDelete = null,
 }) {
-  const committeeColors = Object.fromEntries(Config.committeeColors);
-  const committee = event.committee || 'ACM';
-  const color = committeeColors[committee] || '#1d6bff';
+  const { styleFor } = useCommitteeDirectory();
+  const { label: committee, color, bannerUrl: banner } = styleFor(event.committee);
 
   // Most stored covers are dead external links, so the fallback chain does real work. It has to
   // be an <img>: `background-image` cannot report a load failure, so a broken URL would just
-  // leave the placeholder colour showing with no way to recover.
-  const banner = Config.committeeBanners[committee] || '';
-  const [src, setSrc] = useState(event.cover || banner);
+  // leave the placeholder colour showing with no way to recover. Tracking failures rather than
+  // the current src lets the banner slot in once the committee list loads.
+  const [failed, setFailed] = useState([]);
+  const src = [event.cover, banner].find((url) => url && !failed.includes(url)) || '';
 
-  const onCoverError = () => setSrc((current) => (current === banner ? '' : banner));
+  const onCoverError = () => setFailed((current) => [...current, src]);
 
   const start = event.startDate ? moment(event.startDate) : null;
   const end = event.endDate ? moment(event.endDate) : null;

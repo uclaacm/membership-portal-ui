@@ -49,6 +49,7 @@ const config = {
       applicationStatusCounts: "/api/v1/internship/applications/status-counts",
       ownApplication: "/api/v1/internship/applications/me",
       committees: "/api/v1/internship/committees",
+      committeesDirectory: "/api/v1/internship/committees/directory",
       committeesAdmin: "/api/v1/internship/committees/admin",
       committeesBulkStatus: "/api/v1/internship/committees/bulk-status",
       cycle: "/api/v1/internship/cycle",
@@ -414,36 +415,8 @@ const config = {
     "Undeclared Social Sciences",
     "World Arts and Cultures",
   ],
-  // The canonical committee list — the single source of truth for officer assignment, event
-  // committees, and every Control Panel filter. "Dev Team" belongs here: officers are assigned
-  // to it, and leaving it out is what previously made the only committee with officers
-  // impossible to select. Mirrors COMMITTEES in the API's app/committees.js.
-  committees: ["Dev Team", "AI", "Cyber", "Design", "Hack", "ICPC", "Studio", "TeachLA", "W", "Cloud"],
-  committeeColors: [
-    ["ACM", "#1d6bff"],
-    ["Dev Team", "#3b59ed"],
-    ["AI", "#28b2fd"],
-    ["Cyber", "#ffba43"],
-    ["Design", "#fe833d"],
-    ["Hack", "#c95ffd"],
-    ["ICPC", "#ff6b6b"],
-    ["Studio", "#ed3267"],
-    ["TeachLA", "#5fda10"],
-    ["W", "#01d4cb"],
-    ["Cloud", "#9f97ff"],
-  ],
-  committeeBanners: {
-    "Dev Team" : "/event_banners/acm_dev_banner.webp",
-    "AI" : "/event_banners/acm_ai_banner.webp",
-    "Cyber" : "/event_banners/acm_cyber_banner.png",
-    "Design" : "/event_banners/acm_design_banner.webp",
-    "Hack" : "/event_banners/acm_hack_banner.webp",
-    "ICPC" : "/event_banners/acm_icpc_banner.webp",
-    "Studio" : "/event_banners/acm_studio_banner.webp",
-    "TeachLA" : "/event_banners/acm_teachla_banner.webp",
-    "W" : "/event_banners/acm_w_banner.webp",
-    "Cloud" : "/event_banners/acm_cloud_banner.webp",
-  },
+  // No committee list here on purpose: committees, their colors and banners live in the database
+  // and load through useCommitteeDirectory (lib/hooks). See lib/committees.ts.
   platforms: ["Instagram Story", "Instagram Post", "Discord", "LinkTree", "Medium Article", "LinkedIn", "CS Newsletter"],
 };
 

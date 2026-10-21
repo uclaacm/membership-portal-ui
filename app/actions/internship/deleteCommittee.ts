@@ -43,6 +43,8 @@ export default async function deleteCommittee(committeeId: string): Promise<Dele
       success: true,
       deletedApplications: data?.deletedApplications ?? 0,
       updatedApplications: data?.updatedApplications ?? 0,
+      updatedUsers: data?.updatedUsers ?? 0,
+      demotedOfficers: data?.demotedOfficers ?? 0,
     };
   } catch (err) {
     Logger.error(`deleteCommittee failed: ${(err as Error).message}`);

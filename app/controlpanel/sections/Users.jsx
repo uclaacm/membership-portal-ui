@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import DataTable from '../components/DataTable';
 import {
   PageHeader, Pill, TagGroup, Dagger, ApiLegend, SearchField, Select,
@@ -34,10 +34,11 @@ export default function Users({
   } = data;
   const [selected, setSelected] = useState({});
 
+  const { committees } = useCommitteeDirectory();
   const committeeOptions = useMemo(() => [
     { value: '', label: 'All committees' },
-    ...Config.committees.map((c) => ({ value: c, label: c })),
-  ], []);
+    ...committees.map((c) => ({ value: c.name, label: c.displayName || c.name })),
+  ], [committees]);
 
   const selectedUuids = Object.keys(selected).filter((uuid) => selected[uuid]);
   const allOnPageSelected = users.length > 0 && users.every((u) => selected[u.uuid]);
