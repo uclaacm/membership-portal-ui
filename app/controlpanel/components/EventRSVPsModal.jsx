@@ -6,11 +6,7 @@ import moment from 'moment';
 import fetchEventRSVPs from '@/app/actions/rsvp/fetchEventRSVPs';
 import fetchEventCheckIns from '@/app/actions/attendance/fetchEventCheckIns';
 import { formatCount } from '../format';
-// `.modal-wrapper` and `.attendees-modal-container` live here. Imported by the component rather
-// than its pages: /controlpanel pulled this sheet in for its own modals and so happened to style
-// this one too, while /events did not — leaving the overlay unstyled and rendering as a block at
-// the foot of the page.
-import '@/components/Modal/style.scss';
+import ModalShell from '@/components/Modal/ModalShell';
 
 // What each `kind` of list shows, and where it loads from.
 const KINDS = {
@@ -74,65 +70,42 @@ export default function EventRSVPsModal({ event = null, onClose, kind = 'rsvps' 
   const { loading, rsvps, error } = state;
 
   return (
-    <div
-      className="modal-wrapper"
-      role="presentation"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    <ModalShell
+      title={config.title}
+      subtitle={event.title}
+      onClose={onClose}
+      wide
+      footer={<button type="button" className="modal-action" onClick={onClose}>Close</button>}
     >
-      <div className="attendees-modal-container">
-        <div className="padding">
-          <h1>{config.title}</h1>
-          <p style={{ marginTop: 0 }}>
-            <strong>{event.title}</strong>
-            {' — '}
-            {loading
-              ? 'loading…'
-              : `${formatCount(rsvps.length)} ${config.noun}${rsvps.length === 1 ? '' : 's'}`}
-            {!loading && kind === 'rsvps' && event.capacity ? ` · capacity ${formatCount(event.capacity)}` : ''}
-          </p>
-
-          {error && <p style={{ color: '#c14b4b' }}>{error}</p>}
-
-          {!loading && !error && rsvps.length === 0 && (
-            <p>{config.empty}</p>
-          )}
-
-          {!loading && rsvps.length > 0 && (
-            <div className="cp-table-scroll" style={{ maxHeight: 340, overflowY: 'auto' }}>
-              <table className="cp-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>{config.lastColumn}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rsvps.map((rsvp) => {
-                    const user = rsvp.user || rsvp;
-                    return (
-                      <tr key={rsvp.uuid || user.uuid || user.email}>
-                        <td className="identifier">
-                          {user.firstName || user.lastName
-                            ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()
-                            : '—'}
-                        </td>
-                        <td>{user.email || '—'}</td>
-                        <td>{config.lastCell(rsvp)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <div className="button-container" style={{ marginTop: 18 }}>
-            <button type="button" className="cp-btn secondary" onClick={onClose}>Close</button>
-          </div>
-        </div>
+      <div className="attendance-summary" aria-live="polite">
+        <span className="attendance-count">
+          {loading ? 'Loading…' : error ? 'Unavailable' : `${formatCount(rsvps.length)} ${config.noun}${rsvps.length === 1 ? '' : 's'}`}
+        </span>
+        {!loading && kind === 'rsvps' && event.capacity ? <span>Capacity {formatCount(event.capacity)}</span> : null}
       </div>
-    </div>
+      {error && <p className="modal-feedback is-error" role="alert">{error}</p>}
+      {loading && <p className="modal-state" role="status">Loading {config.title.toLowerCase()}…</p>}
+      {!loading && !error && rsvps.length === 0 && <p className="modal-state">{config.empty}</p>}
+      {!loading && rsvps.length > 0 && (
+        <div className="attendance-table-scroll">
+          <table className="attendance-table">
+            <thead><tr><th scope="col">Name</th><th scope="col">Email</th><th scope="col">{config.lastColumn}</th></tr></thead>
+            <tbody>
+              {rsvps.map((rsvp) => {
+                const user = rsvp.user || rsvp;
+                return (
+                  <tr key={rsvp.uuid || user.uuid || user.email}>
+                    <td>{user.firstName || user.lastName ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() : '—'}</td>
+                    <td>{user.email || '—'}</td>
+                    <td>{kind === 'rsvps' ? <span className={`attendance-status${rsvp.attended ? ' is-attended' : ''}`}>{config.lastCell(rsvp)}</span> : config.lastCell(rsvp)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </ModalShell>
   );
 }
 
