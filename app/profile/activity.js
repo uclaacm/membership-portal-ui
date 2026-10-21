@@ -44,12 +44,14 @@ const mapActivity = (activity) => {
 export default class Activities extends React.Component {
   render() {
     const activity = mapActivity(this.props.activity);
+    if (!activity) return null;
     return (
       <div className="activity-item">
         <h3>
           <i className={`fa ${activity.icon}`} aria-hidden="true" />
           <span dangerouslySetInnerHTML={{ __html: activity.title }} />
         </h3>
+        <time dateTime={this.props.activity.date.toISOString()}>{this.props.activity.date.format('h:mm A')}</time>
         <p className="description" dangerouslySetInnerHTML={{ __html: activity.description }} />
       </div>
     );

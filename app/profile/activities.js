@@ -16,7 +16,7 @@ export default class Activities extends React.Component {
 
     while (i < activities.length) {
       const month = { date: activities[i].date, days: [] };
-      while (i < activities.length && activities[i].date.month() === month.date.month()) {
+      while (i < activities.length && activities[i].date.format('YYYY-MM') === month.date.format('YYYY-MM')) {
         if (month.days.length === 0 || activities[i].date.date() !== month.days[month.days.length - 1].date.date()) month.days.push({ date: activities[i].date, activities: [] });
         month.days[month.days.length - 1].activities.push(activities[i]);
 
