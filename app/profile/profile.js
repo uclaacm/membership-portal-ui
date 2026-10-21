@@ -3,7 +3,7 @@
 import React from 'react';
 import Button from '@/components/Button';
 import Toast from '@/components/Toast';
-import Config from '@/lib/config';
+import MajorSelector from '@/components/MajorSelector';
 
 import Activities from './activities';
 import YearSelector from './yearSelector';
@@ -124,14 +124,12 @@ export default class Profile extends React.Component {
 
               <div className="form-elem">
                 <label className="SubheaderSecondary">Major</label>
-                <select
+                <MajorSelector
                   className="profile-select"
                   name="major"
                   onChange={this.handleUpdate}
                   value={this.state.profile.major}
-                >
-                  {Config.majors.map((major, idx) => <option key={idx} value={major}>{major}</option>)}
-                </select>
+                />
               </div>
 
               {this.profileUpdated() && (
