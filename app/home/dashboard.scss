@@ -1,3 +1,4 @@
+@use "@/styles/modal";
 @use "../../styles/vars";
 
 // Tokens for the dashboard. Everything already in styles/vars.scss is referenced from there;
@@ -907,3 +908,6 @@ $d-card-height: 244px;
     justify-content: center;
   }
 }
+
+.dash-modal-backdrop { @include modal.backdrop; }
+.dash-modal { @include modal.panel; }

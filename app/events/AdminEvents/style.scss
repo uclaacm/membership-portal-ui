@@ -1,3 +1,4 @@
+@use "@/styles/modal";
 @use "../../../styles/vars";
 
 // ── Shared input styles (used throughout the modal) ─────────────────
@@ -1071,4 +1072,35 @@
   margin: 8px 0 0 0;
   font-size: 12px;
   color: #979797;
+}
+
+.admin-dashboard .add-event-overlay {
+  @include modal.backdrop;
+  animation: none;
+  .event-modal { @include modal.panel; max-width: 100%; animation: none; }
+  // This editor can mount already open. Transitions alone have no initial frame then.
+  // Apply entrance animations only while showing, so the hidden editor stays hidden.
+  &.showing {
+    animation: event-backdrop-in 140ms ease-out;
+    .event-modal { animation: event-panel-in 180ms ease-out; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &, &.showing { animation: none; transition: none; }
+    .event-modal, &.showing .event-modal { animation: none; transition: none; }
+  }
+  .modal-header { padding: 22px 24px; border-color: #edf0f4;
+    .modal-title { font: 600 20px/1.4 var(--font-poppins), "Poppins", sans-serif; }
+    .modal-close-btn { width: 32px; height: 32px; padding: 0; border: 1px solid #e7e9ef; border-radius: 8px; color: #727887; }
+  }
+  .modal-footer { background: #fafbfc; border-color: #edf0f4; padding: 16px 24px; }
+}
+
+@keyframes event-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes event-panel-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
