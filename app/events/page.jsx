@@ -1,5 +1,6 @@
 'use client';
 
+import DropdownSelect from '@/components/DropdownSelect';
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAtom, useAtomValue } from 'jotai';
@@ -252,7 +253,7 @@ function EventsPageInner() {
             />
           </div>
 
-          <select
+          <DropdownSelect
             className="events-toolbar__select"
             value={committee}
             aria-label="Filter by committee"
@@ -261,18 +262,18 @@ function EventsPageInner() {
             <option value="all">All committees</option>
             <option value={GENERAL_COMMITTEE}>{GENERAL_COMMITTEE} (chapter-wide)</option>
             {committees.map((c) => <option key={c.name} value={c.name}>{c.displayName}</option>)}
-          </select>
+          </DropdownSelect>
 
           {/* Cards view only. The month you are looking at already answers "upcoming or past". */}
           {view === 'grid' && (
-            <select
+            <DropdownSelect
               className="events-toolbar__select"
               value={range}
               aria-label="Filter by date range"
               onChange={(e) => setRange(e.target.value)}
             >
               {RANGES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-            </select>
+            </DropdownSelect>
           )}
 
           <div className="events-toolbar__toggle" role="group" aria-label="View">

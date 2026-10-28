@@ -1,5 +1,6 @@
 'use client';
 
+import DropdownSelect from '@/components/DropdownSelect';
 import PropTypes from 'prop-types';
 
 /** Rounded status pill. `tone` selects the palette; see style.scss `.cp-pill`. */
@@ -129,11 +130,11 @@ export function Select({
   value, onChange, options, label,
 }) {
   return (
-    <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
+    <DropdownSelect value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
       {options.map((option) => (
         <option key={option.value} value={option.value}>{option.label}</option>
       ))}
-    </select>
+    </DropdownSelect>
   );
 }
 

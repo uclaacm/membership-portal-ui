@@ -1,5 +1,6 @@
 "use client";
 
+import DropdownSelect from '@/components/DropdownSelect';
 import { useState } from "react";
 
 const QUESTION_TYPES = [
@@ -121,14 +122,14 @@ export default function CustomQuestionsEditor({ editor }) {
           <div className="committee-form__question-row committee-form__question-row--meta">
             <label className="committee-form__question-type">
               <span>Type</span>
-              <select
+              <DropdownSelect
                 value={question.questionType}
                 onChange={(e) => updateQuestion(question.clientId, { questionType: e.target.value })}
               >
                 {QUESTION_TYPES.map((type) => (
                   <option key={type.value} value={type.value}>{type.label}</option>
                 ))}
-              </select>
+              </DropdownSelect>
             </label>
 
             <label className="committee-form__question-required">
