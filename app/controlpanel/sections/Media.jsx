@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   PageHeader, ApiLegend, SearchField, Select,
@@ -8,17 +8,19 @@ import {
 import {
   formatBytes, formatCount, imageFilename, imageUrl,
 } from '../format';
+import { imageEventReferences, isImageExpired } from '../mediaUsage';
 
 const FILTER_OPTIONS = [
   { value: 'all', label: 'All files' },
   { value: 'unused', label: 'Unused only' },
+  { value: 'expired', label: 'Expired' },
   { value: 'large', label: 'Larger than 1 MB' },
 ];
 
 const ONE_MB = 1024 * 1024;
 
 export default function Media({
-  images, canUpload, maxBytes, onUpload, onDelete,
+  images, events, canUpload, maxBytes, onUpload, onDelete,
 }) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
@@ -27,6 +29,7 @@ export default function Media({
   const [uploadError, setUploadError] = useState('');
   const [copied, setCopied] = useState(null);
   const fileInput = useRef(null);
+  const referencesByImage = useMemo(() => imageEventReferences(events), [events]);
 
   const handleFiles = async (event) => {
     const files = Array.from(event.target.files || []);
@@ -57,6 +60,7 @@ export default function Media({
     const name = imageFilename(image);
     if (search && !name.toLowerCase().includes(search.toLowerCase())) return false;
     if (filter === 'unused') return !image.referenceCount;
+    if (filter === 'expired') return isImageExpired(image, referencesByImage);
     if (filter === 'large') return (image.size || 0) > ONE_MB;
     return true;
   });
@@ -101,6 +105,10 @@ export default function Media({
           )}
         </div>
       </div>
+
+      {filter === 'expired' && (
+        <p className="cp-toolbar-meta">Images used only by events that have ended.</p>
+      )}
 
       {uploadError && <div className="cp-upload-error">{uploadError}</div>}
 
@@ -185,6 +193,7 @@ export default function Media({
 
 Media.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  events: PropTypes.arrayOf(PropTypes.object).isRequired,
   canUpload: PropTypes.bool.isRequired,
   maxBytes: PropTypes.number.isRequired,
   onUpload: PropTypes.func.isRequired,
