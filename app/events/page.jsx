@@ -7,6 +7,7 @@ import moment from 'moment';
 import Topbar from '@/components/Topbar';
 import EventCard from '@/components/EventCard';
 import ConfirmationModal from '@/components/Modal/confirmationModal';
+import RSVPReminderModal from '@/components/Modal/rsvpReminderModal';
 import SyncSheetsModal from '@/components/Modal/syncSheetsModal';
 import AdminAddEvent from './AdminEvents/adminAddEvent';
 import EventsCalendar from './EventsCalendar';
@@ -64,6 +65,7 @@ function EventsPageInner() {
   const [editing, setEditing] = useState(null);
   const [creating, setCreating] = useState(false);
   const [rsvpModalEvent, setRsvpModalEvent] = useState(null);
+  const [rsvpChoiceEvent, setRsvpChoiceEvent] = useState(null);
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [deleting, setDeleting] = useState(null);
   const [syncOpen, setSyncOpen] = useState(false);
@@ -189,11 +191,24 @@ function EventsPageInner() {
 
   const toggleRsvp = async (event) => {
     const going = !!rsvpedUuids[event.uuid];
+    if (!going) {
+      setRsvpChoiceEvent(event);
+      return;
+    }
     // Optimistic: the pill is the whole feedback mechanism, so waiting on the round trip makes
     // it feel broken.
-    setRsvpedUuids((c) => ({ ...c, [event.uuid]: !going }));
-    const result = going ? await cancelRSVP(event.uuid) : await createRSVP(event.uuid);
-    if (result?.error) setRsvpedUuids((c) => ({ ...c, [event.uuid]: going }));
+    setRsvpedUuids((c) => ({ ...c, [event.uuid]: false }));
+    const result = await cancelRSVP(event.uuid);
+    if (!result.success) setRsvpedUuids((c) => ({ ...c, [event.uuid]: true }));
+  };
+
+  const confirmRsvp = async (emailRemindersEnabled) => {
+    const result = await createRSVP(rsvpChoiceEvent.uuid, emailRemindersEnabled);
+    if (result.success) {
+      setRsvpedUuids((current) => ({ ...current, [rsvpChoiceEvent.uuid]: true }));
+      setRsvpChoiceEvent(null);
+    }
+    return result;
   };
 
   const confirmDelete = async () => {
@@ -382,6 +397,14 @@ function EventsPageInner() {
 
       {rsvpModalEvent && (
         <EventRSVPsModal event={rsvpModalEvent} onClose={() => setRsvpModalEvent(null)} />
+      )}
+      {rsvpChoiceEvent && (
+        <RSVPReminderModal
+          key={rsvpChoiceEvent.uuid}
+          event={rsvpChoiceEvent}
+          onConfirm={confirmRsvp}
+          onClose={() => setRsvpChoiceEvent(null)}
+        />
       )}
 
       {checkInOpen && (

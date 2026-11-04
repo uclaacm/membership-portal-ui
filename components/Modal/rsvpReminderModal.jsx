@@ -1,0 +1,80 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
+import './rsvpReminderModal.scss';
+
+export default function RSVPReminderModal({ event, onConfirm, onClose }) {
+  const [emailRemindersEnabled, setEmailRemindersEnabled] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const checkboxRef = useRef(null);
+
+  useEffect(() => {
+    checkboxRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (keyEvent) => {
+      if (keyEvent.key === 'Escape' && !submitting) onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose, submitting]);
+
+  const submit = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    setError('');
+    try {
+      const result = await onConfirm(emailRemindersEnabled);
+      if (!result?.success) setError(result?.error || 'Could not RSVP. Please try again.');
+    } catch {
+      setError('Could not RSVP. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="rsvp-reminder-backdrop">
+      <div
+        className="rsvp-reminder-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rsvp-reminder-title"
+      >
+        <h2 id="rsvp-reminder-title">RSVP to {event.title}</h2>
+        <p>Choose whether you would like email reminders for this event.</p>
+        <form onSubmit={submit}>
+          <label className="rsvp-reminder-option">
+            <input
+              ref={checkboxRef}
+              type="checkbox"
+              checked={emailRemindersEnabled}
+              onChange={(changeEvent) => setEmailRemindersEnabled(changeEvent.target.checked)}
+            />
+            <span>Email me reminders before this event</span>
+          </label>
+          <p className="rsvp-reminder-note">
+            Your choice will be saved with your RSVP. Reminder emails are not being sent yet.
+          </p>
+          {error && <p className="rsvp-reminder-error" role="alert">{error}</p>}
+          <div className="rsvp-reminder-actions">
+            <button type="button" onClick={onClose} disabled={submitting}>Cancel</button>
+            <button type="submit" className="is-primary" disabled={submitting}>
+              {submitting ? 'Saving…' : 'Confirm RSVP'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+RSVPReminderModal.propTypes = {
+  event: PropTypes.shape({ title: PropTypes.string.isRequired }).isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};

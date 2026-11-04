@@ -13,6 +13,7 @@ import createRSVP from '@/app/actions/rsvp/createRSVP';
 import cancelRSVP from '@/app/actions/rsvp/cancelRSVP';
 import checkIn from '@/app/actions/attendance/checkIn';
 import Topbar from '@/components/Topbar';
+import RSVPReminderModal from '@/components/Modal/rsvpReminderModal';
 
 import Hero from './components/Hero';
 import CheckInCard from './components/CheckInCard';
@@ -60,6 +61,7 @@ export default function HomePage() {
   const [memberTotal, setMemberTotal] = useState(0);
   const [me, setMe] = useState({ uuid: null, rank: null, points: 0 });
   const [rsvped, setRsvped] = useState({});
+  const [rsvpChoiceEvent, setRsvpChoiceEvent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   // How many items the last fetch asked for, so a resize only refetches when the new fit needs
@@ -178,13 +180,26 @@ export default function HomePage() {
 
   const handleToggleRsvp = async (event) => {
     const going = !!rsvped[event.uuid];
-    // Optimistic: the button is the feedback, and a round trip before it moves feels broken.
-    setRsvped((current) => ({ ...current, [event.uuid]: !going }));
-
-    const result = going ? await cancelRSVP(event.uuid) : await createRSVP(event.uuid);
-    if (!result.success) {
-      setRsvped((current) => ({ ...current, [event.uuid]: going }));
+    if (!going) {
+      setRsvpChoiceEvent(event);
+      return;
     }
+    // Optimistic: the button is the feedback, and a round trip before it moves feels broken.
+    setRsvped((current) => ({ ...current, [event.uuid]: false }));
+
+    const result = await cancelRSVP(event.uuid);
+    if (!result.success) {
+      setRsvped((current) => ({ ...current, [event.uuid]: true }));
+    }
+  };
+
+  const confirmRsvp = async (emailRemindersEnabled) => {
+    const result = await createRSVP(rsvpChoiceEvent.uuid, emailRemindersEnabled);
+    if (result.success) {
+      setRsvped((current) => ({ ...current, [rsvpChoiceEvent.uuid]: true }));
+      setRsvpChoiceEvent(null);
+    }
+    return result;
   };
 
   if (!mounted) return null;
@@ -257,6 +272,14 @@ export default function HomePage() {
         memberCount={memberTotal}
         onClose={() => setModalOpen(false)}
       />
+      {rsvpChoiceEvent && (
+        <RSVPReminderModal
+          key={rsvpChoiceEvent.uuid}
+          event={rsvpChoiceEvent}
+          onConfirm={confirmRsvp}
+          onClose={() => setRsvpChoiceEvent(null)}
+        />
+      )}
     </>
   );
 }

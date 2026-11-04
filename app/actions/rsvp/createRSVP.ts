@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import Config from "@/lib/config";
 import Logger from "@/lib/logger";
 
-export default async function createRSVP(eventUuid: string): Promise<{ success: boolean; error?: string }> {
+export default async function createRSVP(eventUuid: string, emailRemindersEnabled = false): Promise<{ success: boolean; error?: string }> {
   try {
     const cks = await cookies();
     const response = await fetch(Config.API_URL + Config.routes.rsvp.create, {
@@ -14,7 +14,7 @@ export default async function createRSVP(eventUuid: string): Promise<{ success: 
         "Content-Type": "application/json",
         Authorization: `Bearer ${cks.get("token")?.value}`,
       },
-      body: JSON.stringify({ event: { uuid: eventUuid } }),
+      body: JSON.stringify({ event: { uuid: eventUuid }, emailRemindersEnabled }),
     });
 
     if (!response.ok) {

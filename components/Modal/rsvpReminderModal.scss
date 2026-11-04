@@ -1,0 +1,84 @@
+.rsvp-reminder-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.rsvp-reminder-dialog {
+  box-sizing: border-box;
+  width: min(100%, 440px);
+  padding: 28px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 14px 48px rgba(0, 0, 0, 0.2);
+  color: #222;
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 21px;
+    line-height: 1.3;
+  }
+
+  p {
+    margin: 0 0 18px;
+    line-height: 1.45;
+  }
+}
+
+.rsvp-reminder-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #d5dbea;
+  border-radius: 10px;
+  cursor: pointer;
+
+  input {
+    margin: 3px 0 0;
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+}
+
+.rsvp-reminder-dialog .rsvp-reminder-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #626a78;
+}
+
+.rsvp-reminder-dialog .rsvp-reminder-error {
+  margin: 12px 0 0;
+  color: #a72323;
+}
+
+.rsvp-reminder-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+
+  button {
+    padding: 10px 16px;
+    border: 1px solid #d5dbea;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    cursor: pointer;
+
+    &:disabled { cursor: wait; opacity: 0.65; }
+    &:focus-visible { outline: 2px solid #365bea; outline-offset: 2px; }
+  }
+
+  .is-primary {
+    border-color: #3459e6;
+    background: #3459e6;
+    color: #fff;
+  }
+}
