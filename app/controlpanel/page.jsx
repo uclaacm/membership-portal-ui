@@ -521,6 +521,7 @@ export default function ControlPanelPage() {
         return (
           <Media
             images={images}
+            events={events}
             canUpload={isAdmin || isOfficer}
             maxBytes={MAX_UPLOAD_BYTES}
             onUpload={handleUploadImage}
