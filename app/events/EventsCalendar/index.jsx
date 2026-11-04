@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Config from '@/lib/config';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import './style.scss';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -13,6 +13,9 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const CHIPS_PER_DAY = 2;
 
 const isoOf = (m) => m.format('YYYY-MM-DD');
+
+// Shared so the default is one stable object rather than a new one per render.
+const NO_RSVPS = {};
 
 /**
  * The month grid and day panel.
@@ -28,11 +31,11 @@ const isoOf = (m) => m.format('YYYY-MM-DD');
 export default function EventsCalendar({
   events, month, year, selectedDay,
   onSelectDay, onStepMonth, onToday,
-  staff, canModify, rsvpedUuids,
-  onRsvp, onViewRsvps, onEdit,
+  staff = false, canModify, rsvpedUuids = NO_RSVPS,
+  onRsvp = null, onViewRsvps = null, onViewCheckIns = null, onEdit = null,
 }) {
-  const committeeColors = useMemo(() => Object.fromEntries(Config.committeeColors), []);
-  const colorFor = (committee) => committeeColors[committee || 'ACM'] || '#1d6bff';
+  const { styleFor } = useCommitteeDirectory();
+  const colorFor = (committee) => styleFor(committee).color;
 
   const todayIso = isoOf(moment());
 
@@ -210,7 +213,7 @@ export default function EventsCalendar({
                 className="events-calendar__entry-committee"
                 style={{ color: colorFor(event.committee) }}
               >
-                {event.committee || 'ACM'}
+                {styleFor(event.committee).label}
               </span>
               <h3 className="events-calendar__entry-title">{event.title}</h3>
 
@@ -239,6 +242,16 @@ export default function EventsCalendar({
                       onClick={() => onEdit(event)}
                     >
                       <i className="fa fa-pen" aria-hidden="true" />
+                    </button>
+                  )}
+
+                  {staff && canModify(event) && onViewCheckIns && (
+                    <button
+                      type="button"
+                      className="events-calendar__pill is-staff"
+                      onClick={() => onViewCheckIns(event)}
+                    >
+                      Check-ins
                     </button>
                   )}
 
@@ -291,13 +304,6 @@ EventsCalendar.propTypes = {
   rsvpedUuids: PropTypes.object,
   onRsvp: PropTypes.func,
   onViewRsvps: PropTypes.func,
+  onViewCheckIns: PropTypes.func,
   onEdit: PropTypes.func,
-};
-
-EventsCalendar.defaultProps = {
-  staff: false,
-  rsvpedUuids: {},
-  onRsvp: null,
-  onViewRsvps: null,
-  onEdit: null,
 };

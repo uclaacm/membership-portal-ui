@@ -49,6 +49,7 @@ const config = {
       applicationStatusCounts: "/api/v1/internship/applications/status-counts",
       ownApplication: "/api/v1/internship/applications/me",
       committees: "/api/v1/internship/committees",
+      committeesDirectory: "/api/v1/internship/committees/directory",
       committeesAdmin: "/api/v1/internship/committees/admin",
       committeesBulkStatus: "/api/v1/internship/committees/bulk-status",
       cycle: "/api/v1/internship/cycle",
@@ -78,27 +79,27 @@ const config = {
       {
         name: "Kevin Wang",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://avatars.githubusercontent.com/u/2747165?v=4",
       },
       {
         name: "Ram Goli",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQGbwH_PMijtIQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1683901171536?e=1793836800&v=beta&t=fumpMHm3b1N7xQSJFJaG4EswPp0UiqxCtGEFo9-Lb08",
       },
       {
         name: "Brandon Liu",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/C5603AQFemaW2cXfJ5A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1517522198365?e=1793836800&v=beta&t=Hg3oODGAMjbnEBQOuyU7AxIl-uGGpTaiYOVIbf0YMv4",
       },
       {
         name: "Nikhil Kansal",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQEyud1-JvMhSg/profile-displayphoto-crop_800_800/B56ZyyWSsmJ0AI-/0/1772518717050?e=1793836800&v=beta&t=pPac6efdIKNWTJmCgm7stjabfx26Wjl9P_84AM369lM",
       },
       {
         name: "Justin Liu",
         position: "Dev Team Website Founder",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQEMQrUqWDiorg/profile-displayphoto-crop_800_800/B56Z8CYaQZHcAI-/0/1782451383614?e=1793836800&v=beta&t=EA6oi5UXXrhF-ZBEJrKIuIJ38gNdh_IeZgIMzYoKLIE",
       },
     ],
     devTeamDirectors: [
@@ -115,32 +116,32 @@ const config = {
       {
         name: "Snigdha Kansal",
         position: "Dev Team Director, 24-25",
-        picture: "",
+        picture: "https://avatars.githubusercontent.com/u/93846021?v=4",
       },
       {
         name: "Arsh Malik",
         position: "Dev Team Director, 23-24",
-        picture: "",
+        picture: "https://avatars.githubusercontent.com/u/51771221?v=4",
       },
       {
         name: "Matthew Nieva",
         position: "Dev Team Director, 22-23",
-        picture: "",
+        picture: "https://avatars.githubusercontent.com/u/65370631?v=4",
       },
       {
         name: "Advaith Gowrishetty",
         position: "Dev Team Director, 21-22",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQH3zO_dm00Y3g/profile-displayphoto-scale_400_400/B56aEXhtNvHUAg-/0/1791396076202?e=1793836800&v=beta&t=lAo8tf4TVQmxTt7nXinFgJAop_VPE9jozYJV6UbTXCY",
       },
       {
         name: "Austin Keil",
         position: "Dev Team Director, 20-21",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQHu3X4qZokTog/profile-displayphoto-scale_400_400/B56ZycZMyFKkAg-/0/1772150378225?e=1793836800&v=beta&t=WkP8URmT0VRLjeit3xQoRZERMlN_cUziEFtctTxWR5s",
       },
       {
         name: "Nhi Van",
         position: "Dev Team Director, 20-21",
-        picture: "",
+        picture: "https://media.licdn.com/dms/image/v2/D5603AQGuhg4k46t79w/profile-displayphoto-scale_400_400/B56Z98h5YtH4Ag-/0/1784500688703?e=1793836800&v=beta&t=KWrrX4eCWGTtnvTTg8w9SE4HMhYsMYfVDG4XajlFNNk",
       },
     ],
     currentDevTeam: [
@@ -156,7 +157,7 @@ const config = {
       },
       {
         name: "Rizwaan Bana",
-        position: "Dev Team Project Manager",
+        position: "Dev Team PM",
         picture: "/officers/RizwaanBana.jpg",
       },
       {
@@ -187,7 +188,7 @@ const config = {
       {
         name: "Daniil Malakhov",
         position: "Dev Team Officer",
-        picture: "",
+        picture: "/officers/DaniilMalakhov.jpg",
       },
       {
         name: "Spandan Patel",
@@ -197,17 +198,12 @@ const config = {
       {
         name: "Siddhant Patil",
         position: "Dev Team Officer",
-        picture: "",
-      },
-      {
-        name: "Ryan Dewey",
-        position: "Dev Team Officer",
-        picture: "/officers/RyanDewey.jpg",
+        picture: "/officers/SiddhantPatil.png",
       },
       {
         name: "Marc Jowell Bagaoisan",
         position: "Dev Team Officer",
-        picture: "",
+        picture: "/officers/MJBagaoisan.jpg",
       },
       {
         name: "Lily Wu",
@@ -228,7 +224,7 @@ const config = {
     resources: [
       {
         type: "github",
-        title: "Github",
+        title: "GitHub",
         subtitle: "github.com/uclaacm",
         link: "https://github.com/uclaacm",
       },
@@ -414,36 +410,8 @@ const config = {
     "Undeclared Social Sciences",
     "World Arts and Cultures",
   ],
-  // The canonical committee list — the single source of truth for officer assignment, event
-  // committees, and every Control Panel filter. "Dev Team" belongs here: officers are assigned
-  // to it, and leaving it out is what previously made the only committee with officers
-  // impossible to select. Mirrors COMMITTEES in the API's app/committees.js.
-  committees: ["Dev Team", "AI", "Cyber", "Design", "Hack", "ICPC", "Studio", "TeachLA", "W", "Cloud"],
-  committeeColors: [
-    ["ACM", "#1d6bff"],
-    ["Dev Team", "#3b59ed"],
-    ["AI", "#28b2fd"],
-    ["Cyber", "#ffba43"],
-    ["Design", "#fe833d"],
-    ["Hack", "#c95ffd"],
-    ["ICPC", "#ff6b6b"],
-    ["Studio", "#ed3267"],
-    ["TeachLA", "#5fda10"],
-    ["W", "#01d4cb"],
-    ["Cloud", "#9f97ff"],
-  ],
-  committeeBanners: {
-    "Dev Team" : "/event_banners/acm_dev_banner.webp",
-    "AI" : "/event_banners/acm_ai_banner.webp",
-    "Cyber" : "/event_banners/acm_cyber_banner.png",
-    "Design" : "/event_banners/acm_design_banner.webp",
-    "Hack" : "/event_banners/acm_hack_banner.webp",
-    "ICPC" : "/event_banners/acm_icpc_banner.webp",
-    "Studio" : "/event_banners/acm_studio_banner.webp",
-    "TeachLA" : "/event_banners/acm_teachla_banner.webp",
-    "W" : "/event_banners/acm_w_banner.webp",
-    "Cloud" : "/event_banners/acm_cloud_banner.webp",
-  },
+  // No committee list here on purpose: committees, their colors and banners live in the database
+  // and load through useCommitteeDirectory (lib/hooks). See lib/committees.ts.
   platforms: ["Instagram Story", "Instagram Post", "Discord", "LinkTree", "Medium Article", "LinkedIn", "CS Newsletter"],
 };
 

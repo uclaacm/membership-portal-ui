@@ -1,13 +1,11 @@
 'use client';
 
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
 import DataTable from '../components/DataTable';
 import {
   PageHeader, SectionHead, Pill, Dagger, ApiLegend,
 } from '../components/primitives';
 import { formatDate } from '../format';
-import { findCommitteeRecord } from '@/lib/cycleState';
 
 const A = 'allowed';
 const D = 'denied';
@@ -50,19 +48,18 @@ function Mark({ value }) {
 Mark.propTypes = { value: PropTypes.string.isRequired };
 
 export default function Committees({
-  committees, admins, officers, events,
+  committees, directory, admins, officers, events,
 }) {
-  // Every committee in the canonical list gets a row, joined to its internship-side record if
-  // one exists. Deriving from Config.committees rather than the API response means a committee
-  // never silently disappears from this table just because it has no internship config yet.
-  const rows = Config.committees.map((name) => {
-    // Matched through the shared resolver: the internship records were created separately and
-    // at least one disagrees with the canonical name ("Dev" vs "Dev Team"), which used to yield
-    // a null record and a wrong "Closed" status here while internship showed it open.
-    const record = findCommitteeRecord(committees, name);
+  // One row per committee in the database: the directory has every committee, active or not.
+  // `committees` adds the full internship record (deadline, intern limit) where this viewer
+  // can see it. Officers, admins and events all reference a committee by its permanent `name`.
+  const rows = directory.map((entry) => {
+    const { name } = entry;
+    const record = committees.find((c) => c.name === name) ?? entry;
     const president = admins.find((a) => (a.committees || []).includes(name) && a.level === 'President');
     return {
       name,
+      label: entry.displayName || name,
       record,
       president,
       officerCount: officers.filter((o) => (o.committees || []).includes(name)).length,
@@ -71,7 +68,7 @@ export default function Committees({
   });
 
   const columns = [
-    { key: 'committee', label: 'Committee', cellClassName: 'identifier', render: (row) => row.name },
+    { key: 'committee', label: 'Committee', cellClassName: 'identifier', render: (row) => row.label },
     {
       key: 'president',
       label: <>President <Dagger /></>,
@@ -85,14 +82,9 @@ export default function Committees({
     {
       key: 'recruitment',
       label: 'Recruitment',
-      // Three states, not two: a committee with no internship record has no recruitment status
-      // at all, and showing it as "Closed" asserted something untrue.
-      render: (row) => {
-        if (!row.record) return <span className="cp-muted">Not set up</span>;
-        return row.record.isActive
-          ? <Pill tone="success">Open</Pill>
-          : <Pill tone="muted">Closed</Pill>;
-      },
+      render: (row) => (row.record.isActive
+        ? <Pill tone="success">Open</Pill>
+        : <Pill tone="muted">Closed</Pill>),
     },
     {
       key: 'deadline',
@@ -200,6 +192,7 @@ export default function Committees({
 
 Committees.propTypes = {
   committees: PropTypes.arrayOf(PropTypes.object).isRequired,
+  directory: PropTypes.arrayOf(PropTypes.object).isRequired,
   admins: PropTypes.arrayOf(PropTypes.object).isRequired,
   officers: PropTypes.arrayOf(PropTypes.object).isRequired,
   events: PropTypes.arrayOf(PropTypes.object).isRequired,

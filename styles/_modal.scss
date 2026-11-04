@@ -1,0 +1,32 @@
+@use "vars";
+
+@mixin backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(26, 29, 38, 0.48);
+  backdrop-filter: blur(4px);
+  animation: modal-backdrop-in 140ms ease-out;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+  @media (max-width: 600px) { padding: 16px; }
+}
+
+@mixin panel {
+  box-sizing: border-box;
+  background: #fff;
+  color: vars.$primaryblack;
+  border: 1px solid #e7e9ef;
+  border-radius: 16px;
+  box-shadow: 0 24px 80px -20px rgba(26, 29, 38, 0.35);
+  max-height: calc(100dvh - 48px);
+  min-width: 0;
+  font-family: var(--font-lato), "Lato", sans-serif;
+  animation: modal-panel-in 180ms ease-out;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+  @media (max-width: 600px) { max-height: calc(100dvh - 32px); }
+}

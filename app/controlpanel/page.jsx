@@ -10,6 +10,7 @@ import SyncSheetsModal from '@/components/Modal/syncSheetsModal';
 import Config from '@/lib/config';
 import CookieStore from '@/lib/cookieStore';
 import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from '@/lib/atoms';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 
 import logoutUser from '@/app/actions/auth/logoutUser';
 import changeOneClickPassword from '@/app/actions/auth/changeOneClickPassword';
@@ -87,6 +88,9 @@ export default function ControlPanelPage() {
   const [admins, setAdmins] = useState([]);
   const [officers, setOfficers] = useState([]);
   const [committees, setCommittees] = useState([]);
+  // Every committee from the database, active or not: the only list officers can be assigned
+  // to and events filed under.
+  const { committees: committeeDirectory } = useCommitteeDirectory();
   const [applications, setApplications] = useState([]);
   const [events, setEvents] = useState([]);
   const [images, setImages] = useState([]);
@@ -415,14 +419,13 @@ export default function ControlPanelPage() {
   });
 
   // ------------------------------------------------------------ derived counts
-
   const counts = useMemo(() => ({
     users: roster.total,
     roles: admins.length + officers.length,
-    committees: Config.committees.length,
+    committees: committeeDirectory.length,
     events: events.length,
     media: images.length,
-  }), [roster.total, admins.length, officers.length, events.length, images.length]);
+  }), [roster.total, admins.length, officers.length, committeeDirectory.length, events.length, images.length]);
 
   const system = useMemo(() => {
     const rotation = overviewActivity.find((e) => e.action === 'settings.update');
@@ -495,6 +498,7 @@ export default function ControlPanelPage() {
         return (
           <Committees
             committees={committees}
+            directory={committeeDirectory}
             admins={admins}
             officers={officers}
             events={events}
@@ -593,6 +597,7 @@ export default function ControlPanelPage() {
           prefill={assign.prefill}
           onClose={() => setAssign((a) => ({ ...a, open: false }))}
           onAssign={handleAssignRole}
+          committeeOptions={committeeDirectory}
         />
 
         {/* `.admin-dashboard` is the scope every rule in AdminEvents/style.scss is nested
@@ -601,6 +606,7 @@ export default function ControlPanelPage() {
           <AdminAddEvent
             key={eventForm.seq}
             event={eventForm.event}
+            committees={committeeDirectory}
             isEdit={eventForm.isEdit}
             showing={eventForm.showing}
             onClickAdd={handleSaveEvent}
@@ -620,6 +626,7 @@ export default function ControlPanelPage() {
         <BulkCommitteeDialog
           open={bulkCommittee.open}
           count={bulkCommittee.uuids.length}
+          committeeOptions={committeeDirectory}
           onClose={() => setBulkCommittee({ open: false, uuids: [] })}
           onApply={({ committees: picked, committeeMode }) => handleBulkUpdate({
             uuids: bulkCommittee.uuids, committees: picked, committeeMode,
@@ -630,6 +637,7 @@ export default function ControlPanelPage() {
           open={bulkAddOpen}
           onClose={() => setBulkAddOpen(false)}
           onApply={handleBulkUpdate}
+          committeeOptions={committeeDirectory}
         />
 
         <SyncSheetsModal

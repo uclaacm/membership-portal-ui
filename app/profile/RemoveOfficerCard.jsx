@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import Button from '@/components/Button';
 import Config from '@/lib/config';
 import CookieStore from '@/lib/cookieStore';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import './RemoveOfficerCard.scss';
-
-const COMMITTEES = Config.committees;
 
 const getResponseMessage = (data, fallback) => {
   const value = data?.message || data?.error;
@@ -21,6 +20,7 @@ const RemoveOfficerCard = () => {
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState('');
   const [committee, setCommittee] = useState('');
+  const { committees: committeeOptions } = useCommitteeDirectory();
   const [message, setMessage] = useState({ text: '', success: false });
   const [loading, setLoading] = useState(false);
 
@@ -97,14 +97,14 @@ const RemoveOfficerCard = () => {
             <div className="ro-field">
               <label className="ro-label">Committee</label>
               <div className="ro-committee-grid">
-                {COMMITTEES.map(c => (
+                {committeeOptions.map(({ name, displayName }) => (
                   <button
-                    key={c}
+                    key={name}
                     type="button"
-                    className={`ro-chip ${committee === c ? 'selected' : ''}`}
-                    onClick={() => selectCommittee(c)}
+                    className={`ro-chip ${committee === name ? 'selected' : ''}`}
+                    onClick={() => selectCommittee(name)}
                   >
-                    {c}
+                    {displayName || name}
                   </button>
                 ))}
               </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Config from '@/lib/config';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import './style.scss';
 
 /**
@@ -40,16 +40,15 @@ const plainText = (description) => {
  *   page's wrapping flexbox a full-width card takes a whole row and the cards stack.
  */
 export default function EventPreviewCard({
-  event, fill, onRsvp, going, flippable,
-  admin, rsvpCount, onEdit, onViewRsvps, rsvpsOpen, rsvpsLoading,
+  event, fill = false, onRsvp = null, going = false, flippable = true,
+  admin = false, rsvpCount = 0, onEdit = null, onViewRsvps = null, rsvpsOpen = false, rsvpsLoading = false,
 }) {
-  const banner = Config.committeeBanners[event.committee] || '/logo.png';
-  const [src, setSrc] = useState(event.cover || banner);
+  const { styleFor } = useCommitteeDirectory();
+  const { label: committee, color, bannerUrl: banner } = styleFor(event.committee);
+  // Tracks failures rather than the current src so the banner slots in once committees load.
+  const [failed, setFailed] = useState([]);
+  const src = [event.cover, banner].find((url) => url && !failed.includes(url)) || '/logo.png';
   const [flipped, setFlipped] = useState(false);
-
-  const committeeColors = Object.fromEntries(Config.committeeColors);
-  const committee = event.committee || 'ACM';
-  const color = committeeColors[committee] || '#1E6CFF';
 
   const start = event.startDate ? moment(event.startDate) : null;
   const end = event.endDate ? moment(event.endDate) : null;
@@ -111,7 +110,7 @@ export default function EventPreviewCard({
             <img
               src={src}
               alt=""
-              onError={() => setSrc((current) => (current === banner ? '/logo.png' : banner))}
+              onError={() => setFailed((current) => [...current, src])}
             />
             <div className="preview-points-pill">{event.attendancePoints ?? 0} PTS</div>
           </div>
@@ -206,17 +205,4 @@ EventPreviewCard.propTypes = {
   onViewRsvps: PropTypes.func,
   rsvpsOpen: PropTypes.bool,
   rsvpsLoading: PropTypes.bool,
-};
-
-EventPreviewCard.defaultProps = {
-  fill: false,
-  onRsvp: null,
-  going: false,
-  flippable: true,
-  admin: false,
-  rsvpCount: 0,
-  onEdit: null,
-  onViewRsvps: null,
-  rsvpsOpen: false,
-  rsvpsLoading: false,
 };

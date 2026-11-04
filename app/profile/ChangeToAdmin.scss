@@ -1,3 +1,4 @@
+@use "@/styles/modal";
 @use "../../styles/vars";
 
 .ar-overlay {
@@ -141,3 +142,7 @@
   gap: 10px;
   margin-top: 4px;
 }
+
+.ar-overlay { @include modal.backdrop; }
+.ar-modal { @include modal.panel; max-width: 100%; overflow-y: auto; padding: 24px; }
+.ar-title { font: 600 20px/1.4 var(--font-poppins), "Poppins", sans-serif; }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '@/components/Button';
+import ModalShell from './ModalShell';
 // `.modal-wrapper` lives here. Imported by the component rather than its pages, so mounting it
 // somewhere that hasn't happened to pull the sheet in can't leave it unstyled at the foot of
 // the page — the failure this and EventRSVPsModal both used to have.
@@ -14,25 +14,18 @@ export default class ConfirmationModal extends React.Component {
       title, message, submit, cancel, opened,
     } = this.props;
     return opened ? (
-      <div className="modal-wrapper">
-        <div className="confirmation-modal-container">
-          <div className="padding">
-            <h1>{title}</h1>
-            <br />
-            <p>{message}</p>
-            <br />
-            <br />
-            <div className="button-container">
-              <div className="button-padding">
-                <Button text="Yes" color="green" onClick={submit} />
-              </div>
-              <div className="button-padding">
-                <Button text="No" color="red" onClick={cancel} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ModalShell
+        title={title}
+        onClose={cancel}
+        footer={(
+          <>
+            <button type="button" className="modal-action" onClick={cancel}>Cancel</button>
+            <button type="button" className="modal-action modal-action--primary" onClick={submit}>Confirm</button>
+          </>
+        )}
+      >
+        <p style={{ margin: 0 }}>{message}</p>
+      </ModalShell>
     ) : null;
   }
 }

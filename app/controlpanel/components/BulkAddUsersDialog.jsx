@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
+import ModalShell from '@/components/Modal/ModalShell';
 
 const ROLES = ['Member', 'Officer', 'Admin'];
 
@@ -28,7 +28,9 @@ export const parseEmails = (raw) => [
  * Partial success is expected — an address that never registered cannot be assigned anything —
  * so the result panel lists every failure with its reason rather than reporting one summary.
  */
-export default function BulkAddUsersDialog({ open, onClose, onApply }) {
+export default function BulkAddUsersDialog({
+  open, onClose, onApply, committeeOptions,
+}) {
   const [raw, setRaw] = useState('');
   const [role, setRole] = useState('Officer');
   const [committees, setCommittees] = useState([]);
@@ -69,13 +71,8 @@ export default function BulkAddUsersDialog({ open, onClose, onApply }) {
   };
 
   return (
-    <div
-      className="cp-dialog-backdrop"
-      role="presentation"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="cp-dialog wide" role="dialog" aria-modal="true" aria-label="Add users in bulk">
-        <h3>Add users in bulk</h3>
+    <ModalShell title="Add users in bulk" onClose={onClose} wide>
+      <div className="cp-dialog cp-dialog--embedded">
 
         {!result && (
           <>
@@ -115,14 +112,14 @@ export default function BulkAddUsersDialog({ open, onClose, onApply }) {
               <div>
                 <span className="cp-field-label">Committees</span>
                 <div className="cp-chip-group">
-                  {Config.committees.map((committee) => (
+                  {committeeOptions.map(({ name, displayName }) => (
                     <button
-                      key={committee}
+                      key={name}
                       type="button"
-                      className={`cp-chip ${committees.includes(committee) ? 'selected' : ''}`}
-                      onClick={() => toggle(committee)}
+                      className={`cp-chip ${committees.includes(name) ? 'selected' : ''}`}
+                      onClick={() => toggle(name)}
                     >
-                      {committee}
+                      {displayName || name}
                     </button>
                   ))}
                 </div>
@@ -182,11 +179,15 @@ export default function BulkAddUsersDialog({ open, onClose, onApply }) {
           </>
         )}
       </div>
-    </div>
+    </ModalShell>
   );
 }
 
 BulkAddUsersDialog.propTypes = {
+  committeeOptions: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    displayName: PropTypes.string,
+  })).isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onApply: PropTypes.func.isRequired,

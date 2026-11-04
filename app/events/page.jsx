@@ -1,5 +1,6 @@
 'use client';
 
+import DropdownSelect from '@/components/DropdownSelect';
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAtom, useAtomValue } from 'jotai';
@@ -23,7 +24,8 @@ import createRSVP from '@/app/actions/rsvp/createRSVP';
 import cancelRSVP from '@/app/actions/rsvp/cancelRSVP';
 import syncEventsAction from '@/app/actions/events/syncEvents';
 import checkInAction from '@/app/actions/attendance/checkIn';
-import Config from '@/lib/config';
+import { GENERAL_COMMITTEE } from '@/lib/committees';
+import useCommitteeDirectory from '@/lib/hooks/useCommitteeDirectory';
 import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from '@/lib/atoms';
 // AdminAddEvent carries no styles of its own — its overlay lives in this sheet, scoped under
 // `.admin-dashboard`. The page rewrite dropped the old `./style.scss` import that used to pull
@@ -61,11 +63,13 @@ function EventsPageInner() {
   const [search, setSearch] = useState('');
   const [committee, setCommittee] = useState('all');
   const [range, setRange] = useState('upcoming');
+  const { committees } = useCommitteeDirectory();
 
   const [editing, setEditing] = useState(null);
   const [creating, setCreating] = useState(false);
   const [rsvpModalEvent, setRsvpModalEvent] = useState(null);
   const [rsvpChoiceEvent, setRsvpChoiceEvent] = useState(null);
+  const [checkInsModalEvent, setCheckInsModalEvent] = useState(null);
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [deleting, setDeleting] = useState(null);
   const [syncOpen, setSyncOpen] = useState(false);
@@ -142,7 +146,7 @@ function EventsPageInner() {
     const needle = search.trim().toLowerCase();
 
     return events.filter((e) => {
-      if (committee !== 'all' && e.committee !== committee) return false;
+      if (committee !== 'all' && (e.committee || GENERAL_COMMITTEE) !== committee) return false;
       if (!needle) return true;
       return [e.title, e.location, e.committee]
         .some((field) => String(field ?? '').toLowerCase().includes(needle));
@@ -264,26 +268,27 @@ function EventsPageInner() {
             />
           </div>
 
-          <select
+          <DropdownSelect
             className="events-toolbar__select"
             value={committee}
             aria-label="Filter by committee"
             onChange={(e) => setCommittee(e.target.value)}
           >
             <option value="all">All committees</option>
-            {Config.committees.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
+            <option value={GENERAL_COMMITTEE}>{GENERAL_COMMITTEE} (chapter-wide)</option>
+            {committees.map((c) => <option key={c.name} value={c.name}>{c.displayName}</option>)}
+          </DropdownSelect>
 
           {/* Cards view only. The month you are looking at already answers "upcoming or past". */}
           {view === 'grid' && (
-            <select
+            <DropdownSelect
               className="events-toolbar__select"
               value={range}
               aria-label="Filter by date range"
               onChange={(e) => setRange(e.target.value)}
             >
               {RANGES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-            </select>
+            </DropdownSelect>
           )}
 
           <div className="events-toolbar__toggle" role="group" aria-label="View">
@@ -347,6 +352,7 @@ function EventsPageInner() {
             rsvpedUuids={rsvpedUuids}
             onRsvp={toggleRsvp}
             onViewRsvps={staff ? setRsvpModalEvent : null}
+            onViewCheckIns={staff ? setCheckInsModalEvent : null}
             onEdit={setEditing}
           />
         ) : months.length === 0 ? (
@@ -368,6 +374,7 @@ function EventsPageInner() {
                   going={!!rsvpedUuids[event.uuid]}
                   onRsvp={toggleRsvp}
                   onViewRsvps={staff ? setRsvpModalEvent : null}
+                  onViewCheckIns={staff ? setCheckInsModalEvent : null}
                   onEdit={setEditing}
                   onDelete={setDeleting}
                 />
@@ -385,6 +392,7 @@ function EventsPageInner() {
             showing
             isEdit={!!editing}
             event={editing ?? {}}
+            committees={committees}
             onClickAdd={saveEvent}
             onClickCancel={() => { setEditing(null); setCreating(false); }}
             onClickDelete={canModify(editing ?? {}) ? (event) => {
@@ -404,6 +412,14 @@ function EventsPageInner() {
           event={rsvpChoiceEvent}
           onConfirm={confirmRsvp}
           onClose={() => setRsvpChoiceEvent(null)}
+        />
+      )}
+
+      {checkInsModalEvent && (
+        <EventRSVPsModal
+          kind="checkins"
+          event={checkInsModalEvent}
+          onClose={() => setCheckInsModalEvent(null)}
         />
       )}
 

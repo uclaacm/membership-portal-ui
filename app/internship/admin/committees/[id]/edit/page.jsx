@@ -8,11 +8,13 @@ import ConfirmationModal from "@/components/Modal/confirmationModal";
 import fetchCommitteeById from "@/app/actions/internship/fetchCommitteeById";
 import updateCommittee from "@/app/actions/internship/updateCommittee";
 import deleteCommittee from "@/app/actions/internship/deleteCommittee";
+import useCommitteeDirectory from "@/lib/hooks/useCommitteeDirectory";
 import "@/components/Internship/AdminDashboard.scss";
 
 export default function EditCommitteePage({ params }) {
   const { id } = use(params);
   const router = useRouter();
+  const { refresh: refreshCommitteeDirectory } = useCommitteeDirectory();
 
   const [committee, setCommittee] = useState(null);
   const [loadError, setLoadError] = useState(null);
@@ -43,6 +45,7 @@ export default function EditCommitteePage({ params }) {
     const result = await updateCommittee(id, payload);
     if (result.success) {
       setCommittee(result.data);
+      refreshCommitteeDirectory();
     }
     return result;
   }
@@ -58,6 +61,7 @@ export default function EditCommitteePage({ params }) {
       setDangerError(result.error);
       return;
     }
+    refreshCommitteeDirectory();
     router.push("/internship/admin");
   }
 
@@ -108,7 +112,7 @@ export default function EditCommitteePage({ params }) {
         <ConfirmationModal
           opened={confirmDelete}
           title="Permanently delete this committee?"
-          message="This permanently deletes the committee and cannot be undone. Any application with no other committee choice will be deleted entirely, and this committee's choice, responses, status, and officer review will be removed from any application that also chose a different committee."
+          message="This permanently deletes the committee and cannot be undone. Any application with no other committee choice will be deleted entirely, and this committee's choice, responses, status, and officer review will be removed from any application that also chose a different committee. It will also be removed from every officer assigned to it; officers with no other committee become members."
           submit={handleConfirmDelete}
           cancel={() => setConfirmDelete(false)}
         />

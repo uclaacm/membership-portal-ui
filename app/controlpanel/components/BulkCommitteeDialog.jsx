@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
+import ModalShell from '@/components/Modal/ModalShell';
 
 const MODES = [
   { value: 'add', label: 'Add to' },
@@ -13,9 +13,11 @@ const MODES = [
 /**
  * Assigns committees to the users currently selected in the Users table.
  *
- * Chips come from Config.committees — the canonical list — never a local copy.
+ * Chips come from `committeeOptions`, the committee records in the database, never a local copy.
  */
-export default function BulkCommitteeDialog({ open, count, onClose, onApply }) {
+export default function BulkCommitteeDialog({
+  open, count, onClose, onApply, committeeOptions,
+}) {
   const [committees, setCommittees] = useState([]);
   const [mode, setMode] = useState('add');
   const [error, setError] = useState('');
@@ -45,13 +47,8 @@ export default function BulkCommitteeDialog({ open, count, onClose, onApply }) {
   };
 
   return (
-    <div
-      className="cp-dialog-backdrop"
-      role="presentation"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="cp-dialog" role="dialog" aria-modal="true" aria-label="Assign committee">
-        <h3>Assign committee</h3>
+    <ModalShell title="Assign committee" onClose={onClose}>
+      <div className="cp-dialog cp-dialog--embedded">
         <p style={{ margin: 0, fontSize: 13, color: 'rgba(0,0,0,0.6)' }}>
           Applies to {count} selected user{count === 1 ? '' : 's'}.
         </p>
@@ -75,14 +72,14 @@ export default function BulkCommitteeDialog({ open, count, onClose, onApply }) {
         <div>
           <span className="cp-field-label">Committees</span>
           <div className="cp-chip-group">
-            {Config.committees.map((committee) => (
+            {committeeOptions.map(({ name, displayName }) => (
               <button
-                key={committee}
+                key={name}
                 type="button"
-                className={`cp-chip ${committees.includes(committee) ? 'selected' : ''}`}
-                onClick={() => toggle(committee)}
+                className={`cp-chip ${committees.includes(name) ? 'selected' : ''}`}
+                onClick={() => toggle(name)}
               >
-                {committee}
+                {displayName || name}
               </button>
             ))}
           </div>
@@ -102,11 +99,15 @@ export default function BulkCommitteeDialog({ open, count, onClose, onApply }) {
           </button>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }
 
 BulkCommitteeDialog.propTypes = {
+  committeeOptions: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    displayName: PropTypes.string,
+  })).isRequired,
   open: PropTypes.bool.isRequired,
   count: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,

@@ -21,12 +21,14 @@ const ACTION_STYLE = {
   'committee.close': { icon: 'fa-folder-open', color: 'rgba(0,0,0,0.6)' },
   'committee.create': { icon: 'fa-sitemap', color: '#248a45' },
   'committee.update': { icon: 'fa-sitemap', color: 'rgba(0,0,0,0.6)' },
+  'decisions.release': { icon: 'fa-eye', color: '#248a45' },
+  'decisions.hide': { icon: 'fa-eye-slash', color: 'rgba(0,0,0,0.6)' },
 };
 
 const DEFAULT_STYLE = { icon: 'fa-clock-rotate-left', color: 'rgba(0,0,0,0.6)' };
 
 function AttentionRow({
-  color, label, count, system,
+  color = '#ffba43', label, count, system = false,
 }) {
   return (
     <div className={`cp-attention-row ${system ? 'system' : ''}`}>
@@ -43,8 +45,6 @@ AttentionRow.propTypes = {
   count: PropTypes.node.isRequired,
   system: PropTypes.bool,
 };
-
-AttentionRow.defaultProps = { color: '#ffba43', system: false };
 
 export default function Overview({ data, isAdmin, onNavigate }) {
   const {

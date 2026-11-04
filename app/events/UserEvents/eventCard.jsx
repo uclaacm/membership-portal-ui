@@ -1,7 +1,6 @@
 'use client';
 
 import React from "react";
-import Config from '@/lib/config';
 import './style.scss';
 import moment from "moment";
 import fetchUserRSVPs from '@/app/actions/rsvp/fetchUserRSVPs';
@@ -134,7 +133,6 @@ class EventCard extends React.Component {
         const buttonText = this.getButtonText();
         const isDisabled = this.isRSVPDisabled();
 
-        const committeeColorMap = Object.fromEntries(Config.committeeColors);
 
         return (
             <>
@@ -174,7 +172,7 @@ class EventCard extends React.Component {
                                         📍 {event.location}
                                     </a>
                                 </p>
-                                <p className="text" style={{color: committeeColorMap[event.committee]}}>{event.committee}</p>
+                                <p className="text">{event.committee}</p>
                                 {event.eventLink ? (
                                     <a
                                         className="pill-shape rsvp external-rsvp"
