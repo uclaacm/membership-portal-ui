@@ -22,6 +22,7 @@ const config = {
     audit: "/api/v1/audit",
     settings: {
       email: "/api/v1/settings/email",
+      emailReminder: "/api/v1/settings/email/reminder",
       emailTest: "/api/v1/settings/email/test",
     },
     activity: "/api/v1/activity",

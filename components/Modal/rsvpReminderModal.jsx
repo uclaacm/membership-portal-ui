@@ -58,7 +58,8 @@ export default function RSVPReminderModal({ event, onConfirm, onClose }) {
             <span>Email me reminders before this event</span>
           </label>
           <p className="rsvp-reminder-note">
-            Your choice will be saved with your RSVP. Reminder emails are not being sent yet.
+            If email is configured, we’ll send one reminder an hour before the event.
+            RSVPs made in the final hour won’t receive one.
           </p>
           {error && <p className="rsvp-reminder-error" role="alert">{error}</p>}
           <div className="rsvp-reminder-actions">
