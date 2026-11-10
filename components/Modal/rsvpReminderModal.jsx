@@ -46,7 +46,7 @@ export default function RSVPReminderModal({ event, onConfirm, onClose }) {
         aria-labelledby="rsvp-reminder-title"
       >
         <h2 id="rsvp-reminder-title">RSVP to {event.title}</h2>
-        <p>Choose whether you would like email reminders for this event.</p>
+        <p>You’ll receive a confirmation email after RSVPing. Choose whether you’d also like a reminder.</p>
         <form onSubmit={submit}>
           <label className="rsvp-reminder-option">
             <input

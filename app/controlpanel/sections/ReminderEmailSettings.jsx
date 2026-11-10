@@ -28,11 +28,11 @@ export default function ReminderEmailSettings({ canManage, notify }) {
 
   return (
     <div className="cp-setting-block">
-      <SectionHead title="Event reminder email" />
+      <SectionHead title="Event emails" />
       <p className="cp-setting-state">
         {settings.configured
           ? `SMTP settings present: ${settings.host}:${settings.port}, sending from ${settings.from}.`
-          : 'SMTP is not configured on the backend. Reminder emails cannot be sent yet.'}
+          : 'SMTP is not configured on the backend. RSVP confirmations and reminders cannot be sent yet.'}
         {' '}Credentials are managed in the deployment environment.
       </p>
       {testResult && <p className="cp-setting-state">{testResult}</p>}
