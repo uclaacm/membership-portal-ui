@@ -1,5 +1,6 @@
 "use client";
 
+import DropdownSelect from '@/components/DropdownSelect';
 import { memo, useState } from "react";
 
 import updateApplicationStatus from "@/app/actions/internship/updateApplicationStatus";
@@ -37,7 +38,7 @@ function StatusUpdateDropdown({ applicationId, statusField, status, onChanged })
 
   return (
     <div className="status-update-dropdown">
-      <select
+      <DropdownSelect
         className={`status-update-dropdown__select status-update-dropdown__select--${status}`}
         value={status}
         onChange={handleChange}
@@ -50,7 +51,7 @@ function StatusUpdateDropdown({ applicationId, statusField, status, onChanged })
             {option.label}
           </option>
         ))}
-      </select>
+      </DropdownSelect>
       {error && <span className="status-update-dropdown__error">{error}</span>}
     </div>
   );

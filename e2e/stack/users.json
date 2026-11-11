@@ -1,0 +1,32 @@
+{
+  "member": {
+    "uuid": "00000000-0000-4000-8000-00000000e201",
+    "email": "e2e-member@g.ucla.edu",
+    "firstName": "Erin",
+    "lastName": "Member",
+    "accessType": "STANDARD"
+  },
+  "admin": {
+    "uuid": "00000000-0000-4000-8000-00000000e202",
+    "email": "e2e-admin@g.ucla.edu",
+    "firstName": "Alex",
+    "lastName": "Admin",
+    "accessType": "ADMIN"
+  },
+  "officer": {
+    "uuid": "00000000-0000-4000-8000-00000000e203",
+    "email": "e2e-officer@g.ucla.edu",
+    "firstName": "Oscar",
+    "lastName": "Officer",
+    "accessType": "OFFICER",
+    "committees": ["Hack"]
+  },
+  "pending": {
+    "uuid": "00000000-0000-4000-8000-00000000e204",
+    "email": "e2e-pending@g.ucla.edu",
+    "firstName": "Pat",
+    "lastName": "Pending",
+    "accessType": "STANDARD",
+    "state": "PENDING"
+  }
+}
