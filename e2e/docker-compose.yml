@@ -1,0 +1,104 @@
+# Throwaway portal for E2E tests and the Playwright agents.
+#
+#   npm run e2e:up     build and start, wait until every container is healthy
+#   npm run e2e:down   stop and delete everything, data included
+#
+# Expects membership-portal (backend) checked out next to membership-portal-ui, the same layout
+# membership-portal-deployment/dev assumes.
+#
+# How it differs from the dev stack:
+#   - Its own Compose project name and host port (8100), so it runs beside a dev stack on 8000.
+#   - Both databases live in tmpfs (memory), so every `up` starts empty and `down` erases it.
+#   - SESSION_SECRET is a fixed throwaway value. The seed tests sign login tokens with it
+#     (e2e/support/auth.ts). Never reuse it anywhere real.
+#   - Two known users are seeded on startup (e2e/stack/users.json).
+name: mp-e2e
+
+x-session-secret: &session-secret e2e-throwaway-secret-not-for-real-use
+
+services:
+  postgres:
+    image: postgres:9.6-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: membership_portal_e2e # db-init.js connects to it; it doesn't create it
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  mongodb:
+    image: mongo:7.0
+    tmpfs:
+      - /data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  # Must be called "backend": the UI's Next.js rewrites send /app/api/* to http://backend:8080.
+  # "localhost" in these Alpine images resolves to IPv6 (::1) but the servers listen on IPv4,
+  # so the health checks use 127.0.0.1.
+  backend:
+    build:
+      context: ../..
+      dockerfile: membership-portal/dev.Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ../../membership-portal:/var/www/membership-portal
+      - /var/www/membership-portal/node_modules
+      - ./stack:/e2e:ro
+    environment:
+      PORT: 8080
+      HOST: 0.0.0.0
+      NUM_WORKERS: 1 # one API process is plenty for tests (default: one per CPU)
+      NODE_ENV: development # enables dev-only routes; never production here
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: password
+      PG_DATABASE: membership_portal_e2e
+      MONGODB_URI: mongodb://mongodb:27017/membership_portal_e2e
+      SESSION_SECRET: *session-secret
+      GOOGLE_CLIENT_ID: 913307270840-751ad0psdu1q2a7m81np30g062osgpp5.apps.googleusercontent.com
+    # Same steps CI runs before the integration tests, then seed the test users.
+    command: >
+      sh -c "node scripts/db-init.js
+      && npx sequelize-cli db:migrate
+      && node /e2e/seed-users.js
+      && npm run dev"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/app/api/v1/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 60
+      start_period: 20s
+
+  ui:
+    build:
+      context: ../..
+      dockerfile: membership-portal-ui/dev.Dockerfile
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - ..:/var/www/membership-portal-ui
+      - /var/www/membership-portal-ui/node_modules
+      # Keep Next's build cache inside the container, so it never clashes with a local `npm run dev`.
+      - /var/www/membership-portal-ui/.next
+    ports:
+      - "8100:8000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:8000/login"]
+      interval: 3s
+      timeout: 10s
+      retries: 100
+      start_period: 30s
