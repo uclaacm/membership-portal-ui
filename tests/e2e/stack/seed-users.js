@@ -1,6 +1,6 @@
-// Runs inside the throwaway stack's backend container (see e2e/docker-compose.yml), after the
+// Runs inside the throwaway stack's backend container (see tests/e2e/docker-compose.yml), after the
 // migrations and before the server starts. Creates the users in users.json with fixed UUIDs, so
-// e2e/support/auth.ts can sign login tokens for them without asking the database.
+// tests/e2e/support/auth.ts can sign login tokens for them without asking the database.
 //
 // Safe to run again: existing users are reset to the values in users.json.
 const path = require('path');

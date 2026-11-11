@@ -1,4 +1,4 @@
-import { test, expect } from "../support/fixtures";
+import { test, expect } from "./support/fixtures";
 
 // Seed: a logged-in admin on the control panel. Give this seed to the agents for anything only
 // admins can reach. See seed.spec.ts for how the agents use a seed.

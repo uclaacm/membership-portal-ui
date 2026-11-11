@@ -10,8 +10,8 @@
 #   - Its own Compose project name and host port (8100), so it runs beside a dev stack on 8000.
 #   - Both databases live in tmpfs (memory), so every `up` starts empty and `down` erases it.
 #   - SESSION_SECRET is a fixed throwaway value. The seed tests sign login tokens with it
-#     (e2e/support/auth.ts). Never reuse it anywhere real.
-#   - Two known users are seeded on startup (e2e/stack/users.json).
+#     (tests/e2e/support/auth.ts). Never reuse it anywhere real.
+#   - Two known users are seeded on startup (tests/e2e/stack/users.json).
 name: mp-e2e
 
 x-session-secret: &session-secret e2e-throwaway-secret-not-for-real-use
@@ -45,7 +45,7 @@ services:
   # so the health checks use 127.0.0.1.
   backend:
     build:
-      context: ../..
+      context: ../../..
       dockerfile: membership-portal/dev.Dockerfile
     depends_on:
       postgres:
@@ -53,7 +53,7 @@ services:
       mongodb:
         condition: service_healthy
     volumes:
-      - ../../membership-portal:/var/www/membership-portal
+      - ../../../membership-portal:/var/www/membership-portal
       - /var/www/membership-portal/node_modules
       - ./stack:/e2e:ro
     environment:
@@ -84,13 +84,13 @@ services:
 
   ui:
     build:
-      context: ../..
+      context: ../../..
       dockerfile: membership-portal-ui/dev.Dockerfile
     depends_on:
       backend:
         condition: service_healthy
     volumes:
-      - ..:/var/www/membership-portal-ui
+      - ../..:/var/www/membership-portal-ui
       - /var/www/membership-portal-ui/node_modules
       # Keep Next's build cache inside the container, so it never clashes with a local `npm run dev`.
       - /var/www/membership-portal-ui/.next

@@ -1,4 +1,4 @@
-import { test, expect } from "../support/fixtures";
+import { test, expect } from "./support/fixtures";
 
 // Seed: a signed-in user who hasn't finished registering. The app sends them to /register
 // whatever page they ask for. See seed.spec.ts for how the agents use a seed.

@@ -14,13 +14,13 @@ const config = [
   },
   {
     // Playwright fixtures call `use()`, which the React hooks rule mistakes for a hook.
-    files: ['e2e/**'],
+    files: ['tests/e2e/**'],
     rules: {
       'react-hooks/rules-of-hooks': 'off',
     },
   },
   {
-    ignores: ['node_modules', '.next', 'build', 'dist', '.git', 'coverage', 'e2e/report', 'e2e/test-results']
+    ignores: ['node_modules', '.next', 'build', 'dist', '.git', 'coverage', 'tests/e2e/report', 'tests/e2e/test-results']
   }
 ];
 

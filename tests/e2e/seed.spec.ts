@@ -1,4 +1,4 @@
-import { test, expect } from "../support/fixtures";
+import { test, expect } from "./support/fixtures";
 
 // Seed: a logged-in, fully registered member on the home page.
 //

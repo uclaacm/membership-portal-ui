@@ -1,5 +1,5 @@
-import { test, expect } from "../../support/fixtures";
-import { tokenFor } from "../../support/auth";
+import { test, expect } from "./fixtures";
+import { tokenFor } from "./auth";
 
 // Checks the shared testData fixture itself, so a broken fixture fails here with a clear
 // message instead of in every feature test.

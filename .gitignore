@@ -66,8 +66,8 @@ certificates
 ./public/event_banners/*
 
 # Playwright output
-/e2e/report/
-/e2e/test-results/
+/tests/e2e/report/
+/tests/e2e/test-results/
 /playwright/.cache/
 # Playwright CLI output (may contain credentials)
 .playwright-cli/

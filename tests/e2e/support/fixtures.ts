@@ -5,7 +5,7 @@ import { loginAs, tokenFor, type Role } from "./auth";
 // Shared fixtures for every e2e test. Import `test` and `expect` from here instead of from
 // "@playwright/test":
 //
-//   import { test, expect } from "../../support/fixtures";
+//   import { test, expect } from "../support/fixtures";
 //
 //   test("a member can RSVP", async ({ page, loginAs, testData }) => {
 //     const event = await testData.createEvent({ title: "RSVP target" });

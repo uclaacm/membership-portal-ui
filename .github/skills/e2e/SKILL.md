@@ -28,11 +28,11 @@ npm run e2e:logs    # backend/UI logs when something looks wrong server-side
 
 | What | Where |
 |---|---|
-| Seeds | `e2e/tests/seed.spec.ts` (member, `/home`), `admin.seed.spec.ts` (admin, `/controlpanel`), `officer.seed.spec.ts` (Hack officer, `/controlpanel`), `pending.seed.spec.ts` (unregistered, lands on `/register`) |
-| Test plans | `e2e/specs/<feature>.plan.md` |
-| Generated tests | `e2e/tests/<group>/<scenario-name>.spec.ts` |
-| Fixtures | `e2e/support/fixtures.ts`: `test`, `expect`, `loginAs(role)`, `testData`, `unique()`, `HOUR` |
-| Seeded users | `e2e/stack/users.json`: `member`, `admin`, `officer` (committee `Hack`), `pending` |
+| Seeds | `tests/e2e/seed.spec.ts` (member, `/home`), `admin.seed.spec.ts` (admin, `/controlpanel`), `officer.seed.spec.ts` (Hack officer, `/controlpanel`), `pending.seed.spec.ts` (unregistered, lands on `/register`) |
+| Test plans | `tests/e2e/specs/<feature>.plan.md` |
+| Generated tests | `tests/e2e/<group>/<scenario-name>.spec.ts` |
+| Fixtures | `tests/e2e/support/fixtures.ts`: `test`, `expect`, `loginAs(role)`, `testData`, `unique()`, `HOUR` |
+| Seeded users | `tests/e2e/stack/users.json`: `member`, `admin`, `officer` (committee `Hack`), `pending` |
 
 Pick the seed by who the flow is for: member pages use `seed.spec.ts`, the control panel uses
 `admin.seed.spec.ts` or `officer.seed.spec.ts`, and registration uses `pending.seed.spec.ts`.
@@ -45,7 +45,7 @@ The real login is Google sign-in, which can't be automated. **Do not try to clic
 - Explore through the seed, never by opening a URL directly with `playwright-cli open`. Otherwise
   the browser is logged out and every page redirects to `/login`:
   ```bash
-  npx playwright test e2e/tests/seed.spec.ts --debug=cli    # run in the background
+  npx playwright test tests/e2e/seed.spec.ts --debug=cli    # run in the background
   # wait for "Debugging Instructions" and the tw-XXXX session name, then:
   npx playwright-cli attach tw-XXXX
   npx playwright-cli -s=tw-XXXX step-over    # runs the seed's goto, pauses at its expect
@@ -60,12 +60,12 @@ The real login is Google sign-in, which can't be automated. **Do not try to clic
     `resume` once at the very end to let the test finish.
   The HTML report is already set to never open (`playwright.config.ts`), so
   `PLAYWRIGHT_HTML_OPEN=never` is not needed.
-- **Always import `test` and `expect` from `e2e/support/fixtures.ts`**, never from
+- **Always import `test` and `expect` from `tests/e2e/support/fixtures.ts`**, never from
   `@playwright/test`. Copy the seed's setup into each test:
   ```ts
-  // spec: e2e/specs/<feature>.plan.md
-  // seed: e2e/tests/seed.spec.ts
-  import { test, expect } from "../../support/fixtures";
+  // spec: tests/e2e/specs/<feature>.plan.md
+  // seed: tests/e2e/seed.spec.ts
+  import { test, expect } from "../support/fixtures";
 
   test.describe("<Group name from the plan>", () => {
     test("<scenario-name>", async ({ page, loginAs, testData }) => {
@@ -78,7 +78,7 @@ The real login is Google sign-in, which can't be automated. **Do not try to clic
   });
   ```
 - Need a role that isn't seeded yet (e.g. a super admin, or an officer of a second committee)?
-  Ask the user first: `e2e/stack/users.json` is shared by the whole team.
+  Ask the user first: `tests/e2e/stack/users.json` is shared by the whole team.
 
 ## 4. Data rules
 
@@ -88,7 +88,7 @@ The real login is Google sign-in, which can't be automated. **Do not try to clic
   deleted automatically when the test ends. Use `unique("...")` for any names you type into
   forms. Don't rely on anything another test left behind.
 - If a test needs a kind of data `testData` can't create yet, add a method to `TestData` in
-  `e2e/support/fixtures.ts` (calling the backend API, cleaning up in `cleanup()`), rather than
+  `tests/e2e/support/fixtures.ts` (calling the backend API, cleaning up in `cleanup()`), rather than
   setting it up by clicking through other pages.
 - The stack loads demo data (about 18 upcoming events, 10 committees, a leaderboard). Use it for
   reading and browsing, but don't assert exact counts or titles from it, and don't change it
@@ -111,8 +111,8 @@ Follow the generic heal section, and also:
 
 ```bash
 npm run test:e2e                                   # everything
-npx playwright test e2e/tests/<group>/<file>.spec.ts   # one file
-npx playwright show-report e2e/report              # last HTML report
+npx playwright test tests/e2e/<group>/<file>.spec.ts   # one file
+npx playwright show-report tests/e2e/report              # last HTML report
 ```
 
 When you're done, `resume` any paused `--debug=cli` run (or stop it) and run

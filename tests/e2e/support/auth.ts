@@ -6,7 +6,7 @@ import users from "../stack/users.json";
 // Real logins go through Google, which a test can't do. But a finished login only leaves one
 // thing behind: a `token` cookie holding a JWT the backend signed. So the seeds sign that JWT
 // themselves, with the throwaway stack's secret, for a user the stack seeded with a known UUID.
-// Must match SESSION_SECRET in e2e/docker-compose.yml.
+// Must match SESSION_SECRET in tests/e2e/docker-compose.yml.
 const SESSION_SECRET = process.env.E2E_SESSION_SECRET ?? "e2e-throwaway-secret-not-for-real-use";
 
 export type Role = keyof typeof users;

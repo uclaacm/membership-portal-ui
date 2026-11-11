@@ -3,21 +3,18 @@
 Browser tests that drive the real UI against a real backend. Coding agents help write and maintain
 them through **skills** that use the `playwright-cli` shell command. There is no MCP server.
 
-New here? Start with [OVERVIEW.md](OVERVIEW.md). It explains how the stack, the agents, the
-Playwright runner and GitHub Actions fit together.
-
 ```
-e2e/
+tests/e2e/
   docker-compose.yml     the throwaway portal: Postgres, Mongo, backend, UI on :8100
   stack/users.json       the seeded users (member, admin, officer of Hack, pending), fixed UUIDs
   stack/seed-users.js    creates those users when the backend container starts
   support/auth.ts        signs a login token for a seeded user and sets the cookie
   support/fixtures.ts    import test/expect from here: loginAs(role), testData, unique()
-  tests/seed.spec.ts           seed: member, on /home
-  tests/admin.seed.spec.ts     seed: admin, on /controlpanel
-  tests/officer.seed.spec.ts   seed: Hack officer, on /controlpanel
-  tests/pending.seed.spec.ts   seed: unregistered user, sent to /register
-  tests/<group>/         feature tests, one folder per area
+  seed.spec.ts                 seed: member, on /home
+  admin.seed.spec.ts           seed: admin, on /controlpanel
+  officer.seed.spec.ts         seed: Hack officer, on /controlpanel
+  pending.seed.spec.ts         seed: unregistered user, sent to /register
+  <group>/               feature tests, one folder per area
   specs/                 test plans (Markdown) written during the planning step
 .github/skills/          Copilot agent skills (VS Code loads these automatically)
   playwright-cli/        Microsoft's skill for driving a browser and plan/generate/heal (generated)
@@ -44,7 +41,7 @@ npm run test:e2e    # run every test against http://localhost:8100
 npm run e2e:down    # delete the whole stack, databases included
 ```
 
-`npx playwright test --ui` opens the interactive runner, and `npx playwright show-report e2e/report`
+`npx playwright test --ui` opens the interactive runner, and `npx playwright show-report tests/e2e/report`
 opens the last HTML report. Point the tests elsewhere with `E2E_BASE_URL`, but only at a stack
 with the same throwaway secret. Never at staging or prod.
 
@@ -79,8 +76,8 @@ copies the Playwright code each CLI action prints into the test.
 
 | Step | Ask for | It produces |
 |---|---|---|
-| **Plan** | "Write an e2e test plan for RSVPing to events, as a member" | `e2e/specs/<feature>.plan.md` |
-| **Generate** | "Generate the tests from `e2e/specs/rsvp.plan.md`" (or one scenario, e.g. `1.2`) | `e2e/tests/<group>/<scenario>.spec.ts` |
+| **Plan** | "Write an e2e test plan for RSVPing to events, as a member" | `tests/e2e/specs/<feature>.plan.md` |
+| **Generate** | "Generate the tests from `tests/e2e/specs/rsvp.plan.md`" (or one scenario, e.g. `1.2`) | `tests/e2e/<group>/<scenario>.spec.ts` |
 | **Heal** | "Run the e2e tests and fix the failures" | Edited test files, or a question when the app itself looks wrong |
 
 You can also drive a browser by hand. Start a seed with `--debug=cli`, run

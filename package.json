@@ -11,9 +11,9 @@
     "test:unit": "jest --config jest.config.js tests/unit",
     "test:component": "jest --config jest.config.js --passWithNoTests tests/component",
     "lint": "eslint .",
-    "e2e:up": "docker compose -f e2e/docker-compose.yml up -d --build --wait",
-    "e2e:down": "docker compose -f e2e/docker-compose.yml down -v",
-    "e2e:logs": "docker compose -f e2e/docker-compose.yml logs -f backend ui",
+    "e2e:up": "docker compose -f tests/e2e/docker-compose.yml up -d --build --wait",
+    "e2e:down": "docker compose -f tests/e2e/docker-compose.yml down -v",
+    "e2e:logs": "docker compose -f tests/e2e/docker-compose.yml logs -f backend ui",
     "test:e2e": "playwright test",
     "e2e:skills": "playwright-cli install --skills && node -e \"const fs=require('fs');fs.rmSync('.github/skills/playwright-cli',{recursive:true,force:true});fs.cpSync('.claude/skills/playwright-cli','.github/skills/playwright-cli',{recursive:true});fs.rmSync('.claude/skills/playwright-cli',{recursive:true,force:true});for(const d of ['.claude/skills','.claude']){try{fs.rmdirSync(d)}catch{}}\""
   },
