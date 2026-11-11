@@ -46,7 +46,7 @@ export default function RSVPReminderModal({ event, onConfirm, onClose }) {
         aria-labelledby="rsvp-reminder-title"
       >
         <h2 id="rsvp-reminder-title">RSVP to {event.title}</h2>
-        <p>You’ll receive a confirmation email after RSVPing. Choose whether you’d also like a reminder.</p>
+        <p>You’ll receive a confirmation email after RSVPing. Choose whether you’d also like reminders.</p>
         <form onSubmit={submit}>
           <label className="rsvp-reminder-option">
             <input
@@ -58,8 +58,9 @@ export default function RSVPReminderModal({ event, onConfirm, onClose }) {
             <span>Email me reminders before this event</span>
           </label>
           <p className="rsvp-reminder-note">
-            If email is configured, we’ll send one reminder an hour before the event.
-            RSVPs made in the final hour won’t receive one.
+            If email is configured, we’ll send reminders 1 week, 3 days, and
+            1 day before the event, plus 9 AM Los Angeles time on the event day.
+            Past send times are skipped.
           </p>
           {error && <p className="rsvp-reminder-error" role="alert">{error}</p>}
           <div className="rsvp-reminder-actions">
