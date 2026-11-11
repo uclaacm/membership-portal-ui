@@ -26,11 +26,9 @@ export default class Profile extends React.Component {
   handleUpdate(e) {
     const { name } = e.target;
     const { value } = e.target;
-    this.setState((prev) => {
-      const newState = Object.assign({}, prev);
-      newState.profile[name] = value;
-      return newState;
-    });
+    this.setState((prev) => ({
+      profile: { ...prev.profile, [name]: value },
+    }));
   }
 
   profileUpdated() {
@@ -69,11 +67,17 @@ export default class Profile extends React.Component {
     });
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({
-      profile: Object.assign({}, nextProps.profile),
-      originalProfile: Object.assign({}, nextProps.profile),
-    });
+  static getDerivedStateFromProps(props, state) {
+    // The parent creates a new profile object on every render. Only new editable
+    // values should replace the draft; activity and toast updates must preserve it.
+    const profile = props.profile || {};
+    if (['name', 'year', 'major'].every(key => profile[key] === state.originalProfile[key])) {
+      return null;
+    }
+    return {
+      profile: { ...profile },
+      originalProfile: { ...profile },
+    };
   }
 
   render() {

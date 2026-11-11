@@ -1,5 +1,6 @@
 'use client';
 
+import DropdownSelect from '@/components/DropdownSelect';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -72,7 +73,7 @@ function EmailSettingsBlock({ canManage, notify }) {
 
       <div className="cp-field narrow">
         <label className="cp-field-label" htmlFor="cp-email-transport">Transport</label>
-        <select
+        <DropdownSelect
           id="cp-email-transport"
           value={settings.transport}
           onChange={field('transport')}
@@ -82,7 +83,7 @@ function EmailSettingsBlock({ canManage, notify }) {
           <option value="google">Google Workspace service account</option>
           <option value="smtp">SMTP</option>
           <option value="api">Transactional API</option>
-        </select>
+        </DropdownSelect>
       </div>
 
       {settings.transport !== 'none' && (

@@ -1,4 +1,5 @@
 "use client";
+import DropdownSelect from '@/components/DropdownSelect';
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All statuses" },
@@ -37,24 +38,24 @@ export default function OfficerFilterBar({
 
       <label className="officer-filter-bar__field">
         <span className="officer-filter-bar__label">Status</span>
-        <select value={statusFilter} onChange={(event) => onStatusFilterChange(event.target.value)}>
+        <DropdownSelect value={statusFilter} onChange={(event) => onStatusFilterChange(event.target.value)}>
           {STATUS_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
-        </select>
+        </DropdownSelect>
       </label>
 
       <label className="officer-filter-bar__field">
         <span className="officer-filter-bar__label">Choice</span>
-        <select value={choiceFilter} onChange={(event) => onChoiceFilterChange(event.target.value)}>
+        <DropdownSelect value={choiceFilter} onChange={(event) => onChoiceFilterChange(event.target.value)}>
           {CHOICE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
-        </select>
+        </DropdownSelect>
       </label>
     </div>
   );
