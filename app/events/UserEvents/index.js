@@ -196,8 +196,8 @@ export default class UserEvents extends React.Component {
     );
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.checkInSubmitted) {
+  componentDidUpdate(prevProps) {
+    if (!prevProps.checkInSubmitted && this.props.checkInSubmitted && this.state.showCheckIn) {
       this.hideCheckIn();
     }
   }

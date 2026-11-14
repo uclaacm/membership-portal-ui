@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import ModalShell from '@/components/Modal/ModalShell';
 
 const ROLES = ['Member', 'Officer', 'Admin'];
 
@@ -56,13 +57,8 @@ export default function AssignRoleDialog({
   };
 
   return (
-    <div
-      className="cp-dialog-backdrop"
-      role="presentation"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="cp-dialog" role="dialog" aria-modal="true" aria-label="Assign role">
-        <h3>Assign role</h3>
+    <ModalShell title="Assign role" onClose={onClose}>
+      <div className="cp-dialog cp-dialog--embedded">
 
         <div>
           <label className="cp-field-label" htmlFor="cp-assign-email">Email</label>
@@ -118,7 +114,7 @@ export default function AssignRoleDialog({
           </button>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }
 

@@ -1363,3 +1363,16 @@ $cp-topbar-height: 61px;
   }
 }
 
+
+// Dialog fields use the shared modal frame for sizing, header and scrolling.
+.cp-dialog.cp-dialog--embedded {
+  width: 100%; max-width: none; max-height: none; padding: 0;
+  border: 0; border-radius: 0; box-shadow: none; background: transparent;
+  font-family: var(--font-lato), "Lato", sans-serif;
+  .cp-field-label { color: #656b79; font-size: 12px; text-transform: none; letter-spacing: 0; margin-bottom: 8px; }
+  input, textarea { padding: 11px 12px; border-color: #dfe3eb; border-radius: 8px; font-size: 14px; }
+  .cp-dialog-footer { padding-top: 18px; border-top: 1px solid #edf0f4; }
+  .cp-btn { height: 40px; padding: 0 16px; border-radius: 8px; }
+  .cp-segmented { max-width: 100%; button { padding: 9px 12px; } }
+  .cp-dialog-error { padding: 12px; background: #fff2f2; border-radius: 8px; }
+}

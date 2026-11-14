@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 // `.modal-wrapper` lives here — imported by the component so mounting it on a page that hasn't
 // pulled the sheet in can't leave it unstyled at the foot of the document.
 import './style.scss';
-import Button from '@/components/Button';
+import ModalShell from './ModalShell';
 
 export default class SyncSheetsModal extends React.Component {
   constructor() {
@@ -42,10 +42,20 @@ export default class SyncSheetsModal extends React.Component {
     if (!opened) return null;
 
     return (
-      <div className="modal-wrapper">
-        <div className="attendees-modal-container">
-          <div className="padding">
-            <h1>Sync Events from Sheets</h1>
+      <ModalShell
+        title="Sync events from Sheets"
+        subtitle="Import events from your committee’s spreadsheet."
+        onClose={this.handleClose}
+        wide
+        footer={(
+          <>
+            <button type="button" className="modal-action" onClick={this.handleClose}>Close</button>
+            <button type="button" className="modal-action modal-action--primary" onClick={this.handleSync} disabled={syncStatus === 'syncing' || !sheetUrl.trim()}>
+              {syncStatus === 'syncing' ? 'Syncing…' : 'Sync events'}
+            </button>
+          </>
+        )}
+      >
 
             <p>
               Paste the URL or ID of a Google Sheets spreadsheet below. The sheet must meet the following requirements:
@@ -61,36 +71,19 @@ export default class SyncSheetsModal extends React.Component {
             </ul>
 
             <div className="form-elem">
+              <label className="modal-field" htmlFor="sync-sheet-url">Spreadsheet URL or ID</label>
               <input
+                id="sync-sheet-url"
                 type="text"
-                className="sheets-url-input"
+                className="modal-input"
                 placeholder="Paste spreadsheet URL or ID"
                 value={sheetUrl}
                 onChange={this.handleUrlChange}
               />
             </div>
 
-            {syncMessage && (
-              <p style={{ color: syncStatus === 'success' ? 'green' : '#f74e4e', marginTop: '10px' }}>
-                {syncMessage}
-              </p>
-            )}
-
-            <div className="form-elem" style={{ marginTop: '16px' }}>
-              <Button
-                color="blue"
-                text="Sync"
-                onClick={this.handleSync}
-                loading={syncStatus === 'syncing'}
-              />
-            </div>
-
-            <div className="button-container" style={{ marginTop: '24px' }}>
-              <Button text="Close" color="red" onClick={this.handleClose} />
-            </div>
-          </div>
-        </div>
-      </div>
+        {syncMessage && <p className={`modal-feedback ${syncStatus === 'success' ? 'is-ok' : 'is-error'}`} role="status">{syncMessage}</p>}
+      </ModalShell>
     );
   }
 }

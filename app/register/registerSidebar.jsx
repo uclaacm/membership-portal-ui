@@ -1,5 +1,6 @@
 'use client';
 
+import DropdownSelect from '@/components/DropdownSelect';
 import React from 'react';
 import PropTypes from 'prop-types';
 import MajorSelector from '@/components/MajorSelector';
@@ -42,14 +43,14 @@ export default class RegisterSidebar extends React.Component {
             
             <div className="form-group">
               <label className="form-label">Year</label>
-              <select className="form-input" name="year" onChange={this.handleChange}>
+              <DropdownSelect className="form-input" name="year" onChange={this.handleChange}>
                 <option value={0}>--</option>
                 <option value={1}>Freshman</option>
                 <option value={2}>Sophomore</option>
                 <option value={3}>Junior</option>
                 <option value={4}>Senior</option>
                 <option value={5}>Post-Senior</option>
-              </select>
+              </DropdownSelect>
             </div>
             
             <div className="form-button">
