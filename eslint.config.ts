@@ -3,6 +3,8 @@ import nextConfig from 'eslint-config-next';
 const config = [
   ...nextConfig,
   {
+    // Match Next's plugin scope; CommonJS tooling configs do not load React rules.
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
     rules: {
       'no-restricted-syntax': ['error', {
         selector: "AssignmentExpression[left.type='MemberExpression'][left.property.name='defaultProps']",
