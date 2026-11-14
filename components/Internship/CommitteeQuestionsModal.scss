@@ -1,3 +1,4 @@
+@use "@/styles/modal";
 @use "@/styles/vars";
 
 .committee-questions-modal-wrapper {
@@ -80,3 +81,6 @@
     }
   }
 }
+
+.committee-questions-modal-wrapper { @include modal.backdrop; }
+.committee-questions-modal { @include modal.panel; }
