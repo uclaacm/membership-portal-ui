@@ -9,6 +9,7 @@ import useDebouncedValue from "@/lib/hooks/useDebouncedValue";
 import { formatSpreadsheetDate } from "@/lib/spreadsheet";
 import AdminApplicationDetailDrawer from "@/app/internship/components/AdminApplicationDetailDrawer";
 import ExportSpreadsheetButton from "@/app/internship/components/ExportSpreadsheetButton";
+import { resumeExportLink } from "@/lib/internship/resume";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All statuses" },
@@ -147,7 +148,7 @@ export default function ApplicationTable({ committees = NO_COMMITTEES }) {
       application.secondChoiceStatus,
       getCommitteeName(application.thirdChoiceCommittee),
       application.thirdChoiceStatus,
-      application.resumeUrl,
+      resumeExportLink(application),
       application.applicationCycle,
       formatSpreadsheetDate(application.submittedAt),
     ]);
