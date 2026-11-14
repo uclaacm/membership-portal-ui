@@ -3,7 +3,7 @@
 import DropdownSelect from '@/components/DropdownSelect';
 import React from 'react';
 import PropTypes from 'prop-types';
-import Config from '@/lib/config';
+import MajorSelector from '@/components/MajorSelector';
 import Button from '@/components/Button';
 import Logo from '../login/logo.js';
 import Banner from '@/components/BannerJS/banner';
@@ -38,10 +38,7 @@ export default class RegisterSidebar extends React.Component {
           <form onSubmit={onSubmit} autoComplete="off" className="register-form">
             <div className="form-group">
               <label className="form-label">Major</label>
-              <DropdownSelect className="form-input" name="major" onChange={this.handleChange}>
-                <option value="">--</option>
-                {Config.majors.map(major => <option key={major} value={major}>{major}</option>)}
-              </DropdownSelect>
+              <MajorSelector className="form-input" onChange={this.handleChange} showPlaceholder />
             </div>
             
             <div className="form-group">
@@ -83,4 +80,4 @@ RegisterSidebar.propTypes = {
   disableForm: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
   profileValid: PropTypes.func.isRequired,
-}; 
+};
