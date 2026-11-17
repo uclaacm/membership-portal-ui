@@ -93,29 +93,9 @@
 }
 .attendance-status { display: inline-block; padding: 3px 8px; border-radius: 5px; background: #f0f3ff; color: #3b59ed; font-size: 12px; white-space: nowrap; &.is-attended { background: #eff9f2; color: #24763d; } }
 
-// Older management dialogs share the same surface and use content-driven sizing.
-.modal-wrapper {
-  > :is(.attendees-modal-container, .small-input-modal-container, .confirmation-modal-container, .leaderboard-modal-container) {
-    @include modal.panel;
-    position: relative; width: 680px; max-width: 100%; overflow-y: auto;
-    > .padding { padding: 28px; }
-    h1 { margin: 0 0 20px; color: #262938; font: 600 20px/1.4 var(--font-poppins), "Poppins", sans-serif; }
-    p, li { font-size: 14px; line-height: 1.6; color: #656b79; }
-    .button-container { position: static; display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
-    .modal-table { overflow: auto; max-height: 45dvh; table { width: 100%; border-collapse: collapse; } img { max-height: 150px; } img.rounded { height: 30px; width: 30px; border-radius: 50%; } }
-    input { background: #fff; }
-    .sheets-url-input { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #dfe3eb; border-radius: 8px; font: inherit; }
-    .table-form-elem { padding: 0; }
-    .content-container { display: flex; gap: 24px; align-items: center; .image-container img { width: 140px; height: 140px; border-radius: 50%; } .text-container { min-width: 0; overflow-wrap: anywhere; } }
-  }
-  > :is(.small-input-modal-container, .confirmation-modal-container) { width: 460px; }
-  .modal-table { th, td { padding: 12px; border-bottom: 1px solid #edf0f4; font-size: 13px; color: #656b79; } thead td { font-weight: 700; color: #262938; background: #f8f9fc; } }
-  .center { display: flex; justify-content: flex-end; }
-}
 @media (max-width: 600px) {
   .portal-modal__header, .portal-modal__body { padding: 20px; }
   .portal-modal__footer { padding: 16px 20px; }
-  .modal-wrapper .content-container { flex-direction: column; }
 }
 @media (prefers-reduced-motion: reduce) {
   .portal-modal-backdrop, .portal-modal, .modal-wrapper, .modal-wrapper > div { animation: none; }
