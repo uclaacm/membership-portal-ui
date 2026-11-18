@@ -4,7 +4,7 @@
 @keyframes modal-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes modal-panel-in { from { opacity: 0; transform: translateY(8px) scale(0.99); } to { opacity: 1; transform: none; } }
 
-.portal-modal-backdrop, .modal-wrapper { @include modal.backdrop; }
+.portal-modal-backdrop { @include modal.backdrop; }
 .portal-modal {
   @include modal.panel;
   display: flex;
@@ -98,5 +98,5 @@
   .portal-modal__footer { padding: 16px 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .portal-modal-backdrop, .portal-modal, .modal-wrapper, .modal-wrapper > div { animation: none; }
+  .portal-modal-backdrop, .portal-modal { animation: none; }
 }
