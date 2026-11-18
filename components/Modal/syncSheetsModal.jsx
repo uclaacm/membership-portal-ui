@@ -2,9 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-// `.modal-wrapper` lives here — imported by the component so mounting it on a page that hasn't
-// pulled the sheet in can't leave it unstyled at the foot of the document.
-import './style.scss';
 import ModalShell from './ModalShell';
 
 export default class SyncSheetsModal extends React.Component {

@@ -48,9 +48,6 @@ import Media from './sections/Media';
 import AuditLog from './sections/AuditLog';
 import Settings from './sections/Settings';
 import { formatRelative } from './format';
-// ConfirmationModal and SyncSheetsModal render `.modal-wrapper`, whose styles live here.
-// Without this import they render as unstyled inline text instead of an overlay.
-import '@/components/Modal/style.scss';
 // AdminAddEvent carries no styles of its own — its overlay lives in this sheet, scoped under
 // `.admin-dashboard`. Only app/events/page.jsx imported it, so on /controlpanel the form
 // rendered permanently visible and unstyled.
