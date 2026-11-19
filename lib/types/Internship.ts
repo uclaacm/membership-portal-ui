@@ -14,7 +14,14 @@ export interface InternshipApplication {
   university: string;
   major: string;
   graduationYear: number;
+  // Legacy: a pasted link, from applications made before resume uploads. Read-only now.
   resumeUrl?: string;
+  // The uploaded resume PDF; open it via resumeHref() in lib/internship/resume.js.
+  resume?: {
+    originalName?: string;
+    size: number;
+    uploadedAt: string;
+  } | null;
   coverLetter?: string;
   firstChoiceCommittee: string;
   secondChoiceCommittee?: string;

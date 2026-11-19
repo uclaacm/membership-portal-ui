@@ -21,6 +21,7 @@ import { formatSpreadsheetDate } from "@/lib/spreadsheet";
 import { authUserProfileAtom, officerApplicationsAtom } from "@/lib/atoms";
 import CommitteeQuestionsModal from "./CommitteeQuestionsModal";
 import "./OfficerDashboard.scss";
+import { resumeExportLink } from "@/lib/internship/resume";
 
 const CHOICE_FIELDS = [
   {
@@ -136,7 +137,7 @@ function buildOfficerSpreadsheetRows(applications) {
       application.myOfficer1Rating,
       application.myOfficer2Rating,
       application.myNotes,
-      application.resumeUrl,
+      resumeExportLink(application),
       formatSpreadsheetDate(application.submittedAt),
       ...[...questions.keys()].map((questionKey) => answers.get(questionKey)),
     ];

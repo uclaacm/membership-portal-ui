@@ -1,6 +1,7 @@
 "use client";
 
 import StatusUpdateDropdown from "./StatusUpdateDropdown";
+import { resumeHref } from "@/lib/internship/resume";
 
 const CHOICE_RANK_LABELS = { 1: "1st Choice", 2: "2nd Choice", 3: "3rd Choice" };
 
@@ -56,8 +57,8 @@ export default function ApplicationDetailDrawer({ application, onClose, onApplic
             <div>
               <dt>Resume</dt>
               <dd>
-                {application.resumeUrl ? (
-                  <a href={application.resumeUrl} target="_blank" rel="noopener noreferrer">
+                {resumeHref(application) ? (
+                  <a href={resumeHref(application)} target="_blank" rel="noopener noreferrer">
                     View resume
                   </a>
                 ) : (
