@@ -117,6 +117,9 @@ function buildOfficerSpreadsheetRows(applications) {
     "Officer 2 Rating",
     "Notes",
     "Resume",
+    "Cover Letter",
+    "Cycle",
+    "Submission Status",
     "Submitted",
     ...questions.values(),
   ];
@@ -137,6 +140,9 @@ function buildOfficerSpreadsheetRows(applications) {
       application.myOfficer2Rating,
       application.myNotes,
       application.resumeUrl,
+      application.coverLetter,
+      application.applicationCycle,
+      application.submissionStatus,
       formatSpreadsheetDate(application.submittedAt),
       ...[...questions.keys()].map((questionKey) => answers.get(questionKey)),
     ];
