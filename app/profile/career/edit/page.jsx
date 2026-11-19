@@ -1,16 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useEffect, useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Switch from "@/components/Switch";
+import UnsavedChangesGuard from "@/components/UnsavedChangesGuard.jsx";
 import Topbar from "@/components/Topbar";
 import logoutUser from "@/app/actions/auth/logoutUser";
 import updateCareerProfile from "@/app/actions/user/updateCareerProfile";
 import fetchCareerProfile from "@/app/actions/user/fetchCareerProfile";
 import { authUserProfileAtom, isAdminAtom, isOfficerAtom } from "@/lib/atoms";
 import "./page.scss";
+
+const careerSnapshot = profile => ({
+  bio: profile.bio || "",
+  pronouns: profile.pronouns || "",
+  linkedinUrl: profile.linkedinUrl || "",
+  githubUrl: profile.githubUrl || "",
+  portfolioUrl: profile.portfolioUrl || "",
+  personalWebsite: profile.personalWebsite || "",
+  resumeUrl: profile.resumeUrl || "",
+  skills: profile.skills || [],
+  careerInterests: profile.careerInterests || [],
+  isProfilePublic: profile.isProfilePublic ?? true,
+});
+const withPendingTag = (values, input) => {
+  const value = input.trim();
+  return value && values.length < 20 && !values.includes(value) ? [...values, value] : values;
+};
 
 const normalizeUrl = url => {
   if (!url || url.trim() === "") return url;
@@ -64,6 +82,7 @@ export default function CareerEditPage() {
   const isAdmin = useAtomValue(isAdminAtom);
   const isOfficer = useAtomValue(isOfficerAtom);
   const [mounted, setMounted] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [careerProfile, setCareerProfile] = useState(userProfile || {});
   const [bio, setBio] = useState(userProfile?.bio || "");
   const [pronouns, setPronouns] = useState(userProfile?.pronouns || "");
@@ -75,7 +94,7 @@ export default function CareerEditPage() {
   const [skills, setSkills] = useState(userProfile?.skills || []);
   const [careerInterests, setCareerInterests] = useState(userProfile?.careerInterests || []);
   const [isProfilePublic, setIsProfilePublic] = useState(
-    userProfile?.isProfilePublic !== undefined ? userProfile.isProfilePublic : true,
+    userProfile?.isProfilePublic !== undefined ? userProfile.isProfilePublic : true
   );
   const [skillInput, setSkillInput] = useState("");
   const [careerInterestInput, setCareerInterestInput] = useState("");
@@ -86,40 +105,72 @@ export default function CareerEditPage() {
   });
   const [validationErrors, setValidationErrors] = useState({});
 
+  const applyProfile = useCallback(profile => {
+    const saved = careerSnapshot(profile);
+    setCareerProfile(profile);
+    setBio(saved.bio);
+    setPronouns(saved.pronouns);
+    setLinkedinUrl(saved.linkedinUrl);
+    setGithubUrl(saved.githubUrl);
+    setPortfolioUrl(saved.portfolioUrl);
+    setPersonalWebsite(saved.personalWebsite);
+    setResumeUrl(saved.resumeUrl);
+    setSkills(saved.skills);
+    setCareerInterests(saved.careerInterests);
+    setIsProfilePublic(saved.isProfilePublic);
+    setSkillInput("");
+    setCareerInterestInput("");
+    setValidationErrors({});
+  }, []);
+
+  const resetForm = () => applyProfile(careerProfile);
+
   useEffect(() => {
     Promise.resolve().then(() => setMounted(true));
   }, []);
 
   useEffect(() => {
-    if (!userProfile) {
-      return;
-    }
-
-    (async () => {
-      const career = await fetchCareerProfile();
-      if (career) {
-        setCareerProfile({ ...(userProfile || {}), ...career });
-      } else {
-        setCareerProfile(userProfile || {});
+    if (!mounted) return;
+    // The form is absent on the first render, when native hash scrolling runs.
+    const frame = requestAnimationFrame(() => {
+      const field = document.getElementById(window.location.hash.slice(1));
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+        field.focus({ preventScroll: true });
+        field.scrollIntoView({ block: "start" });
       }
-    })();
-  }, [userProfile]);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [mounted]);
 
   useEffect(() => {
-    const syncFromProfile = () => {
-      setBio(careerProfile.bio || "");
-      setPronouns(careerProfile.pronouns || "");
-      setLinkedinUrl(careerProfile.linkedinUrl || "");
-      setGithubUrl(careerProfile.githubUrl || "");
-      setPortfolioUrl(careerProfile.portfolioUrl || "");
-      setPersonalWebsite(careerProfile.personalWebsite || "");
-      setResumeUrl(careerProfile.resumeUrl || "");
-      setSkills(careerProfile.skills || []);
-      setCareerInterests(careerProfile.careerInterests || []);
-      setIsProfilePublic(careerProfile.isProfilePublic !== undefined ? careerProfile.isProfilePublic : true);
+    if (!userProfile) return;
+    let cancelled = false;
+    (async () => {
+      const career = await fetchCareerProfile();
+      if (cancelled) return;
+      applyProfile({ ...userProfile, ...(career || {}) });
+      setLoaded(true);
+    })();
+    return () => {
+      cancelled = true;
     };
-    syncFromProfile();
-  }, [careerProfile]);
+  }, [userProfile, applyProfile]);
+
+  const draft = {
+    bio,
+    pronouns,
+    linkedinUrl,
+    githubUrl,
+    portfolioUrl,
+    personalWebsite,
+    resumeUrl,
+    skills,
+    careerInterests,
+    isProfilePublic,
+  };
+  const changed =
+    JSON.stringify(careerSnapshot(draft)) !== JSON.stringify(careerSnapshot(careerProfile)) ||
+    Boolean(skillInput || careerInterestInput);
 
   const handleLogout = async () => {
     await logoutUser();
@@ -146,6 +197,7 @@ export default function CareerEditPage() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (!changed || saveState.saving || saveState.saveSuccess) return;
 
     const validationErrors = {};
     const linkedinError = getLinkedInUrlError(linkedinUrl);
@@ -170,8 +222,8 @@ export default function CareerEditPage() {
     const updates = {
       bio,
       pronouns,
-      skills,
-      careerInterests,
+      skills: withPendingTag(skills, skillInput),
+      careerInterests: withPendingTag(careerInterests, careerInterestInput),
       isProfilePublic,
       linkedinUrl,
       githubUrl,
@@ -191,6 +243,9 @@ export default function CareerEditPage() {
         return;
       }
 
+      applyProfile(updates);
+      setSkillInput("");
+      setCareerInterestInput("");
       setSaveState({ saving: false, saveSuccess: true, saveError: null });
       setAuthUserProfile(prev => ({
         ...(prev || {}),
@@ -239,326 +294,377 @@ export default function CareerEditPage() {
     setSkills(prev => prev.filter(skill => skill !== skillToRemove));
   };
 
-  const calculateCompleteness = () => {
-    let completed = 0;
-    const total = 6;
-
-    if (bio && bio.length >= 50) completed += 1;
-    if (skills.length >= 3) completed += 1;
-    if (careerInterests.length >= 2) completed += 1;
-    if (linkedinUrl || githubUrl) completed += 1;
-    if (portfolioUrl || personalWebsite) completed += 1;
-    if (pronouns) completed += 1;
-
-    return Math.round((completed / total) * 100);
-  };
-
-  const completeness = calculateCompleteness();
+  const checklist = [
+    { label: "Add a bio (50+ chars)", complete: bio.length >= 50, field: "bio" },
+    { label: "List at least 3 skills", complete: skills.length >= 3, field: "skillInput" },
+    { label: "Add 2+ career interests", complete: careerInterests.length >= 2, field: "careerInterestInput" },
+    { label: "Add your LinkedIn or GitHub", complete: Boolean(linkedinUrl || githubUrl), field: "linkedinUrl" },
+    { label: "Add a portfolio or website", complete: Boolean(portfolioUrl || personalWebsite), field: "portfolioUrl" },
+    { label: "Add your pronouns", complete: Boolean(pronouns), field: "pronouns" },
+  ];
+  const completed = checklist.filter(item => item.complete).length;
+  const completeness = Math.round((completed / checklist.length) * 100);
   const { saving, saveSuccess, saveError } = saveState;
+  const name = [userProfile?.firstName, userProfile?.lastName].filter(Boolean).join(" ") || "Your career profile";
+  const years = ["Freshman", "Sophomore", "Junior", "Senior", "Post-Senior"];
+  const linkFields = [
+    {
+      id: "linkedinUrl",
+      label: "LinkedIn",
+      icon: "fa-brands fa-linkedin",
+      value: linkedinUrl,
+      set: setLinkedinUrl,
+      placeholder: "https://linkedin.com/in/yourname",
+      required: true,
+    },
+    {
+      id: "githubUrl",
+      label: "GitHub",
+      icon: "fa-brands fa-github",
+      value: githubUrl,
+      set: setGithubUrl,
+      placeholder: "https://github.com/yourname",
+      required: true,
+    },
+    {
+      id: "portfolioUrl",
+      label: "Portfolio",
+      icon: "fa-solid fa-globe",
+      value: portfolioUrl,
+      set: setPortfolioUrl,
+      placeholder: "https://yourportfolio.com",
+    },
+    {
+      id: "personalWebsite",
+      label: "Personal website",
+      icon: "fa-solid fa-link",
+      value: personalWebsite,
+      set: setPersonalWebsite,
+      placeholder: "https://yourwebsite.com",
+    },
+    {
+      id: "resumeUrl",
+      label: "Resume URL",
+      icon: "fa-solid fa-file-lines",
+      value: resumeUrl,
+      set: setResumeUrl,
+      placeholder: "https://drive.google.com/…",
+    },
+  ];
 
   if (!mounted) return null;
 
   return (
     <div>
-      <Topbar
-        picture={userProfile?.picture}
-        onLogout={handleLogout}
-        isRealAdmin={isAdmin}
-        isOfficer={isOfficer}
-      />
-      <div className="career-profile-page">
-        <div className="career-profile-header">
-          <Link href="/profile/career" className="back-link">
-            <i className="fa fa-arrow-left" />
-            <span>Back to Career Hub</span>
-          </Link>
-          <h1>Edit Career Profile</h1>
-          <p className="subtitle">Showcase your skills and experience to the ACM community</p>
-        </div>
-
-        <div className="career-profile-container">
-          <div className="career-profile-content">
-            <form onSubmit={handleSubmit}>
-              <div className="form-section">
-                <h2>Basic Information</h2>
-
-                <div className="form-group">
+      <Topbar picture={userProfile?.picture} onLogout={handleLogout} isRealAdmin={isAdmin} isOfficer={isOfficer} />
+      <main className="career-profile-page">
+        <UnsavedChangesGuard dirty={changed && !saveSuccess} />
+        <Link href="/profile/career" className="career-edit-back">
+          <i className="fa-solid fa-arrow-left" aria-hidden="true" />
+          Career Hub
+        </Link>
+        <header className="career-edit-header">
+          <div>
+            <h1>Edit Career Profile</h1>
+            <p>Keep your experience, skills, and professional links up to date.</p>
+          </div>
+          <div className="career-edit-actions">
+            {changed && (
+              <button
+                type="button"
+                className="career-edit-button"
+                disabled={saving || saveSuccess}
+                onClick={() => {
+                  resetForm();
+                  setSaveState({ saving: false, saveSuccess: false, saveError: null });
+                }}
+              >
+                Cancel
+              </button>
+            )}
+            <button
+              type="submit"
+              form="career-profile-form"
+              className="career-edit-button career-edit-primary"
+              disabled={!loaded || !changed || saving || saveSuccess}
+            >
+              <i
+                className={`fa-solid ${saving ? "fa-spinner fa-spin" : saveSuccess ? "fa-check" : "fa-check-to-slot"}`}
+                aria-hidden="true"
+              />
+              {saving ? "Saving…" : saveSuccess ? "Saved" : "Save Changes"}
+            </button>
+          </div>
+        </header>
+        {saveError && (
+          <div className="career-edit-notice career-edit-error" role="alert">
+            <i className="fa-solid fa-circle-exclamation" aria-hidden="true" />
+            {saveError}
+          </div>
+        )}
+        {saveSuccess && (
+          <div className="career-edit-notice career-edit-success" role="status">
+            <i className="fa-solid fa-circle-check" aria-hidden="true" />
+            Profile saved. Returning to Career Hub…
+          </div>
+        )}
+        <div className="career-edit-columns">
+          <form id="career-profile-form" className="career-edit-form" onSubmit={handleSubmit}>
+            <fieldset disabled={!loaded || saving || saveSuccess}>
+              <section className="career-edit-panel" aria-labelledby="career-about-title">
+                <div className="career-edit-section-heading">
+                  <span className="career-edit-section-icon">
+                    <i className="fa-solid fa-user" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h2 id="career-about-title">About You</h2>
+                    <p>Introduce yourself to recruiters and committee leads.</p>
+                  </div>
+                </div>
+                <div className="career-edit-field career-edit-pronouns">
                   <label htmlFor="pronouns">
-                    Pronouns
-                    <input
-                      type="text"
-                      id="pronouns"
-                      name="pronouns"
-                      value={pronouns}
-                      onChange={e => setPronouns(e.target.value)}
-                      placeholder="e.g., she/her, he/him, they/them"
-                      maxLength={50}
-                    />
+                    Pronouns <span className="career-edit-optional">Optional</span>
                   </label>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="bio">
-                    Bio
-                    <span className="char-count">
-                      {bio.length}
-                      /1000
-                    </span>
-                    <textarea
-                      id="bio"
-                      name="bio"
-                      value={bio}
-                      onChange={e => setBio(e.target.value)}
-                      placeholder="Tell us about yourself, your interests, and what you're working on..."
-                      rows={6}
-                      maxLength={1000}
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="form-section">
-                <h2>Professional Links</h2>
-
-                <div className="form-group">
-                  <label htmlFor="linkedinUrl">
-                    <i className="fab fa-linkedin" /> LinkedIn
-                    {linkedinUrl && !validationErrors.linkedinUrl && <span className="valid-check"> ✓</span>}
-                    <input
-                      type="url"
-                      id="linkedinUrl"
-                      name="linkedinUrl"
-                      value={linkedinUrl}
-                      onChange={e => {
-                        setLinkedinUrl(e.target.value);
-                        if (validationErrors.linkedinUrl) {
-                          setValidationErrors(prev => ({ ...prev, linkedinUrl: null }));
-                        }
-                      }}
-                      onBlur={handleBlur}
-                      placeholder="https://linkedin.com/in/yourprofile"
-                      required
-                      className={validationErrors.linkedinUrl ? "error" : ""}
-                    />
-                  </label>
-                  {validationErrors.linkedinUrl && (
-                    <span className="error-message">{validationErrors.linkedinUrl}</span>
-                  )}
-                  <p className="help-text">Example: https://linkedin.com/in/yourname</p>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="githubUrl">
-                    <i className="fab fa-github" /> GitHub
-                    {githubUrl && !validationErrors.githubUrl && <span className="valid-check"> ✓</span>}
-                    <input
-                      type="url"
-                      id="githubUrl"
-                      name="githubUrl"
-                      value={githubUrl}
-                      onChange={e => {
-                        setGithubUrl(e.target.value);
-                        if (validationErrors.githubUrl) {
-                          setValidationErrors(prev => ({ ...prev, githubUrl: null }));
-                        }
-                      }}
-                      onBlur={handleBlur}
-                      placeholder="https://github.com/yourusername"
-                      required
-                      className={validationErrors.githubUrl ? "error" : ""}
-                    />
-                  </label>
-                  {validationErrors.githubUrl && <span className="error-message">{validationErrors.githubUrl}</span>}
-                  <p className="help-text">Example: https://github.com/yourusername</p>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="portfolioUrl">
-                    <i className="fa fa-briefcase" /> Portfolio
-                    <span className="optional-label"> (Optional)</span>
-                    <input
-                      type="url"
-                      id="portfolioUrl"
-                      name="portfolioUrl"
-                      value={portfolioUrl}
-                      onChange={e => setPortfolioUrl(e.target.value)}
-                      placeholder="https://yourportfolio.com"
-                    />
-                  </label>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="personalWebsite">
-                    <i className="fa fa-globe" /> Personal Website
-                    <span className="optional-label"> (Optional)</span>
-                    <input
-                      type="url"
-                      id="personalWebsite"
-                      name="personalWebsite"
-                      value={personalWebsite}
-                      onChange={e => setPersonalWebsite(e.target.value)}
-                      placeholder="https://yourwebsite.com"
-                    />
-                  </label>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="resumeUrl">
-                    <i className="fa fa-file-alt" /> Resume URL
-                    <span className="optional-label"> (Optional)</span>
-                    <input
-                      type="url"
-                      id="resumeUrl"
-                      name="resumeUrl"
-                      value={resumeUrl}
-                      onChange={e => setResumeUrl(e.target.value)}
-                      placeholder="https://drive.google.com/..."
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="form-section">
-                <h2>
-                  Skills
-                  <span className="count-badge">
-                    {skills.length}
-                    /20
-                  </span>
-                </h2>
-                <p className="section-help">Add your technical and soft skills. Press Enter to add each skill.</p>
-
-                <div className="form-group">
                   <input
-                    type="text"
-                    name="skillInput"
-                    value={skillInput}
-                    onChange={e => setSkillInput(e.target.value)}
-                    onKeyDown={addSkill}
-                    placeholder="Type a skill and press Enter"
+                    id="pronouns"
+                    name="pronouns"
+                    value={pronouns}
+                    onChange={e => setPronouns(e.target.value)}
+                    placeholder="e.g., she/her, he/him, they/them"
                     maxLength={50}
-                    disabled={skills.length >= 20}
                   />
                 </div>
+                <div className="career-edit-field">
+                  <div className="career-edit-label-row">
+                    <label htmlFor="bio">Bio</label>
+                    <span>{bio.length} / 1,000</span>
+                  </div>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    value={bio}
+                    onChange={e => setBio(e.target.value)}
+                    placeholder="Share your interests, what you’re working on, and what you’d like to do next…"
+                    rows={5}
+                    maxLength={1000}
+                    aria-describedby="career-bio-help"
+                  />
+                  <p id="career-bio-help" className="career-edit-help">
+                    Write at least 50 characters to complete this part of your profile.
+                  </p>
+                </div>
+              </section>
 
-                <div className="tags-container">
-                  {skills.map(skill => (
-                    <span key={skill} className="tag">
-                      {skill}
-                      <button type="button" onClick={() => removeSkill(skill)}>
-                        ×
-                      </button>
-                    </span>
+              <section className="career-edit-panel" aria-labelledby="career-links-title">
+                <div className="career-edit-section-heading">
+                  <span className="career-edit-section-icon">
+                    <i className="fa-solid fa-link" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h2 id="career-links-title">Professional Links</h2>
+                    <p>Share your work and where people can find you.</p>
+                  </div>
+                </div>
+                <div className="career-edit-link-grid">
+                  {linkFields.map(({ id, label, icon, value, set, placeholder, required }) => (
+                    <div className="career-edit-field" key={id}>
+                      <label htmlFor={id}>
+                        {label} <span className="career-edit-optional">{required ? "Required" : "Optional"}</span>
+                      </label>
+                      <div className={`career-edit-input-icon ${validationErrors[id] ? "has-error" : ""}`}>
+                        <i className={icon} aria-hidden="true" />
+                        <input
+                          type="url"
+                          id={id}
+                          name={id}
+                          value={value}
+                          onChange={e => {
+                            set(e.target.value);
+                            if (validationErrors[id]) setValidationErrors(prev => ({ ...prev, [id]: null }));
+                          }}
+                          onBlur={handleBlur}
+                          placeholder={placeholder}
+                          required={required}
+                          aria-invalid={Boolean(validationErrors[id])}
+                          aria-describedby={validationErrors[id] ? `${id}-error` : undefined}
+                        />
+                      </div>
+                      {validationErrors[id] && (
+                        <p id={`${id}-error`} className="career-edit-field-error">
+                          {validationErrors[id]}
+                        </p>
+                      )}
+                      {id === "resumeUrl" && <p className="career-edit-help">Use a shareable link to your resume.</p>}
+                    </div>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              <div className="form-section">
-                <h2>
-                  Career Interests
-                  <span className="count-badge">
-                    {careerInterests.length}
-                    /20
-                  </span>
-                </h2>
-                <p className="section-help">
-                  What career fields or roles interest you? Press Enter to add each interest.
+              <div className="career-edit-tag-panels">
+                {[
+                  {
+                    title: "Skills",
+                    id: "skillInput",
+                    description: "Add your technical and soft skills.",
+                    placeholder: "e.g., Python, UI design",
+                    values: skills,
+                    input: skillInput,
+                    set: setSkillInput,
+                    add: addSkill,
+                    remove: removeSkill,
+                    icon: "fa-code",
+                  },
+                  {
+                    title: "Career Interests",
+                    id: "careerInterestInput",
+                    description: "What fields or roles interest you?",
+                    placeholder: "e.g., Software engineering",
+                    values: careerInterests,
+                    input: careerInterestInput,
+                    set: setCareerInterestInput,
+                    add: addCareerInterest,
+                    remove: removeCareerInterest,
+                    icon: "fa-compass",
+                  },
+                ].map(({ title, id, description, placeholder, values, input, set, add, remove, icon }) => (
+                  <section className="career-edit-panel" key={id} aria-labelledby={`${id}-title`}>
+                    <div className="career-edit-section-heading">
+                      <span className="career-edit-section-icon">
+                        <i className={`fa-solid ${icon}`} aria-hidden="true" />
+                      </span>
+                      <div>
+                        <h2 id={`${id}-title`}>
+                          {title}
+                          <span className="career-edit-count">{values.length} / 20</span>
+                        </h2>
+                        <p>{description}</p>
+                      </div>
+                    </div>
+                    <div className="career-edit-field">
+                      <label className="sr-only" htmlFor={id}>
+                        Add {title.toLowerCase()}
+                      </label>
+                      <input
+                        id={id}
+                        name={id}
+                        value={input}
+                        onChange={e => set(e.target.value)}
+                        onKeyDown={add}
+                        placeholder={placeholder}
+                        maxLength={50}
+                        disabled={values.length >= 20}
+                        aria-describedby={`${id}-help`}
+                      />
+                      <p className="career-edit-help" id={`${id}-help`}>
+                        Press Enter to add. Up to 20.
+                      </p>
+                    </div>
+                    <div className="career-edit-tags" aria-label={title}>
+                      {values.map(value => (
+                        <span key={value}>
+                          {value}
+                          <button type="button" onClick={() => remove(value)} aria-label={`Remove ${value}`}>
+                            <i className="fa-solid fa-xmark" aria-hidden="true" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </fieldset>
+            <div className="career-edit-footer">
+              <p>Changes are saved when you select Save Changes.</p>
+              <button
+                type="submit"
+                className="career-edit-button career-edit-primary"
+                disabled={!loaded || !changed || saving || saveSuccess}
+              >
+                {saving ? "Saving…" : saveSuccess ? "Saved" : "Save Changes"}
+                <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+              </button>
+            </div>
+          </form>
+
+          <aside className="career-edit-sidebar" aria-label="Profile overview and settings">
+            <section className="career-edit-panel career-edit-summary" aria-label="Your profile">
+              <div className="career-edit-summary-banner" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={userProfile?.picture || "/unknown.png"}
+                alt="Your profile photo"
+                className="career-edit-avatar"
+                referrerPolicy="no-referrer"
+              />
+              <h2>{name}</h2>
+              <p>{[years[Number(userProfile?.year) - 1], userProfile?.major].filter(Boolean).join(" · ")}</p>
+              <span className={`career-edit-visibility ${isProfilePublic ? "is-public" : ""}`}>
+                <i className={`fa-solid ${isProfilePublic ? "fa-globe" : "fa-lock"}`} aria-hidden="true" />
+                {isProfilePublic ? "Public profile" : "Private profile"}
+              </span>
+              <Link href="/profile" className="career-edit-basic-link">
+                Manage basic information
+                <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
+              </Link>
+            </section>
+            <section className="career-edit-panel" aria-labelledby="career-completion-heading">
+              <div className="career-edit-completion-heading">
+                <h2 id="career-completion-heading">Profile Completion</h2>
+                <span>{completeness}%</span>
+              </div>
+              <div
+                className="career-edit-progress"
+                role="progressbar"
+                aria-label="Profile completion"
+                aria-valuenow={completeness}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <span style={{ width: `${completeness}%` }} />
+              </div>
+              <p className="career-edit-help">{completed} of 6 complete</p>
+              <ul className="career-edit-checklist">
+                {checklist.map(({ label, complete, field }) => (
+                  <li key={field}>
+                    <a
+                      href={`#${field}`}
+                      onClick={() => document.getElementById(field)?.focus()}
+                      className={complete ? "is-complete" : ""}
+                    >
+                      <span className="career-edit-check" aria-hidden="true">
+                        {complete && <i className="fa-solid fa-check" />}
+                      </span>
+                      {label}
+                      <span className="sr-only">{complete ? " (complete)" : " (incomplete)"}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+            <section className="career-edit-panel" aria-labelledby="career-privacy-title">
+              <h2 id="career-privacy-title">Profile Visibility</h2>
+              <Switch
+                checked={isProfilePublic}
+                onChange={setIsProfilePublic}
+                disabled={!loaded || saving || saveSuccess}
+                label="Make my profile public"
+                description="Allow ACM members and recruiters to view your career profile in the directory."
+                className="career-edit-privacy"
+              />
+            </section>
+            <div className="career-edit-tip">
+              <i className="fa-solid fa-lightbulb" aria-hidden="true" />
+              <div>
+                <h3>A little detail goes a long way</h3>
+                <p>
+                  Highlight specific skills and link to work you’re proud of. Keep your profile current as you gain
+                  experience.
                 </p>
-
-                <div className="form-group">
-                  <input
-                    type="text"
-                    name="careerInterestInput"
-                    value={careerInterestInput}
-                    onChange={e => setCareerInterestInput(e.target.value)}
-                    onKeyDown={addCareerInterest}
-                    placeholder="Type a career interest and press Enter"
-                    maxLength={50}
-                    disabled={careerInterests.length >= 20}
-                  />
-                </div>
-
-                <div className="tags-container">
-                  {careerInterests.map(interest => (
-                    <span key={interest} className="tag">
-                      {interest}
-                      <button type="button" onClick={() => removeCareerInterest(interest)}>
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
               </div>
-
-              <div className="form-section">
-                <h2>Privacy Settings</h2>
-
-                <Switch
-                  checked={isProfilePublic}
-                  onChange={setIsProfilePublic}
-                  label="Make my career profile public"
-                  description="Allow other ACM members and recruiters to view your career profile in the directory"
-                  className="privacy-switch"
-                />
-              </div>
-
-              <div className="form-actions">
-                {saveError && (
-                  <div className="error-message">
-                    <i className="fa fa-exclamation-circle" /> {saveError}
-                  </div>
-                )}
-                {saveSuccess && (
-                  <div className="success-message">
-                    <i className="fa fa-check-circle" /> Profile saved successfully!
-                  </div>
-                )}
-                <button type="submit" className="save-button" disabled={saving}>
-                  {saving ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div className="career-profile-sidebar">
-            <div className="info-card">
-              <h3>Profile Completeness</h3>
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${completeness}%` }} />
-              </div>
-              <p className="progress-text">{completeness}% Complete</p>
-              <ul className="completeness-checklist">
-                <li className={bio && bio.length >= 50 ? "complete" : ""}>
-                  {bio && bio.length >= 50 ? "✓" : "○"} Bio (50+ characters)
-                </li>
-                <li className={skills.length >= 3 ? "complete" : ""}>
-                  {skills.length >= 3 ? "✓" : "○"} At least 3 skills
-                </li>
-                <li className={careerInterests.length >= 2 ? "complete" : ""}>
-                  {careerInterests.length >= 2 ? "✓" : "○"} At least 2 career interests
-                </li>
-                <li className={linkedinUrl || githubUrl ? "complete" : ""}>
-                  {linkedinUrl || githubUrl ? "✓" : "○"} Professional link
-                </li>
-                <li className={portfolioUrl || personalWebsite ? "complete" : ""}>
-                  {portfolioUrl || personalWebsite ? "✓" : "○"} Portfolio/website
-                </li>
-                <li className={pronouns ? "complete" : ""}>{pronouns ? "✓" : "○"} Pronouns</li>
-              </ul>
             </div>
-
-            <div className="info-card">
-              <h3>📈 Profile Tips</h3>
-              <ul>
-                <li>Write a compelling bio that highlights your interests</li>
-                <li>Add specific, relevant skills</li>
-                <li>Include links to your best work</li>
-                <li>Make your profile public to increase networking opportunities</li>
-              </ul>
-            </div>
-          </div>
+          </aside>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

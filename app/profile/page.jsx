@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import Topbar from '@/components/Topbar';
 import Profile from './profile';
@@ -37,31 +37,37 @@ export default function ProfilePage() {
   }, []);
 
   const handleSaveChanges = async (newProfile) => {
-    const result = await updateUser(newProfile);
-    if (result.success) {
-      setAuthUserProfile(prev => ({ ...(prev || {}), ...newProfile }));
+    setUpdated(false);
+    let saved = false;
+    try {
+      const basicChanged = ['firstName', 'lastName', 'year', 'major'].some(key => String(newProfile[key]) !== String(userProfile?.[key]));
+      if (basicChanged) {
+        const result = await updateUser(newProfile);
+        if (!result.success) throw new Error(typeof result.error === 'string' ? result.error : 'Unable to save your information.');
+        setAuthUserProfile(prev => ({ ...(prev || {}), ...newProfile }));
+      }
+      saved = true;
+      setUpdateSuccess(true);
+      setUpdateError(null);
+    } catch (error) {
+      setUpdateSuccess(false);
+      setUpdateError(error.message || 'Unable to save your profile. Please try again.');
     }
     setUpdated(true);
-    setUpdateSuccess(result.success);
-    setUpdateError(result.error ?? null);
     setTimeout(() => setUpdated(false), 3000);
+    return saved;
   };
 
   const handleLogout = async () => {
     await logoutUser();
   };
 
-  if (!mounted) return null;
-
-  const profile = userProfile ? {
+  const profile = useMemo(() => userProfile ? {
+    ...userProfile,
     name: `${userProfile.firstName} ${userProfile.lastName}`,
-    firstName: userProfile.firstName,
-    lastName: userProfile.lastName,
-    major: userProfile.major,
-    year: userProfile.year,
-    points: userProfile.points,
-    picture: userProfile.picture,
-  } : {};
+  } : {}, [userProfile]);
+
+  if (!mounted) return null;
 
   return (
     <div className="profile">
