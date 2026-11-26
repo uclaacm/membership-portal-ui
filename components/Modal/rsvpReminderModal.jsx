@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import PropTypes from 'prop-types';
 import './rsvpReminderModal.scss';
 
-export default function RSVPReminderModal({ event, onConfirm, onClose }) {
+export default function RSVPReminderModal({ event, remindersAllowed, onConfirm, onClose }) {
   const [emailRemindersEnabled, setEmailRemindersEnabled] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -28,7 +29,7 @@ export default function RSVPReminderModal({ event, onConfirm, onClose }) {
     setSubmitting(true);
     setError('');
     try {
-      const result = await onConfirm(emailRemindersEnabled);
+      const result = await onConfirm(remindersAllowed && emailRemindersEnabled);
       if (!result?.success) setError(result?.error || 'Could not RSVP. Please try again.');
     } catch {
       setError('Could not RSVP. Please try again.');
@@ -53,13 +54,17 @@ export default function RSVPReminderModal({ event, onConfirm, onClose }) {
               ref={checkboxRef}
               type="checkbox"
               checked={emailRemindersEnabled}
+              disabled={!remindersAllowed}
               onChange={(changeEvent) => setEmailRemindersEnabled(changeEvent.target.checked)}
             />
             <span>Email me a reminder before this event</span>
           </label>
           <p className="rsvp-reminder-note">
-            If email is configured, we’ll send one reminder 24 hours before the event.
-            Past send times are skipped.
+            {remindersAllowed ? (
+              <>If email is configured, we’ll send one reminder 24 hours before the event. Past send times are skipped.</>
+            ) : (
+              <>Event reminders are off for your account. <Link href="/profile#event-email-preferences">Manage email preferences</Link>.</>
+            )}
           </p>
           {error && <p className="rsvp-reminder-error" role="alert">{error}</p>}
           <div className="rsvp-reminder-actions">
@@ -76,6 +81,7 @@ export default function RSVPReminderModal({ event, onConfirm, onClose }) {
 
 RSVPReminderModal.propTypes = {
   event: PropTypes.shape({ title: PropTypes.string.isRequired }).isRequired,
+  remindersAllowed: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
 };

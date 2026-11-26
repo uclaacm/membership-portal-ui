@@ -8,6 +8,7 @@ export interface UserPublicProfile {
 export interface UserExtendedProfile extends UserPublicProfile {
   uuid: string;
   email: string;
+  eventReminderEmailsEnabled?: boolean;
   year: number;
   major: string;
   committees?: string[];

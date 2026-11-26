@@ -276,6 +276,7 @@ export default function HomePage() {
         <RSVPReminderModal
           key={rsvpChoiceEvent.uuid}
           event={rsvpChoiceEvent}
+          remindersAllowed={userProfile?.eventReminderEmailsEnabled !== false}
           onConfirm={confirmRsvp}
           onClose={() => setRsvpChoiceEvent(null)}
         />

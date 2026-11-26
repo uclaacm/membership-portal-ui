@@ -61,6 +61,29 @@
       margin-bottom: 30px;
     }
 
+    .event-email-preference {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      cursor: pointer;
+
+      input {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        accent-color: vars.$secondary-color;
+      }
+    }
+
+    .event-email-preference-note,
+    .event-email-preference-message {
+      color: #666;
+      font-size: 0.9em;
+      line-height: 1.5;
+      margin: 12px 0 0;
+    }
+
     .form-elem {
       margin-bottom: 24px;
 

@@ -10,6 +10,7 @@ const config = {
   routes: {
     user: {
       user: "/api/v1/user",
+      eventReminderEmails: "/api/v1/user/event-reminder-emails",
       activity: "/api/v1/user/activity",
       admins: "/api/v1/user/admins",
       career: "/api/v1/user/career",

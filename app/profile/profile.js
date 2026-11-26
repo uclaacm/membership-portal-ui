@@ -156,6 +156,28 @@ export default class Profile extends React.Component {
               )}
             </div>
 
+            <div className="profile-edit-section" id="event-email-preferences">
+              <h2 className="section-title">Event emails</h2>
+              <label className="event-email-preference">
+                <input
+                  type="checkbox"
+                  checked={this.props.profile.eventReminderEmailsEnabled !== false}
+                  disabled={this.props.emailPreferenceSaving}
+                  onChange={(event) => this.props.onEmailPreferenceChange(event.target.checked)}
+                />
+                <span>Allow event reminder emails</span>
+              </label>
+              <p className="event-email-preference-note">
+                You’ll only get reminders for events where you requested one when RSVPing.
+                Turn this off to stop all event reminders. RSVP confirmation emails will still arrive.
+              </p>
+              {this.props.emailPreferenceMessage && (
+                <p className="event-email-preference-message" role="status">
+                  {this.props.emailPreferenceMessage}
+                </p>
+              )}
+            </div>
+
             <div className="divider" />
 
             <div className="activity-section">
