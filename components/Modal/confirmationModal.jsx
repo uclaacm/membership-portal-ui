@@ -3,10 +3,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ModalShell from './ModalShell';
-// `.modal-wrapper` lives here. Imported by the component rather than its pages, so mounting it
-// somewhere that hasn't happened to pull the sheet in can't leave it unstyled at the foot of
-// the page — the failure this and EventRSVPsModal both used to have.
-import './style.scss';
 
 export default class ConfirmationModal extends React.Component {
   render() {

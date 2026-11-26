@@ -59,10 +59,6 @@ const config = {
     },
     leaderboard: "/api/v1/leaderboard",
     leaderboardAdmin: "/api/v1/leaderboard/admin",
-    admin: {
-      promote: "/api/v1/admin/promote",
-      promoteOfficer: "/api/v1/admin/promote-officer",
-    },
     image: {
       upload: "/api/v1/image",
       specific: "/api/v1/image/raw",
