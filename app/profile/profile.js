@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Button from '@/components/Button';
+import Switch from '@/components/Switch';
 import Toast from '@/components/Toast';
 import Config from '@/lib/config';
 
@@ -158,15 +159,13 @@ export default class Profile extends React.Component {
 
             <div className="profile-edit-section" id="event-email-preferences">
               <h2 className="section-title">Event emails</h2>
-              <label className="event-email-preference">
-                <input
-                  type="checkbox"
-                  checked={this.props.profile.eventReminderEmailsEnabled !== false}
-                  disabled={this.props.emailPreferenceSaving}
-                  onChange={(event) => this.props.onEmailPreferenceChange(event.target.checked)}
-                />
-                <span>Allow event reminder emails</span>
-              </label>
+              <Switch
+                className="event-email-preference"
+                checked={this.props.profile.eventReminderEmailsEnabled !== false}
+                disabled={this.props.emailPreferenceSaving}
+                onChange={this.props.onEmailPreferenceChange}
+                label="Allow event reminder emails"
+              />
               <p className="event-email-preference-note">
                 You’ll only get reminders for events where you requested one when RSVPing.
                 Turn this off to stop all event reminders. RSVP confirmation emails will still arrive.

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
+import Switch from '@/components/Switch';
 import './rsvpReminderModal.scss';
 
 export default function RSVPReminderModal({ event, remindersAllowed, onConfirm, onClose }) {
@@ -10,10 +11,12 @@ export default function RSVPReminderModal({ event, remindersAllowed, onConfirm, 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const checkboxRef = useRef(null);
+  const confirmButtonRef = useRef(null);
 
   useEffect(() => {
-    checkboxRef.current?.focus();
-  }, []);
+    if (remindersAllowed) checkboxRef.current?.focus();
+    else confirmButtonRef.current?.focus();
+  }, [remindersAllowed]);
 
   useEffect(() => {
     const onKeyDown = (keyEvent) => {
@@ -49,19 +52,19 @@ export default function RSVPReminderModal({ event, remindersAllowed, onConfirm, 
         <h2 id="rsvp-reminder-title">RSVP to {event.title}</h2>
         <p>You’ll receive a confirmation email after RSVPing. Choose whether you’d also like reminders.</p>
         <form onSubmit={submit}>
-          <label className="rsvp-reminder-option">
-            <input
-              ref={checkboxRef}
-              type="checkbox"
-              checked={emailRemindersEnabled}
-              disabled={!remindersAllowed}
-              onChange={(changeEvent) => setEmailRemindersEnabled(changeEvent.target.checked)}
-            />
-            <span>Email me a reminder before this event</span>
-          </label>
+          <Switch
+            className="rsvp-reminder-option"
+            inputRef={checkboxRef}
+            checked={emailRemindersEnabled}
+            disabled={!remindersAllowed}
+            onChange={setEmailRemindersEnabled}
+            label="Email me a reminder before this event"
+          />
           <p className="rsvp-reminder-note">
             {remindersAllowed ? (
-              <>If email is configured, we’ll send one reminder 24 hours before the event. Past send times are skipped.</>
+              emailRemindersEnabled
+                ? <>You will receive an email reminder one day before the event.</>
+                : <>Turn this on to receive an email reminder one day before the event.</>
             ) : (
               <>Event reminders are off for your account. <Link href="/profile#event-email-preferences">Manage email preferences</Link>.</>
             )}
@@ -69,7 +72,7 @@ export default function RSVPReminderModal({ event, remindersAllowed, onConfirm, 
           {error && <p className="rsvp-reminder-error" role="alert">{error}</p>}
           <div className="rsvp-reminder-actions">
             <button type="button" onClick={onClose} disabled={submitting}>Cancel</button>
-            <button type="submit" className="is-primary" disabled={submitting}>
+            <button ref={confirmButtonRef} type="submit" className="is-primary" disabled={submitting}>
               {submitting ? 'Saving…' : 'Confirm RSVP'}
             </button>
           </div>

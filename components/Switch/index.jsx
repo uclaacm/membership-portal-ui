@@ -13,12 +13,14 @@ export default function Switch({
   hideDescription = false,
   disabled = false,
   className = "",
+  inputRef,
 }) {
   const descriptionId = useId();
 
   return (
     <label className={`switch${disabled ? " switch--disabled" : ""}${className ? ` ${className}` : ""}`}>
       <input
+        ref={inputRef}
         type="checkbox"
         role="switch"
         className="switch__input"
