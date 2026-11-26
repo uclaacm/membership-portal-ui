@@ -55,11 +55,10 @@ export default function RSVPReminderModal({ event, onConfirm, onClose }) {
               checked={emailRemindersEnabled}
               onChange={(changeEvent) => setEmailRemindersEnabled(changeEvent.target.checked)}
             />
-            <span>Email me reminders before this event</span>
+            <span>Email me a reminder before this event</span>
           </label>
           <p className="rsvp-reminder-note">
-            If email is configured, we’ll send reminders 1 week, 3 days, and
-            1 day before the event, plus 9 AM Los Angeles time on the event day.
+            If email is configured, we’ll send one reminder 24 hours before the event.
             Past send times are skipped.
           </p>
           {error && <p className="rsvp-reminder-error" role="alert">{error}</p>}
