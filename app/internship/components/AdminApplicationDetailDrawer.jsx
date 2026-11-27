@@ -2,6 +2,7 @@
 
 import StatusUpdateDropdown from "./StatusUpdateDropdown";
 import "@/components/Internship/OfficerDashboard.scss";
+import { resumeHref } from "@/lib/internship/resume";
 
 const CHOICE_FIELDS = [
   {
@@ -86,8 +87,8 @@ export default function AdminApplicationDetailDrawer({ application, committees, 
             <div>
               <dt>Resume</dt>
               <dd>
-                {application.resumeUrl ? (
-                  <a href={application.resumeUrl} target="_blank" rel="noopener noreferrer">
+                {resumeHref(application) ? (
+                  <a href={resumeHref(application)} target="_blank" rel="noopener noreferrer">
                     View resume
                   </a>
                 ) : (

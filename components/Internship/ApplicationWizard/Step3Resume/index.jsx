@@ -1,31 +1,40 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAtomValue } from "jotai";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
-import useStep3Save from "./useStep3Save";
-import isValidResumeUrl from "@/components/Internship/ApplicationWizard/isValidResumeUrl";
+import uploadResume from "@/app/actions/internship/uploadResume";
 import { myApplicationAtom } from "@/lib/atoms";
+import { MAX_RESUME_BYTES, formatFileSize, resumeHref } from "@/lib/internship/resume";
+
+function isPdf(file) {
+  return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+}
 
 export default function Step3Resume({ onValidityChange, flushPendingRef }) {
   const router = useRouter();
-  const myApplication = useAtomValue(myApplicationAtom);
-  const [resumeUrlInput, setResumeUrlInput] = useState("");
-  const [touched, setTouched] = useState(false);
+  const [myApplication, setMyApplication] = useAtom(myApplicationAtom);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
+  const inputRef = useRef(null);
+  const inFlightRef = useRef(null);
 
-  const resumeUrl = touched ? resumeUrlInput : (myApplication?.resumeUrl || "");
-
-  const resumeUrlValid = useMemo(() => isValidResumeUrl(resumeUrl), [resumeUrl]);
+  const resume = myApplication?.resume || null;
+  const applicationId = myApplication?._id;
+  const valid = Boolean(applicationId && resume) && !uploading;
+  // Drafts from before uploads may still hold a pasted link, which no longer counts.
+  const hasLegacyLinkOnly = !resume && Boolean(myApplication?.resumeUrl);
 
   useEffect(() => {
-    onValidityChange(resumeUrlValid);
-  }, [resumeUrlValid, onValidityChange]);
+    onValidityChange(valid);
+  }, [valid, onValidityChange]);
 
-  const { saveState, error, errorKind, flushPending, retry } = useStep3Save(
-    resumeUrl,
-    resumeUrlValid,
-  );
+  // The upload starts as soon as a file is picked, so the only thing to wait for when leaving
+  // the step is an upload that hasn't finished yet.
+  const flushPending = useCallback(async () => {
+    if (inFlightRef.current) await inFlightRef.current;
+  }, []);
 
   useEffect(() => {
     if (flushPendingRef) flushPendingRef.current = flushPending;
@@ -34,75 +43,125 @@ export default function Step3Resume({ onValidityChange, flushPendingRef }) {
     };
   }, [flushPendingRef, flushPending]);
 
-  useEffect(() => {
-    if (errorKind === "notFound" || errorKind === "submittedBlock") {
-      router.replace("/internship");
+  const handleFileChange = useCallback(async (event) => {
+    const picked = event.target.files?.[0];
+    // Reset so picking the same file again (say, after an error) still fires onChange.
+    event.target.value = "";
+    if (!picked || !applicationId) return;
+
+    if (!isPdf(picked)) {
+      setError("Resume must be a PDF.");
+      return;
     }
-  }, [errorKind, router]);
-
-  const showInvalidMessage = touched && resumeUrl.trim() !== "" && !resumeUrlValid;
-
-  const handleChange = useCallback((event) => {
-    setTouched(true);
-    setResumeUrlInput(event.target.value);
-  }, []);
-
-  const handleBlur = useCallback(() => {
-    if (!touched) {
-      setResumeUrlInput(resumeUrl);
+    if (picked.size > MAX_RESUME_BYTES) {
+      setError(`Resume is too large. The limit is ${MAX_RESUME_BYTES / (1024 * 1024)} MB.`);
+      return;
     }
-    setTouched(true);
-  }, [resumeUrl, touched]);
+
+    // Some systems report an empty type for PDFs; the API checks the file's bytes either way.
+    const file = picked.type === "application/pdf"
+      ? picked
+      : new File([picked], picked.name, { type: "application/pdf" });
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    setError(null);
+    setUploading(true);
+    const upload = uploadResume(applicationId, formData);
+    inFlightRef.current = upload;
+    try {
+      const result = await upload;
+      if (result.success) {
+        setMyApplication(result.data);
+      } else if (result.notFound || result.submittedBlock) {
+        router.replace("/internship");
+      } else {
+        setError(result.error || "Upload failed. Please try again.");
+      }
+    } catch {
+      setError("Upload failed. Please try again.");
+    } finally {
+      if (inFlightRef.current === upload) inFlightRef.current = null;
+      setUploading(false);
+    }
+  }, [applicationId, router, setMyApplication]);
+
+  const openPicker = useCallback(() => inputRef.current?.click(), []);
+  const viewHref = resume ? resumeHref(myApplication) : null;
 
   return (
     <section className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-slate-900">Resume</h2>
         <p className="text-sm text-slate-600">
-          Upload your resume to Google Drive or another online file host, then paste a public link that anyone with the link can open.
+          Upload your resume as a PDF (up to {MAX_RESUME_BYTES / (1024 * 1024)} MB). Only you and the
+          officers of the committees you applied to can see it.
         </p>
       </div>
 
-      <div className="rounded border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">
-        Before continuing, confirm the file sharing setting is public, such as Google Drive&apos;s &quot;Anyone with the link can view&quot; option.
-      </div>
+      {hasLegacyLinkOnly && (
+        <div className="rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          Resume links are no longer accepted. Upload your resume as a PDF to continue.
+        </div>
+      )}
 
-      <div className="space-y-2">
-        <label htmlFor="internship-resume-url" className="block text-sm font-medium text-slate-700">
-          Public resume link <span className="text-red-600">*</span>
-        </label>
-        <input
-          id="internship-resume-url"
-          type="url"
-          inputMode="url"
-          placeholder="https://drive.google.com/file/d/..."
-          value={resumeUrl}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          className="block w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-          aria-describedby="internship-resume-url-help"
-          aria-invalid={showInvalidMessage}
-        />
-        <p id="internship-resume-url-help" className="text-xs text-slate-500">
-          The link must start with http:// or https:// and be accessible outside your account.
-        </p>
-        {showInvalidMessage && (
-          <p className="text-sm text-red-600">Enter a valid public resume URL before moving on.</p>
-        )}
-      </div>
+      <input
+        ref={inputRef}
+        id="internship-resume-file"
+        type="file"
+        accept="application/pdf,.pdf"
+        className="sr-only"
+        onChange={handleFileChange}
+        disabled={uploading || !applicationId}
+        aria-describedby="internship-resume-status"
+      />
 
-      <div className="text-xs text-slate-500 text-right">
-        {saveState === "pending" && "Saving..."}
-        {saveState === "saving" && "Saving..."}
-        {saveState === "idle" && myApplication?._id && resumeUrlValid &&
-          `Saved${myApplication.lastModifiedAt ? ` ${new Date(myApplication.lastModifiedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : ""}`}
-        {saveState === "error" && (
-          <span className="text-red-600">
-            {error || "Save failed"}{" "}
-            <button type="button" onClick={retry} className="underline ml-1">Retry</button>
+      {resume ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-slate-200 p-4">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-slate-900">{resume.originalName || "resume.pdf"}</p>
+            <p className="text-xs text-slate-500">
+              {formatFileSize(resume.size)}
+              {resume.uploadedAt &&
+                ` · uploaded ${new Date(resume.uploadedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {viewHref && (
+              <a
+                href={viewHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+              >
+                View
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={openPicker}
+              disabled={uploading}
+              className="rounded border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
+              {uploading ? "Uploading…" : "Replace"}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <label
+          htmlFor="internship-resume-file"
+          className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded border-2 border-dashed border-slate-300 px-4 py-8 text-center hover:border-blue-500 hover:bg-blue-50"
+        >
+          <span className="text-sm font-medium text-blue-700">
+            {uploading ? "Uploading…" : "Choose a PDF to upload"}
           </span>
-        )}
-      </div>
+          <span className="text-xs text-slate-500">PDF only, up to {MAX_RESUME_BYTES / (1024 * 1024)} MB</span>
+        </label>
+      )}
+
+      <p id="internship-resume-status" className="text-sm" role="status" aria-live="polite">
+        {error && <span className="text-red-600">{error}</span>}
+      </p>
     </section>
   );
 }

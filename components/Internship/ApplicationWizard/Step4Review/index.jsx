@@ -12,7 +12,7 @@ import {
   responsesByCommitteeAtom,
 } from "@/lib/atoms";
 import useResolvedCommitteeNames, { getCommitteeDisplayName } from "@/lib/hooks/useResolvedCommitteeNames";
-import isValidResumeUrl from "@/components/Internship/ApplicationWizard/isValidResumeUrl";
+import { resumeHref } from "@/lib/internship/resume";
 
 const MIN_GRADUATION_YEAR = 2020;
 
@@ -80,8 +80,8 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
   const graduationYear = Number(graduationYearInput);
   const graduationYearValid =
     Number.isInteger(graduationYear) && graduationYear >= MIN_GRADUATION_YEAR;
-  const resumeUrlValid = isValidResumeUrl(myApplication?.resumeUrl);
-  const stepValid = Boolean(myApplication?._id && graduationYearValid && resumeUrlValid);
+  const hasResume = Boolean(myApplication?.resume);
+  const stepValid = Boolean(myApplication?._id && graduationYearValid && hasResume);
 
   useEffect(() => {
     onValidityChange(stepValid);
@@ -136,7 +136,7 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
       <div>
         <h2 className="text-xl font-semibold text-slate-900">Review your application</h2>
         <p className="text-sm text-slate-600">
-          Please MAKE SURE to check your profile details, committee rankings, responses, and resume link before submitting, as you will NOT be able to re-submit.
+          Please MAKE SURE to check your profile details, committee rankings, responses, and resume before submitting, as you will NOT be able to re-submit.
         </p>
       </div>
 
@@ -204,19 +204,17 @@ export default function Step4Review({ onValidityChange, flushPendingRef }) {
 
       <div className="space-y-4 rounded border border-slate-200 p-4">
         <h3 className="text-base font-semibold text-slate-900">Resume</h3>
-        {myApplication?.resumeUrl && resumeUrlValid ? (
+        {myApplication?.resume ? (
           <a
-            href={myApplication.resumeUrl}
+            href={resumeHref(myApplication)}
             target="_blank"
             rel="noopener noreferrer"
             className="break-all text-sm text-blue-700 underline"
           >
-            {myApplication.resumeUrl}
+            {myApplication.resume.originalName || "resume.pdf"}
           </a>
-        ) : myApplication?.resumeUrl ? (
-          <p className="text-sm text-red-600">Saved resume link must start with http:// or https://.</p>
         ) : (
-          <p className="text-sm text-slate-500">No resume link saved.</p>
+          <p className="text-sm text-red-600">No resume uploaded. Go back a step to upload one.</p>
         )}
       </div>
 
